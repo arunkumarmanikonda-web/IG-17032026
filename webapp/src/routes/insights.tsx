@@ -1252,32 +1252,35 @@ app.get('/', (c) => {
 .ins-search-results-count{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.5rem;letter-spacing:.05em;}
 /* ── Insights Filter Row ───────────────────────────────────────────── */
 .ins-filter-row{display:flex;flex-wrap:wrap;gap:.5rem;}
-.ins-filter-btn{padding:.5rem 1.1rem;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);cursor:pointer;transition:all .25s;white-space:nowrap;backdrop-filter:blur(4px);}
-.ins-filter-btn:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8);}
+/* Filter buttons live inside .hero-dk (always dark bg) — white text is correct */
+.ins-filter-btn{padding:.5rem 1.1rem;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:rgba(255,255,255,.65);cursor:pointer;transition:all .25s;white-space:nowrap;backdrop-filter:blur(4px);}
+.ins-filter-btn:hover{border-color:rgba(255,255,255,.5);color:#fff;background:rgba(255,255,255,.1);}
 .ins-filter-btn.active{border-color:var(--gold);background:var(--gold);color:#fff;}
 .ins-filter-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
 .insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem;}
-.ins-card{background:#fff;border:1px solid var(--border-lt);display:flex;flex-direction:column;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s;position:relative;}
+/* ins-card: uses CSS vars so dark-mode overrides in layout.ts control appearance */
+.ins-card{background:var(--surface);border:1px solid var(--border-lt);display:flex;flex-direction:column;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s;position:relative;}
 .ins-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .28s;}
-.ins-card:hover{border-color:rgba(184,150,12,.3);box-shadow:0 16px 52px rgba(0,0,0,.1);transform:translateY(-5px);}
+.ins-card:hover{border-color:rgba(184,150,12,.3);box-shadow:0 16px 52px rgba(0,0,0,.12);transform:translateY(-5px);}
 .ins-card:hover::before{opacity:1;}
 .ins-card__img{height:200px;overflow:hidden;position:relative;background:#111;flex-shrink:0;}
-.ins-card__img img{width:100%;height:100%;object-fit:cover;transition:transform 6s cubic-bezier(.4,0,.2,1);}
+.ins-card__img img{width:100%;height:100%;object-fit:cover;transition:transform 6s cubic-bezier(.4,0,.2,1);display:block;}
 .ins-card:hover .ins-card__img img{transform:scale(1.05);}
 .ins-card__overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,rgba(0,0,0,.08) 60%,transparent 100%);}
 .ins-card__meta{position:absolute;bottom:.875rem;left:.875rem;right:.875rem;display:flex;align-items:flex-end;justify-content:space-between;}
-.ins-card__body{padding:1.75rem;flex:1;display:flex;flex-direction:column;}
+.ins-card__body{padding:1.75rem;flex:1;display:flex;flex-direction:column;background:var(--surface);}
 .ins-card__title{font-family:'DM Serif Display',Georgia,serif;font-size:1.12rem;color:var(--ink);line-height:1.28;margin-bottom:.75rem;flex:1;}
 .ins-card__excerpt{font-size:.82rem;color:var(--ink-muted);line-height:1.75;margin-bottom:1.1rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .ins-card__tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1.1rem;}
 .ins-card__tag{background:rgba(10,10,10,.04);color:var(--ink-soft);border:1px solid var(--border);font-size:.57rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.15rem .5rem;}
 .ins-card__read{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);transition:gap .2s;margin-top:auto;}
 .ins-card__read:hover{gap:.65rem;}
-.ins-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(255,255,255,.05);}
-.ins-stat{padding:1.75rem 2rem;border-right:1px solid rgba(255,255,255,.05);text-align:center;transition:background .22s;}
+/* Stats bar — always dark (sits below dark hero) */
+.ins-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(255,255,255,.06);}
+.ins-stat{padding:1.75rem 2rem;border-right:1px solid rgba(255,255,255,.06);text-align:center;transition:background .22s;}
 .ins-stat:hover{background:rgba(184,150,12,.04);}
 .ins-stat__n{font-family:'DM Serif Display',Georgia,serif;font-size:1.9rem;color:var(--gold);line-height:1;margin-bottom:.35rem;letter-spacing:-.02em;}
-.ins-stat__l{font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.42);}
+.ins-stat__l{font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.45);}
 @media(max-width:860px){.insight-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:580px){
   .insight-grid{grid-template-columns:1fr;}
@@ -1294,7 +1297,7 @@ app.get('/', (c) => {
 <div class="hero-dk">
   <div class="hero-dk-grid"></div>
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 70% 40%,rgba(184,150,12,.05) 0%,transparent 55%);pointer-events:none;"></div>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,var(--ink));pointer-events:none;"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,#0a0a0f);pointer-events:none;"></div>
   <div class="wrap" style="position:relative;">
     <div style="max-width:720px;" class="fu">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
@@ -1360,7 +1363,7 @@ app.get('/', (c) => {
         <div style="position:absolute;bottom:1.5rem;left:1.5rem;font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:.08em;">${featured.date}</div>
       </div>
       <!-- Content side -->
-      <div style="padding:3.25rem;display:flex;flex-direction:column;justify-content:center;background:#fff;">
+      <div style="padding:3.25rem;display:flex;flex-direction:column;justify-content:center;background:var(--surface);">
         <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;">
           <span style="font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);background:rgba(184,150,12,.08);border:1px solid rgba(184,150,12,.2);padding:.22rem .65rem;">Featured Article</span>
           <span style="font-size:.6rem;color:var(--ink-faint);letter-spacing:.08em;">${featured.readTime}</span>
@@ -1600,7 +1603,7 @@ app.get('/:id', (c) => {
 
 <!-- ══ ARTICLE BODY ════════════════════════════════════════════════════== -->
 <div style="background:var(--parch);padding:5rem 0;">
-  <div class="wrap" style="display:grid;grid-template-columns:1fr 320px;gap:4rem;align-items:start;max-width:1200px;" class="listing-layout">
+  <div class="wrap listing-layout" style="display:grid;grid-template-columns:1fr 320px;gap:4rem;align-items:start;max-width:1200px;">
 
     <!-- ── ARTICLE CONTENT ──────────────────────────────── -->
     <article>

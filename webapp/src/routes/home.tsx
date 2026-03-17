@@ -11,7 +11,7 @@ const RECENT_INSIGHTS = [
     readTime: '9 min read',
     title: 'Cloud Kitchens & Dark Stores: India\'s HORECA Infrastructure Revolution',
     excerpt: 'India\'s online food delivery GMV has crossed ₹1,00,000 Cr. We map how cloud kitchens, dark stores and ghost brands are reshaping HORECA procurement, supply chains and real estate demand in 2026.',
-    img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&auto=format&fit=crop&q=80',
+    img: '/static/mandates/chandigarh/chandigarh-img1.webp',
     color: '#065F46',
   },
   {
@@ -21,7 +21,7 @@ const RECENT_INSIGHTS = [
     readTime: '12 min read',
     title: 'Hotel Brand Affiliation in India 2026: Choosing the Right Flag for Your Asset',
     excerpt: 'With 20+ international and domestic brands competing for India hotel management agreements, selecting the right brand is the most consequential decision a hotel owner makes. Our complete evaluation framework.',
-    img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80',
+    img: '/static/mandates/kasauli/kasauli-cover.jpg',
     color: '#1A3A6B',
   },
   {
@@ -31,7 +31,7 @@ const RECENT_INSIGHTS = [
     readTime: '10 min read',
     title: 'Building India\'s Next Entertainment Destination: Development Economics & Operational Model',
     excerpt: '₹15,000+ Cr of entertainment real estate is in planning across India. We analyse format typology, capex benchmarks, revenue model and the operational structure required to deliver sustainable returns.',
-    img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop&q=80',
+    img: '/static/mandates/kasauli/kasauli-img1.jpg',
     color: '#7C3AED',
   },
 ]
@@ -477,7 +477,7 @@ app.get('/', (c) => {
       <div style="position:relative;" id="indiaMapWrap" class="india-map-wrap">
         <div class="india-map-box" style="border:1px solid var(--border);padding:1.25rem 1rem 1rem;position:relative;overflow:hidden;border-radius:3px;">
           <!-- India SVG map — geographically accurate, viewBox 440×525 with 15px top padding for J&K -->
-          <svg id="igIndiaMap" viewBox="0 -15 440 525" width="100%" style="display:block;max-width:440px;margin:0 auto;" aria-label="India map showing active mandate locations">
+          <svg id="igIndiaMap" viewBox="0 -20 440 530" width="100%" style="display:block;max-width:440px;margin:0 auto;" aria-label="India map showing active mandate locations">
             <defs>
               <filter id="mapPinGlow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
@@ -497,19 +497,8 @@ app.get('/', (c) => {
 
             <!-- India States — generated from GADM GeoJSON, simplified for SVG rendering -->
             <g id="india-states" filter="url(#mapShadow)">
-              <!-- J&K FULL CLAIM — Survey of India 2020 boundary (India's official position) -->
-              <!-- Covers: POK + Gilgit-Baltistan (west) + Indian J&K + Ladakh + Aksai Chin (east) -->
-              <!-- Geographic range: lon 72.5-80.5°E, lat 32.2-37.5°N  (scale 15.17px/deg) -->
-              <!-- viewBox extended to y=-15 so J&K tip is FULLY VISIBLE above other states -->
-              <!-- FIXED Phase 44: Large correct shape — DO NOT SHRINK THIS PATH -->
-              <path class="india-state-claim" id="jk-full-claim"
-                d="M89.5,80.9 L83.4,66.8 L75.9,44.0 L68.3,17.6 L75.9,5.3
-                   L88.0,-4.7 L113.8,-6.5 L151.7,-6.5 L182.1,-3.0
-                   L189.7,21.1 L186.6,44.0 L174.5,61.6 L159.3,71.0
-                   L144.1,79.1 L129.0,82.7 L109.2,84.4 L95.6,82.7 Z"/>
-              <!-- J&K label — centred in claim polygon -->
-              <text x="132" y="28" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(90,74,60,.85)" text-anchor="middle" pointer-events="none" letter-spacing="0.3">J&amp;K</text>
-              <text x="132" y="37" font-family="DM Sans,sans-serif" font-size="4.5" fill="rgba(90,74,60,.6)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
+              <!-- J&K rendered LAST (after all other states) to ensure it always appears on top -->
+              <!-- See end of india-states group for J&K path -->
               <!-- Telangana — separated from AP path below; lon 76.7-81.5 lat 15.4-19.5 -->
               <path class="india-state" id="state-telangana" d="M132.0,304.4L139.3,299.4L146.7,301.1L154.0,296.1L161.3,299.4L168.7,304.4L176.0,304.4L183.3,312.6L190.7,320.8L198.0,329.0L198.0,345.5L190.7,353.7L183.3,357.0L176.0,361.9L168.7,363.6L161.3,361.9L154.0,353.7L146.7,358.7L139.3,363.6L132.0,361.9L128.0,353.7L128.0,337.2L130.7,320.8Z"/>
               <path class="india-state" d="M213.3,335.3L211.4,335.1L213.4,337.6L208.0,340.4L199.3,341.0L193.4,351.1L189.2,348.7L183.0,352.0L179.7,361.7L183.7,388.1L181.2,383.5L179.7,385.7L183.6,389.2L179.1,386.6L175.2,392.0L170.5,389.9L166.3,395.0L159.6,394.3L157.3,400.2L154.6,401.4L152.0,400.3L152.7,397.6L155.9,397.5L157.8,390.9L154.6,390.0L155.0,385.8L150.4,384.9L150.7,381.4L146.4,380.1L144.8,383.3L140.9,384.3L140.6,381.7L136.9,380.4L136.7,383.0L134.1,383.2L132.6,376.5L140.2,381.0L139.4,377.0L141.7,374.8L133.3,375.2L133.8,371.3L130.7,369.4L130.8,362.0L135.4,362.9L136.5,361.0L133.8,355.0L136.0,352.6L135.2,348.4L141.8,348.1L143.1,341.3L137.7,339.2L141.2,337.4L139.9,327.1L144.5,322.7L140.8,321.3L144.0,315.0L142.1,307.4L148.3,301.3L145.5,297.9L147.1,293.5L151.7,294.6L153.8,291.0L153.8,283.7L161.8,286.2L166.7,291.0L167.7,288.5L171.1,290.4L176.2,289.1L178.6,291.9L177.6,301.5L188.4,306.1L189.9,311.7L193.5,311.8L194.6,318.0L203.0,317.5L209.2,313.6L212.7,314.8L215.9,305.9L218.2,310.8L220.7,307.4L224.5,308.5L223.9,304.2L229.6,301.1L228.3,298.6L230.5,299.3L233.0,295.9L239.9,302.5L243.3,301.9L244.8,298.2L249.2,296.0L240.5,309.5L214.3,328.7L213.3,335.3Z"/>
@@ -541,6 +530,24 @@ app.get('/', (c) => {
               <path class="india-state" d="M143.0,114.4L148.1,117.0L144.7,123.0L149.0,128.3L155.3,124.6L162.9,129.7L159.8,132.0L170.2,139.4L175.6,138.8L178.5,141.7L180.8,139.9L186.7,144.3L187.5,142.1L207.1,155.5L209.9,154.5L215.5,158.4L219.4,157.7L219.8,161.2L228.5,164.0L229.6,161.6L232.9,161.8L237.4,164.1L239.4,171.1L244.8,175.4L237.2,177.1L241.2,179.5L238.7,182.6L248.0,189.9L240.1,190.0L228.7,198.7L231.8,207.7L226.6,219.0L222.8,219.7L218.7,215.7L220.2,207.3L213.2,207.8L211.7,204.4L208.2,204.3L202.3,198.5L201.1,200.4L197.9,198.9L195.9,203.4L190.9,202.5L192.1,198.5L189.4,199.4L190.6,200.6L187.9,199.1L183.1,201.3L185.3,198.8L182.8,194.7L176.7,197.7L176.8,200.0L170.0,199.8L171.4,197.3L168.5,196.1L168.6,199.5L166.0,199.8L164.1,197.1L162.2,198.9L163.4,196.0L160.8,196.8L163.7,195.5L163.0,192.6L161.6,194.6L160.1,193.5L160.6,195.8L158.9,194.5L155.5,197.0L157.6,197.4L163.6,212.0L161.0,214.8L156.7,211.4L154.3,212.8L151.6,203.9L155.8,199.5L153.6,195.6L155.6,192.5L161.2,191.5L160.3,189.5L166.0,178.3L164.0,174.4L152.3,172.0L152.4,170.1L140.6,173.1L145.5,169.0L141.9,168.2L144.3,166.1L138.9,159.5L142.3,149.2L137.1,140.3L135.5,127.4L143.0,114.4Z"/>
               <path class="india-state" d="M167.0,99.1L170.2,104.2L176.8,105.2L182.3,108.6L182.2,111.6L194.2,116.9L184.5,125.0L183.4,133.8L178.8,141.7L162.6,134.7L159.8,132.0L162.9,129.7L156.2,125.0L154.1,124.3L149.0,128.3L144.7,123.0L148.1,117.0L142.6,114.2L146.3,112.4L144.5,108.6L147.5,102.3L154.5,100.1L163.2,103.1L164.7,97.3L167.0,99.1Z"/>
               <path class="india-state" d="M300.2,167.4L310.2,167.1L315.2,172.5L326.0,174.1L326.2,178.3L321.5,186.1L315.7,183.3L314.6,179.0L312.7,178.0L314.3,181.4L310.9,181.7L303.9,175.9L306.1,179.7L301.0,183.1L300.1,188.8L302.3,188.6L306.4,193.4L310.4,193.2L313.4,196.9L312.1,198.9L305.0,198.4L304.3,202.5L300.4,202.6L298.5,207.0L303.3,211.6L309.3,213.3L309.8,218.0L306.9,220.0L306.7,223.5L310.2,225.9L309.0,229.8L313.1,230.4L310.9,233.8L312.6,238.9L310.3,238.2L312.6,240.1L311.0,243.0L308.4,240.4L311.4,244.3L309.2,246.8L308.2,244.5L307.4,251.4L305.7,252.0L306.6,249.4L305.4,251.7L303.9,250.5L302.4,254.3L301.3,247.3L296.6,242.9L301.1,248.4L297.8,248.3L297.2,253.2L290.6,256.3L286.9,250.7L283.8,252.2L283.7,249.3L279.1,247.7L281.7,245.3L279.8,240.8L274.7,237.5L276.5,234.1L271.6,234.0L265.9,229.6L269.0,224.5L272.9,227.1L275.0,223.7L280.3,222.8L280.3,220.5L287.0,220.5L286.9,217.1L290.2,218.0L293.7,215.3L297.9,203.3L294.9,200.0L294.7,195.0L299.4,193.5L295.4,186.8L302.7,179.8L301.8,176.6L299.9,176.8L300.9,171.5L298.2,167.4L298.8,165.8L300.2,167.4Z"/>
+
+              <!-- ══ J&K FULL CLAIM — Rendered LAST to stay on top of all other states ══ -->
+              <!-- India's official Survey of India claim: POK + Gilgit-Baltistan + Ladakh + Aksai Chin -->
+              <!-- Geographic: lon 73.0°E–83.0°E (Johnson Line), lat 32.2°N–37.5°N -->
+              <!-- Scale: 14.77 px/deg lon, 16.1 px/deg lat | Delhi (77.2°E,28.6°N)→SVG(137,144) -->
+              <!-- Phase 47: Corrected geometry — proper southern border width (74–80.5°E),
+                   true western wall (Pakistan LoC, 73–74°E), northern peak 97-119 SVG-x (74.5–76°E),
+                   and Aksai Chin plateau extended to 83°E. DO NOT MOVE ABOVE OTHER STATE PATHS. -->
+              <path class="india-state-claim" id="jk-full-claim"
+                d="M89.7,86.0 L111.9,86.0 L141.4,84.4 L156.2,81.2
+                   L185.7,81.2 L222.7,65.1 L222.7,41.0
+                   L185.7,32.9 L163.6,32.9 L156.2,24.9
+                   L141.4,8.8 L119.3,0.7 L97.1,0.7
+                   L82.4,16.8 L75.0,32.9 L75.0,49.0
+                   L79.4,65.1 L82.4,76.4 Z"/>
+              <!-- J&K label — centred in claim polygon (center ≈ 149, 43) -->
+              <text x="135" y="38" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(90,74,60,.9)" text-anchor="middle" pointer-events="none" letter-spacing="0.3">J&amp;K</text>
+              <text x="135" y="47" font-family="DM Sans,sans-serif" font-size="4.5" fill="rgba(90,74,60,.65)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
             </g>
 
             <!-- ══ MANDATE CITY PINS ══ -->
