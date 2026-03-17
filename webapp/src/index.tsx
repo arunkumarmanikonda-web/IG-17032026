@@ -1,6 +1,5 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { serveStatic } from 'hono/cloudflare-workers'
 
 // Route imports
 import homeRoute from './routes/home'
@@ -70,8 +69,25 @@ app.use('/api/*', cors({
   allowHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
   credentials: true,
 }))
-app.use('/static/*', serveStatic({ root: './' }))
-app.use('/assets/*', serveStatic({ root: './' }))
+
+// ── STATIC ASSETS — served directly via Cloudflare Pages ASSETS binding ──────
+// In _worker.js mode, Cloudflare Pages exposes an ASSETS fetcher on the env.
+// We intercept /static/* and /assets/* and proxy them through ASSETS.fetch()
+// so all images, CSS, and other static files are served with correct headers.
+app.use('/static/*', async (c) => {
+  const env = c.env as any
+  if (env?.ASSETS?.fetch) {
+    return env.ASSETS.fetch(c.req.raw)
+  }
+  return c.notFound()
+})
+app.use('/assets/*', async (c) => {
+  const env = c.env as any
+  if (env?.ASSETS?.fetch) {
+    return env.ASSETS.fetch(c.req.raw)
+  }
+  return c.notFound()
+})
 
 // ── LEGAL PAGES ───────────────────────────────────────────────────────────────
 function legalPage(title: string, content: string) {
