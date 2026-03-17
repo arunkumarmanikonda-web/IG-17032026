@@ -476,8 +476,8 @@ app.get('/', (c) => {
       <!-- Right: SVG India map -->
       <div style="position:relative;" id="indiaMapWrap" class="india-map-wrap">
         <div class="india-map-box" style="border:1px solid var(--border);padding:1.25rem 1rem 1rem;position:relative;overflow:hidden;border-radius:3px;">
-          <!-- India SVG map — geographically accurate, viewBox 520×600 -->
-          <svg id="igIndiaMap" viewBox="0 0 440 510" width="100%" style="display:block;max-width:440px;margin:0 auto;" aria-label="India map showing active mandate locations">
+          <!-- India SVG map — geographically accurate, viewBox 440×525 with 15px top padding for J&K -->
+          <svg id="igIndiaMap" viewBox="0 -15 440 525" width="100%" style="display:block;max-width:440px;margin:0 auto;" aria-label="India map showing active mandate locations">
             <defs>
               <filter id="mapPinGlow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
@@ -497,15 +497,19 @@ app.get('/', (c) => {
 
             <!-- India States — generated from GADM GeoJSON, simplified for SVG rendering -->
             <g id="india-states" filter="url(#mapShadow)">
-              <!-- J&K Full Claim: DRAWN FIRST so state borders render on top -->
-              <!-- Covers India-claimed territory: POK + Gilgit-Baltistan + Indian-administered J&K/Ladakh + Aksai Chin -->
-              <!-- Dashed border = disputed/claimed territory per Survey of India -->
-              <!-- J&K Full Claim: wider trapezoidal shape covering POK/GB (left) + Indian J&K/Ladakh + Aksai Chin (right) -->
-              <!-- Geographically accurate: lon 72.5-80.5°E, lat 32.5-37.4°N, bottom at y=88 to overlap Punjab/HP -->
-              <path class="india-state-claim" id="jk-full-claim" d="M89.8,88.0L82.3,65.8L71.9,44.4L67.4,24.7L82.3,6.6L112.3,3.3L134.7,1.6L157.2,4.9L179.6,11.5L187.1,32.9L179.6,60.9L161.7,82.2L134.7,88.0L104.8,88.0Z"/>
-              <!-- J&K territory label — centre of claim polygon approx (127,44) -->
-              <text x="127" y="40" font-family="DM Sans,sans-serif" font-size="5.5" font-weight="600" fill="rgba(90,74,60,.7)" text-anchor="middle" pointer-events="none" letter-spacing="0.3">J&amp;K</text>
-              <text x="127" y="49" font-family="DM Sans,sans-serif" font-size="4.5" fill="rgba(90,74,60,.55)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
+              <!-- J&K FULL CLAIM — Survey of India 2020 boundary (India's official position) -->
+              <!-- Covers: POK + Gilgit-Baltistan (west) + Indian J&K + Ladakh + Aksai Chin (east) -->
+              <!-- Geographic range: lon 72.5-80.5°E, lat 32.2-37.5°N  (scale 15.17px/deg) -->
+              <!-- viewBox extended to y=-15 so J&K tip is FULLY VISIBLE above other states -->
+              <!-- FIXED Phase 44: Large correct shape — DO NOT SHRINK THIS PATH -->
+              <path class="india-state-claim" id="jk-full-claim"
+                d="M89.5,80.9 L83.4,66.8 L75.9,44.0 L68.3,17.6 L75.9,5.3
+                   L88.0,-4.7 L113.8,-6.5 L151.7,-6.5 L182.1,-3.0
+                   L189.7,21.1 L186.6,44.0 L174.5,61.6 L159.3,71.0
+                   L144.1,79.1 L129.0,82.7 L109.2,84.4 L95.6,82.7 Z"/>
+              <!-- J&K label — centred in claim polygon -->
+              <text x="132" y="28" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(90,74,60,.85)" text-anchor="middle" pointer-events="none" letter-spacing="0.3">J&amp;K</text>
+              <text x="132" y="37" font-family="DM Sans,sans-serif" font-size="4.5" fill="rgba(90,74,60,.6)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
               <!-- Telangana — separated from AP path below; lon 76.7-81.5 lat 15.4-19.5 -->
               <path class="india-state" id="state-telangana" d="M132.0,304.4L139.3,299.4L146.7,301.1L154.0,296.1L161.3,299.4L168.7,304.4L176.0,304.4L183.3,312.6L190.7,320.8L198.0,329.0L198.0,345.5L190.7,353.7L183.3,357.0L176.0,361.9L168.7,363.6L161.3,361.9L154.0,353.7L146.7,358.7L139.3,363.6L132.0,361.9L128.0,353.7L128.0,337.2L130.7,320.8Z"/>
               <path class="india-state" d="M213.3,335.3L211.4,335.1L213.4,337.6L208.0,340.4L199.3,341.0L193.4,351.1L189.2,348.7L183.0,352.0L179.7,361.7L183.7,388.1L181.2,383.5L179.7,385.7L183.6,389.2L179.1,386.6L175.2,392.0L170.5,389.9L166.3,395.0L159.6,394.3L157.3,400.2L154.6,401.4L152.0,400.3L152.7,397.6L155.9,397.5L157.8,390.9L154.6,390.0L155.0,385.8L150.4,384.9L150.7,381.4L146.4,380.1L144.8,383.3L140.9,384.3L140.6,381.7L136.9,380.4L136.7,383.0L134.1,383.2L132.6,376.5L140.2,381.0L139.4,377.0L141.7,374.8L133.3,375.2L133.8,371.3L130.7,369.4L130.8,362.0L135.4,362.9L136.5,361.0L133.8,355.0L136.0,352.6L135.2,348.4L141.8,348.1L143.1,341.3L137.7,339.2L141.2,337.4L139.9,327.1L144.5,322.7L140.8,321.3L144.0,315.0L142.1,307.4L148.3,301.3L145.5,297.9L147.1,293.5L151.7,294.6L153.8,291.0L153.8,283.7L161.8,286.2L166.7,291.0L167.7,288.5L171.1,290.4L176.2,289.1L178.6,291.9L177.6,301.5L188.4,306.1L189.9,311.7L193.5,311.8L194.6,318.0L203.0,317.5L209.2,313.6L212.7,314.8L215.9,305.9L218.2,310.8L220.7,307.4L224.5,308.5L223.9,304.2L229.6,301.1L228.3,298.6L230.5,299.3L233.0,295.9L239.9,302.5L243.3,301.9L244.8,298.2L249.2,296.0L240.5,309.5L214.3,328.7L213.3,335.3Z"/>
