@@ -95,25 +95,23 @@ const TESTIMONIALS = [
 ]
 
 const SECTOR_COLORS: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  'Hospitality':              { bg: 'rgba(180,83,9,.14)',    text: '#fbbf24', border: 'rgba(180,83,9,.3)',    icon: 'fa-hotel' },
-  'Real Estate':              { bg: 'rgba(26,58,107,.14)',   text: '#93c5fd', border: 'rgba(26,58,107,.3)',   icon: 'fa-building' },
-  'HORECA':                   { bg: 'rgba(6,78,59,.14)',     text: '#4ade80', border: 'rgba(6,78,59,.3)',     icon: 'fa-utensils' },
-  'Entertainment':            { bg: 'rgba(109,40,217,.14)',  text: '#c4b5fd', border: 'rgba(109,40,217,.3)',  icon: 'fa-star' },
-  'Debt & Special Situations':{ bg: 'rgba(127,29,29,.14)',   text: '#fca5a5', border: 'rgba(127,29,29,.3)',   icon: 'fa-balance-scale' },
-  'Retail':                   { bg: 'rgba(124,58,237,.14)',  text: '#e9d5ff', border: 'rgba(124,58,237,.3)',  icon: 'fa-shopping-bag' },
+  'Hospitality':               { bg: 'rgba(180,83,9,.14)',   text: '#fbbf24', border: 'rgba(180,83,9,.3)',   icon: 'fa-hotel' },
+  'Real Estate':               { bg: 'rgba(26,58,107,.14)',  text: '#93c5fd', border: 'rgba(26,58,107,.3)',  icon: 'fa-building' },
+  'HORECA':                    { bg: 'rgba(6,78,59,.14)',    text: '#4ade80', border: 'rgba(6,78,59,.3)',    icon: 'fa-utensils' },
+  'Entertainment':             { bg: 'rgba(109,40,217,.14)', text: '#c4b5fd', border: 'rgba(109,40,217,.3)', icon: 'fa-star' },
+  'Debt & Special Situations': { bg: 'rgba(127,29,29,.14)',  text: '#fca5a5', border: 'rgba(127,29,29,.3)',  icon: 'fa-balance-scale' },
+  'Retail':                    { bg: 'rgba(124,58,237,.14)', text: '#e9d5ff', border: 'rgba(124,58,237,.3)', icon: 'fa-shopping-bag' },
 }
 
 /* render 5 stars */
 const stars = (n: number) =>
   Array.from({ length: 5 }, (_, i) =>
-    `<i class="fas fa-star" style="color:${i < n ? '#f59e0b' : 'rgba(255,255,255,.12)'};font-size:.62rem;"></i>`
+    `<i class="fas fa-star" style="color:${i < n ? '#f59e0b' : 'rgba(155,155,155,.3)'};font-size:.62rem;"></i>`
   ).join('')
 
 app.get('/', (c) => {
   const html = `
-<!-- WhatsApp float handled by global ig-contact-fab in layout -->
-
-<!-- ── HERO ──────────────────────────────────────────────────────────── -->
+<!-- ── HERO (always dark) ────────────────────────────────────────────── -->
 <section class="hero-dk" style="min-height:36vh;display:flex;align-items:center;padding:calc(6rem - var(--nav-h)) 0 3rem;">
   <div class="container" style="max-width:1100px;margin:0 auto;padding:0 1.5rem;">
     <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
@@ -137,11 +135,9 @@ app.get('/', (c) => {
   </div>
 </section>
 
-<!-- ── TESTIMONIAL CAROUSEL ──────────────────────────────────────────── -->
-<section style="background:rgba(212,174,42,.04);border-top:1px solid rgba(212,174,42,.15);border-bottom:1px solid rgba(212,174,42,.15);padding:3.5rem 0;overflow:hidden;">
+<!-- ── TESTIMONIAL CAROUSEL (solid dark band — works in both themes) ───── -->
+<section class="test-carousel-section" style="background:var(--bg-dk);border-top:1px solid rgba(212,174,42,.15);border-bottom:1px solid rgba(212,174,42,.15);padding:3.5rem 0;overflow:hidden;">
   <div class="container" style="max-width:1100px;margin:0 auto;padding:0 1.5rem;">
-
-    <!-- Carousel track -->
     <div id="tcarWrap" style="position:relative;">
       <div id="tcarTrack" style="display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1);will-change:transform;">
         ${TESTIMONIALS.map((t, i) => {
@@ -154,28 +150,30 @@ app.get('/', (c) => {
               ${stars(t.stars)}
             </div>
             <!-- Quote -->
-            <blockquote style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.15rem,2vw,1.6rem);color:#fff;line-height:1.5;font-style:italic;margin-bottom:2rem;position:relative;">
-              <span style="position:absolute;top:-.5rem;left:50%;transform:translateX(-50%);font-size:4rem;color:rgba(212,174,42,.15);font-family:Georgia,serif;line-height:1;pointer-events:none;">&ldquo;</span>
+            <blockquote class="tcar-quote" style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.15rem,2vw,1.6rem);line-height:1.5;font-style:italic;margin-bottom:2rem;position:relative;">
+              <span style="position:absolute;top:-.5rem;left:50%;transform:translateX(-50%);font-size:4rem;color:rgba(212,174,42,.2);font-family:Georgia,serif;line-height:1;pointer-events:none;">&ldquo;</span>
               "${t.quote}"
             </blockquote>
             <!-- Author -->
             <div style="display:flex;align-items:center;justify-content:center;gap:.875rem;flex-wrap:wrap;">
-              <div style="width:52px;height:52px;border-radius:50%;background:rgba(212,174,42,.12);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid rgba(212,174,42,.3);flex-shrink:0;">
+              <div style="width:52px;height:52px;border-radius:50%;background:rgba(212,174,42,.15);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid rgba(212,174,42,.3);flex-shrink:0;">
                 ${t.emoji}
               </div>
               <div style="text-align:left;">
-                <div style="font-weight:700;font-size:1rem;color:#fff;font-family:'DM Sans',sans-serif;">${t.name}</div>
-                <div style="font-size:.8rem;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;">${t.role}</div>
-                <div style="font-size:.7rem;color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;margin-top:.15rem;"><i class="fas fa-map-marker-alt" style="font-size:.58rem;color:var(--gold);margin-right:.25rem;"></i>${t.location}</div>
+                <div class="tcar-name" style="font-weight:700;font-size:1rem;font-family:'DM Sans',sans-serif;">${t.name}</div>
+                <div class="tcar-role" style="font-size:.8rem;font-family:'DM Sans',sans-serif;margin-top:.1rem;">${t.role}</div>
+                <div class="tcar-loc" style="font-size:.7rem;font-family:'DM Sans',sans-serif;margin-top:.15rem;">
+                  <i class="fas fa-map-marker-alt" style="font-size:.58rem;color:var(--gold);margin-right:.25rem;"></i>${t.location}
+                </div>
               </div>
               <span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.28rem .8rem;border-radius:100px;background:${sc.bg};color:${sc.text};border:1px solid ${sc.border};">
                 <i class="fas ${sc.icon}" style="font-size:.58rem;"></i>${t.sector}
               </span>
             </div>
             <!-- Outcome pill -->
-            ${t.outcome ? `<div style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1.25rem;padding:.45rem 1rem;background:rgba(212,174,42,.07);border:1px solid rgba(212,174,42,.2);font-size:.75rem;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;">
+            ${t.outcome ? `<div class="tcar-outcome" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1.25rem;padding:.45rem 1rem;background:rgba(212,174,42,.09);border:1px solid rgba(212,174,42,.22);font-size:.75rem;font-family:'DM Sans',sans-serif;">
               <i class="fas fa-check-circle" style="color:var(--gold);font-size:.68rem;"></i>
-              <strong style="color:rgba(255,255,255,.75);">Outcome:</strong> ${t.outcome}
+              <strong class="tcar-outcome-strong">Outcome:</strong> ${t.outcome}
             </div>` : ''}
           </div>
         </div>`
@@ -199,38 +197,37 @@ app.get('/', (c) => {
     <div id="tcarDots" style="display:flex;justify-content:center;gap:.5rem;margin-top:2rem;">
       ${TESTIMONIALS.map((_, i) => `
       <button onclick="tcarGoTo(${i})" aria-label="Go to testimonial ${i+1}"
-        style="width:${i===0?'24':'8'}px;height:8px;border-radius:4px;background:${i===0?'var(--gold)':'rgba(255,255,255,.18)'};border:none;cursor:pointer;transition:all .35s;padding:0;"
+        style="width:${i===0?'24':'8'}px;height:8px;border-radius:4px;background:${i===0?'var(--gold)':'rgba(155,155,155,.3)'};border:none;cursor:pointer;transition:all .35s;padding:0;"
         class="tcar-dot" data-idx="${i}"></button>`).join('')}
     </div>
 
     <!-- Progress bar -->
-    <div style="max-width:400px;margin:1rem auto 0;height:2px;background:rgba(255,255,255,.06);overflow:hidden;">
+    <div style="max-width:400px;margin:1rem auto 0;height:2px;background:rgba(155,155,155,.15);overflow:hidden;">
       <div id="tcarProgress" style="height:100%;background:linear-gradient(90deg,var(--gold),#e8c84a);width:0%;transition:width 4s linear;"></div>
     </div>
-
   </div>
 </section>
 
 <!-- ── STATS STRIP ────────────────────────────────────────────────────── -->
-<section style="background:#0c0c18;border-bottom:1px solid rgba(212,174,42,.1);padding:1.75rem 0;">
+<section class="test-stats-strip" style="background:var(--bg-dk);border-bottom:1px solid rgba(212,174,42,.1);padding:1.75rem 0;">
   <div class="container" style="max-width:1000px;margin:0 auto;padding:0 1.5rem;">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center;" id="testStatStrip">
       ${[
-        { val: '5.0', label: 'Average Rating', icon: 'fa-star' },
+        { val: '5.0',  label: 'Average Rating',   icon: 'fa-star' },
         { val: `${TESTIMONIALS.length}+`, label: 'Verified Clients', icon: 'fa-users' },
         { val: '₹1,165 Cr+', label: 'Mandates Advised', icon: 'fa-chart-line' },
-        { val: '100%', label: 'NDA Compliance', icon: 'fa-shield-alt' },
+        { val: '100%', label: 'NDA Compliance',   icon: 'fa-shield-alt' },
       ].map(s => `
       <div>
         <i class="fas ${s.icon}" style="font-size:1.1rem;color:var(--gold);display:block;margin-bottom:.4rem;"></i>
-        <div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.4rem;color:#fff;">${s.val}</div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.07em;margin-top:.2rem;">${s.label}</div>
+        <div class="test-stat-val" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.4rem;color:#fff;">${s.val}</div>
+        <div class="test-stat-lbl" style="font-size:.68rem;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.07em;margin-top:.2rem;">${s.label}</div>
       </div>`).join('')}
     </div>
   </div>
 </section>
 
-<!-- ── FILTER + WALL ─────────────────────────────────────────────────── -->
+<!-- ── FILTER + WALL (always dark band) ─────────────────────────────── -->
 <section style="background:var(--bg-dk);padding:3rem 0 5rem;">
   <div class="container" style="max-width:1200px;margin:0 auto;padding:0 1.5rem;">
 
@@ -250,7 +247,7 @@ app.get('/', (c) => {
       </button>`).join('')}
     </div>
 
-    <!-- Testimonial Wall (masonry-style 3-col) -->
+    <!-- Testimonial Wall -->
     <div class="test-wall" id="testWall">
       ${TESTIMONIALS.map((t) => {
         const sc = SECTOR_COLORS[t.sector] || SECTOR_COLORS['Real Estate']
@@ -259,7 +256,7 @@ app.get('/', (c) => {
         <!-- Stars row -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;">
           <div style="display:flex;gap:.18rem;">${stars(t.stars)}</div>
-          <span style="font-size:.6rem;color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;">${t.location}</span>
+          <span style="font-size:.6rem;color:rgba(200,200,200,.45);font-family:'DM Sans',sans-serif;">${t.location}</span>
         </div>
         <!-- Quote -->
         <p class="test-quote" style="position:relative;">${t.quote}</p>
@@ -276,8 +273,8 @@ app.get('/', (c) => {
             </div>
           </div>
         </div>
-        ${t.outcome ? `<div style="margin-top:.85rem;padding:.5rem .75rem;background:rgba(212,174,42,.07);border-left:2px solid var(--gold);font-size:.76rem;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">
-          <i class="fas fa-check-circle" style="color:var(--gold);font-size:.62rem;margin-right:.3rem;"></i><strong style="color:rgba(255,255,255,.7);">Outcome:</strong> ${t.outcome}
+        ${t.outcome ? `<div class="test-outcome-bar" style="margin-top:.85rem;padding:.5rem .75rem;background:rgba(212,174,42,.08);border-left:2px solid var(--gold);font-size:.76rem;font-family:'DM Sans',sans-serif;">
+          <i class="fas fa-check-circle" style="color:var(--gold);font-size:.62rem;margin-right:.3rem;"></i><strong class="test-outcome-strong">Outcome:</strong> ${t.outcome}
         </div>` : ''}
       </div>`
       }).join('')}
@@ -302,44 +299,65 @@ app.get('/', (c) => {
 </section>
 
 <style>
-/* ── Responsive stats strip ── */
+/* ── Testimonials page scoped styles ──────────────────────────── */
+/* Carousel section: solid dark in BOTH light and dark themes */
+.test-carousel-section { background: var(--bg-dk) !important; }
+/* CTA callout: needs dark text override in light mode */
+html:not([data-theme="dark"]) .test-cta-text { color: var(--ink) !important; }
+html:not([data-theme="dark"]) .test-cta-sub  { color: var(--ink-soft) !important; }
+
+/* Carousel quote text */
+.tcar-quote  { color: #fff; }
+.tcar-name   { color: #fff; }
+.tcar-role   { color: rgba(255,255,255,.52); }
+.tcar-loc    { color: rgba(255,255,255,.36); }
+.tcar-outcome{ color: rgba(255,255,255,.58); }
+.tcar-outcome-strong { color: rgba(255,255,255,.78); }
+
+/* Stats strip dark values */
+.test-stat-val { color: #fff; }
+.test-stat-lbl { color: rgba(255,255,255,.4); }
+
+/* Outcome bar in wall cards */
+.test-outcome-bar    { color: rgba(255,255,255,.55); }
+.test-outcome-strong { color: rgba(255,255,255,.72); font-weight: 600; }
+
+/* Reveal animation */
+.test-card { opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease; }
+.test-card.visible { opacity:1; transform:none; }
+
+/* Responsive stats strip */
 @media(max-width:560px){
   #testStatStrip { grid-template-columns: repeat(2,1fr) !important; }
 }
-/* ── Carousel slide mobile padding ── */
+/* Carousel mobile padding */
 @media(max-width:600px){
   .tcar-slide { padding: 0 2rem !important; }
 }
-/* ── Testimonial wall reveal animation ── */
-.test-card { opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease; }
-.test-card.visible { opacity:1; transform:none; }
 </style>
 
 <script>
-/* ── TESTIMONIAL CAROUSEL ─────────────────────────────────────────── */
+/* ── TESTIMONIAL CAROUSEL ─────────────────────────────────────── */
 (function(){
   var total = ${TESTIMONIALS.length};
   var current = 0;
   var autoTimer = null;
-  var progressTimer = null;
   var DURATION = 4000;
 
   function tcarGoTo(idx){
     current = ((idx % total) + total) % total;
     var track = document.getElementById('tcarTrack');
     if(track) track.style.transform = 'translateX(-' + (current * 100) + '%)';
-    /* dots */
     document.querySelectorAll('.tcar-dot').forEach(function(d,i){
       var isActive = i === current;
-      d.style.width = isActive ? '24px' : '8px';
-      d.style.background = isActive ? 'var(--gold)' : 'rgba(255,255,255,.18)';
+      d.style.width   = isActive ? '24px' : '8px';
+      d.style.background = isActive ? 'var(--gold)' : 'rgba(155,155,155,.3)';
     });
-    /* reset progress bar */
     var bar = document.getElementById('tcarProgress');
     if(bar){ bar.style.transition = 'none'; bar.style.width = '0%'; setTimeout(function(){ bar.style.transition = 'width '+DURATION+'ms linear'; bar.style.width = '100%'; }, 30); }
   }
   window.tcarGoTo = tcarGoTo;
-  window.tcarNav = function(dir){ clearInterval(autoTimer); tcarGoTo(current + dir); startAuto(); };
+  window.tcarNav  = function(dir){ clearInterval(autoTimer); tcarGoTo(current + dir); startAuto(); };
 
   function startAuto(){
     clearInterval(autoTimer);
@@ -348,22 +366,18 @@ app.get('/', (c) => {
     if(bar){ bar.style.transition = 'none'; bar.style.width = '0%'; setTimeout(function(){ bar.style.transition = 'width '+DURATION+'ms linear'; bar.style.width = '100%'; }, 30); }
   }
 
-  /* pause on hover */
   var wrap = document.getElementById('tcarWrap');
   if(wrap){
-    wrap.addEventListener('mouseenter', function(){ clearInterval(autoTimer); var b=document.getElementById('tcarProgress'); if(b){ b.style.animationPlayState='paused'; } });
+    wrap.addEventListener('mouseenter', function(){ clearInterval(autoTimer); });
     wrap.addEventListener('mouseleave', function(){ startAuto(); });
-    /* touch swipe */
     var tx0 = 0;
     wrap.addEventListener('touchstart', function(e){ tx0 = e.touches[0].clientX; }, {passive:true});
     wrap.addEventListener('touchend',   function(e){ var dx = e.changedTouches[0].clientX - tx0; if(Math.abs(dx)>40) tcarNav(dx<0?1:-1); });
   }
-
-  /* kick off */
   startAuto();
 })();
 
-/* ── FILTER ───────────────────────────────────────────────────────── */
+/* ── FILTER ─────────────────────────────────────────────────────── */
 function filterTest(cat) {
   document.querySelectorAll('[data-cat][id^="tcat"]').forEach(function(btn){
     var isActive = btn.dataset.cat === cat;
@@ -378,7 +392,7 @@ function filterTest(cat) {
   });
 }
 
-/* ── REVEAL ON SCROLL ─────────────────────────────────────────────── */
+/* ── REVEAL ON SCROLL ────────────────────────────────────────────── */
 (function(){
   if(!('IntersectionObserver' in window)) {
     document.querySelectorAll('.test-card').forEach(function(c){ c.classList.add('visible'); });

@@ -1378,17 +1378,35 @@ body{overflow-x:hidden;}
 .tel-link{font-size:.82rem;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;text-decoration:none;transition:color .2s;}
 .tel-link:hover{color:var(--gold);}
 
-/* ── test-wall (testimonials) ────────────────── */
+/* ── test-wall (testimonials) — light + dark mode ── */
 .test-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;}
-.test-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:1.75rem;position:relative;transition:border-color .2s,transform .2s;}
-.test-card:hover{border-color:rgba(212,174,42,.25);transform:translateY(-2px);}
-.test-card::before{content:'"';position:absolute;top:.75rem;right:1.25rem;font-family:'DM Serif Display',Georgia,serif;font-size:4rem;color:rgba(212,174,42,.12);line-height:1;}
-.test-quote{font-size:.92rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;line-height:1.7;margin-bottom:1.25rem;font-style:italic;}
+/* Dark default (page bg is always var(--bg-dk) on testimonials wall section) */
+.test-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.09);border-radius:16px;padding:1.75rem;position:relative;transition:border-color .2s,transform .2s;}
+.test-card:hover{border-color:rgba(212,174,42,.3);transform:translateY(-2px);}
+.test-card::before{content:'"';position:absolute;top:.75rem;right:1.25rem;font-family:'DM Serif Display',Georgia,serif;font-size:4rem;color:rgba(212,174,42,.15);line-height:1;}
+.test-quote{font-size:.92rem;color:rgba(255,255,255,.72);font-family:'DM Sans',sans-serif;line-height:1.7;margin-bottom:1.25rem;font-style:italic;}
 .test-author{display:flex;align-items:center;gap:.75rem;}
-.test-avatar{width:40px;height:40px;border-radius:50%;background:rgba(212,174,42,.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.test-avatar{width:40px;height:40px;border-radius:50%;background:rgba(212,174,42,.18);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
 .test-name{font-weight:700;font-size:.88rem;color:#fff;font-family:'DM Sans',sans-serif;}
-.test-role{font-size:.76rem;color:rgba(255,255,255,.45);font-family:'DM Sans',sans-serif;}
+.test-role{font-size:.76rem;color:rgba(255,255,255,.48);font-family:'DM Sans',sans-serif;}
 .test-sector{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .6rem;border-radius:100px;margin-top:.4rem;}
+/* Light-mode overrides: when the page body is light, the wall section bg-dk still stays dark
+   but the cards need legible colors in case they are placed outside bg-dk too */
+html:not([data-theme="dark"]) .test-section-light .test-card{background:var(--surface);border-color:var(--border);}
+html:not([data-theme="dark"]) .test-section-light .test-quote{color:var(--ink-soft);}
+html:not([data-theme="dark"]) .test-section-light .test-name{color:var(--ink);}
+html:not([data-theme="dark"]) .test-section-light .test-role{color:var(--ink-muted);}
+html:not([data-theme="dark"]) .test-section-light .test-card::before{color:rgba(184,150,12,.18);}
+/* Carousel light-mode overrides */
+html:not([data-theme="dark"]) .test-carousel-light blockquote{color:var(--ink)!important;}
+html:not([data-theme="dark"]) .test-carousel-light .test-car-name{color:var(--ink)!important;}
+html:not([data-theme="dark"]) .test-carousel-light .test-car-role{color:var(--ink-muted)!important;}
+html:not([data-theme="dark"]) .test-carousel-light .test-car-loc{color:var(--ink-muted)!important;}
+html:not([data-theme="dark"]) .test-carousel-light .test-car-outcome{color:var(--ink-soft)!important;}
+html:not([data-theme="dark"]) .test-carousel-light .test-car-outcome strong{color:var(--ink)!important;}
+/* Stats strip light override */
+html:not([data-theme="dark"]) .test-stat-val{color:var(--ink)!important;}
+html:not([data-theme="dark"]) .test-stat-lbl{color:var(--ink-muted)!important;}
 
 /* ── sla-badge (response time indicator) ─────── */
 .sla-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.25);color:#15803d;border-radius:100px;padding:.25rem .75rem;font-size:.72rem;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.05em;}
