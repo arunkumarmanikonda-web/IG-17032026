@@ -17308,4 +17308,347 @@ app.get('/mandate-analytics', requireSession(), async (c) => {
   return c.json({ success: true, stats })
 })
 
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 34–39 ERP API ENDPOINTS — D1-backed
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Helper: get DB safely ─────────────────────────────────────────────────
+function getDB(c: any): D1Database | undefined {
+  return (c as any).env?.DB
+}
+
+// ── FINANCE: Invoices ─────────────────────────────────────────────────────
+app.get('/finance/invoices', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, invoices: [] })
+  try {
+    const rows = await db.prepare(
+      `SELECT * FROM ig_invoices ORDER BY created_at DESC LIMIT 100`
+    ).all()
+    return c.json({ success: true, invoices: rows.results })
+  } catch { return c.json({ success: true, invoices: [] }) }
+})
+
+app.post('/finance/invoices', requireSession(), async (c) => {
+  const db = getDB(c)
+  const body = await c.req.json().catch(() => ({})) as any
+  if (!body.client_name || !body.amount_gross) return c.json({ success: false, error: 'Missing required fields' }, 400)
+  const gstAmt = Math.round(body.amount_gross * (body.gst_rate || 18) / 100)
+  const total = body.amount_gross + gstAmt
+  const invNo = `INV-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`
+  if (db) {
+    await db.prepare(
+      `INSERT INTO ig_invoices (invoice_number,client_name,client_gstin,amount_gross,gst_rate,amount_gst,amount_net,status,due_date)
+       VALUES (?,?,?,?,?,?,?,?,?)`
+    ).bind(invNo, body.client_name, body.client_gstin||'', body.amount_gross, body.gst_rate||18, gstAmt, total, 'Draft', body.due_date||null).run()
+    await db.prepare(`INSERT INTO ig_vouchers (voucher_no,voucher_type,date,fy_year,narration,dr_account,cr_account,amount,is_gst,gst_amount,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+      .bind(`VCH-${invNo}`, 'Sales', new Date().toISOString().split('T')[0], '2025-26', `Invoice ${invNo} — ${body.client_name}`, 'Accounts Receivable', 'Advisory Fee Revenue', body.amount_gross, 1, gstAmt, 'Posted').run()
+  }
+  await auditLog(c, 'FINANCE_INVOICE_CREATE', { invoice: invNo })
+  return c.json({ success: true, invoice_number: invNo, total })
+})
+
+app.post('/finance/invoices/:id/status', requireSession(), async (c) => {
+  const db = getDB(c)
+  const { status } = await c.req.json().catch(() => ({})) as any
+  const id = c.req.param('id')
+  if (db && status) {
+    await db.prepare(`UPDATE ig_invoices SET status=?, paid_date=? WHERE invoice_number=?`)
+      .bind(status, status==='Paid' ? new Date().toISOString().split('T')[0] : null, id).run()
+  }
+  return c.json({ success: true })
+})
+
+// ── FINANCE: Vouchers ─────────────────────────────────────────────────────
+app.get('/finance/vouchers', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, vouchers: [] })
+  try {
+    const rows = await db.prepare(
+      `SELECT * FROM ig_vouchers ORDER BY date DESC, id DESC LIMIT 200`
+    ).all()
+    return c.json({ success: true, vouchers: rows.results })
+  } catch { return c.json({ success: true, vouchers: [] }) }
+})
+
+// ── FINANCE: P&L Summary ──────────────────────────────────────────────────
+app.get('/finance/pnl', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, revenue: 0, expenses: 0, profit: 0 })
+  try {
+    const rev = await db.prepare(`SELECT COALESCE(SUM(amount),0) AS total FROM ig_vouchers WHERE voucher_type='Sales' AND fy_year='2025-26' AND status='Posted'`).first() as any
+    const exp = await db.prepare(`SELECT COALESCE(SUM(amount),0) AS total FROM ig_vouchers WHERE voucher_type IN ('Purchase','Payment') AND fy_year='2025-26' AND status='Posted'`).first() as any
+    const revenue = rev?.total || 0, expenses = exp?.total || 0
+    return c.json({ success: true, revenue, expenses, profit: revenue - expenses, margin: revenue > 0 ? Math.round((revenue-expenses)/revenue*100) : 0 })
+  } catch { return c.json({ success: true, revenue: 0, expenses: 0, profit: 0 }) }
+})
+
+// ── HR: Employees ─────────────────────────────────────────────────────────
+app.get('/hr/employees', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, employees: [] })
+  try {
+    const rows = await db.prepare(`SELECT id,employee_id,name,email,department,designation,joining_date,ctc_annual,is_active FROM ig_employees ORDER BY id`).all()
+    return c.json({ success: true, employees: rows.results })
+  } catch { return c.json({ success: true, employees: [] }) }
+})
+
+app.post('/hr/employees', requireSession(), async (c) => {
+  const db = getDB(c)
+  const body = await c.req.json().catch(() => ({})) as any
+  if (!body.name || !body.email) return c.json({ success: false, error: 'Name and email required' }, 400)
+  const year = new Date().getFullYear()
+  let nextId = 'IG-EMP-0001'
+  if (db) {
+    const last = await db.prepare(`SELECT employee_id FROM ig_employees ORDER BY id DESC LIMIT 1`).first() as any
+    if (last?.employee_id) {
+      const num = parseInt(last.employee_id.replace('IG-EMP-', '')) + 1
+      nextId = `IG-EMP-${String(num).padStart(4, '0')}`
+    }
+    await db.prepare(`INSERT INTO ig_employees (employee_id,name,email,department,designation,joining_date,ctc_annual,pf_applicable,is_active) VALUES (?,?,?,?,?,?,?,?,1)`)
+      .bind(nextId, body.name, body.email, body.department||'General', body.designation||'Executive', new Date().toISOString().split('T')[0], body.ctc_annual||0, body.pf_applicable||1).run()
+    await db.prepare(`INSERT OR IGNORE INTO ig_leave_balance (employee_id,fy_year) SELECT id,'2025-26' FROM ig_employees WHERE employee_id=?`).bind(nextId).run()
+  }
+  await auditLog(c, 'HR_EMPLOYEE_ADD', { employee_id: nextId, name: body.name })
+  return c.json({ success: true, employee_id: nextId })
+})
+
+// ── HR: Leave Requests ────────────────────────────────────────────────────
+app.get('/hr/leave', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, requests: [] })
+  try {
+    const rows = await db.prepare(
+      `SELECT lr.*, e.name as employee_name, e.employee_id as emp_code
+       FROM ig_leave_requests lr JOIN ig_employees e ON lr.employee_id=e.id
+       ORDER BY lr.created_at DESC LIMIT 50`
+    ).all()
+    return c.json({ success: true, requests: rows.results })
+  } catch { return c.json({ success: true, requests: [] }) }
+})
+
+app.post('/hr/leave/:id/approve', requireSession(), async (c) => {
+  const db = getDB(c)
+  const id = c.req.param('id')
+  const { action } = await c.req.json().catch(() => ({action:'Approved'})) as any
+  if (db) {
+    await db.prepare(`UPDATE ig_leave_requests SET status=?,approved_at=? WHERE id=?`)
+      .bind(action, new Date().toISOString(), id).run()
+  }
+  return c.json({ success: true })
+})
+
+// ── HR: Payroll ───────────────────────────────────────────────────────────
+app.get('/hr/payroll', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, runs: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_payroll_runs ORDER BY year DESC, month DESC LIMIT 24`).all()
+    return c.json({ success: true, runs: rows.results })
+  } catch { return c.json({ success: true, runs: [] }) }
+})
+
+app.post('/hr/payroll/run', requireSession(), async (c) => {
+  const db = getDB(c)
+  const { month, year } = await c.req.json().catch(() => ({month: new Date().getMonth()+1, year: new Date().getFullYear()})) as any
+  if (!db) return c.json({ success: false, error: 'D1 not available' })
+  const emps = await db.prepare(`SELECT * FROM ig_employees WHERE is_active=1`).all()
+  let totalGross = 0, totalNet = 0, totalPF = 0, totalTDS = 0, totalDed = 0
+  const runRes = await db.prepare(`INSERT OR IGNORE INTO ig_payroll_runs (month,year,fy_year,status) VALUES (?,?,'2025-26','Processing')`)
+    .bind(month, year).run()
+  const runId = runRes.meta?.last_row_id
+  for (const emp of (emps.results as any[])) {
+    const ctc = emp.ctc_annual || 0
+    const basic = Math.round(ctc * 0.4 / 12)
+    const hra = Math.round(ctc * 0.2 / 12)
+    const special = Math.round(ctc / 12) - basic - hra
+    const gross = basic + hra + special
+    const pf = emp.pf_applicable ? Math.min(Math.round(basic * 0.12), 1800) : 0
+    const tds = Math.round(gross * 0.1)
+    const net = gross - pf - tds
+    totalGross += gross; totalNet += net; totalPF += pf; totalTDS += tds; totalDed += pf + tds
+    await db.prepare(`INSERT OR IGNORE INTO ig_payslips (payroll_run_id,employee_id,basic,hra,special_allowance,gross,pf_employee,pf_employer,tds,total_deductions,net_payable) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+      .bind(runId, emp.id, basic, hra, special, gross, pf, pf, tds, pf+tds, net).run()
+  }
+  await db.prepare(`UPDATE ig_payroll_runs SET status='Completed',total_gross=?,total_net=?,total_pf=?,total_tds=?,total_deductions=?,run_at=? WHERE id=?`)
+    .bind(totalGross, totalNet, totalPF, totalTDS, totalDed, new Date().toISOString(), runId).run()
+  await auditLog(c, 'HR_PAYROLL_RUN', { month, year, total_net: totalNet })
+  return c.json({ success: true, run_id: runId, total_gross: totalGross, total_net: totalNet, headcount: emps.results.length })
+})
+
+// ── GOVERNANCE: Board Meetings ────────────────────────────────────────────
+app.get('/governance/meetings', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, meetings: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_board_meetings ORDER BY date DESC LIMIT 20`).all()
+    return c.json({ success: true, meetings: rows.results })
+  } catch { return c.json({ success: true, meetings: [] }) }
+})
+
+app.post('/governance/meetings', requireSession(), async (c) => {
+  const db = getDB(c)
+  const body = await c.req.json().catch(() => ({})) as any
+  if (!body.date) return c.json({ success: false, error: 'Date required' }, 400)
+  let ref = `BM-${new Date().getFullYear()}-001`
+  if (db) {
+    const last = await db.prepare(`SELECT meeting_no FROM ig_board_meetings ORDER BY id DESC LIMIT 1`).first() as any
+    const nextNo = (last?.meeting_no || 0) + 1
+    ref = `BM-${new Date().getFullYear()}-${String(nextNo).padStart(3, '0')}`
+    await db.prepare(`INSERT INTO ig_board_meetings (meeting_ref,meeting_type,meeting_no,date,time,venue,mode,status,agenda_json) VALUES (?,?,?,?,?,?,?,'Scheduled',?)`)
+      .bind(ref, body.meeting_type||'Board Meeting', nextNo, body.date, body.time||'11:00', body.venue||'Registered Office, New Delhi', body.mode||'In-Person', JSON.stringify(body.agenda||[])).run()
+  }
+  await auditLog(c, 'GOV_MEETING_CREATE', { ref, date: body.date })
+  return c.json({ success: true, meeting_ref: ref })
+})
+
+// ── GOVERNANCE: Resolutions ───────────────────────────────────────────────
+app.get('/governance/resolutions', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, resolutions: [] })
+  try {
+    const rows = await db.prepare(
+      `SELECT r.*, m.meeting_ref, m.date as meeting_date FROM ig_resolutions_v2 r
+       JOIN ig_board_meetings m ON r.meeting_id=m.id ORDER BY r.created_at DESC LIMIT 50`
+    ).all()
+    return c.json({ success: true, resolutions: rows.results })
+  } catch { return c.json({ success: true, resolutions: [] }) }
+})
+
+app.post('/governance/resolutions/:id/vote', requireSession(), async (c) => {
+  const db = getDB(c)
+  const id = c.req.param('id')
+  const { director_id, vote } = await c.req.json().catch(() => ({})) as any
+  if (db && director_id) {
+    await db.prepare(`INSERT OR REPLACE INTO ig_resolution_votes (resolution_id,director_id,vote,voted_at) VALUES (?,?,?,?)`)
+      .bind(id, director_id, vote||'For', new Date().toISOString()).run()
+    const votes = await db.prepare(`SELECT vote,COUNT(*) as cnt FROM ig_resolution_votes WHERE resolution_id=? GROUP BY vote`).bind(id).all()
+    const forVotes = (votes.results as any[]).find(v => v.vote==='For')?.cnt || 0
+    const against = (votes.results as any[]).find(v => v.vote==='Against')?.cnt || 0
+    const total = await db.prepare(`SELECT COUNT(*) as cnt FROM ig_directors WHERE is_active=1`).first() as any
+    if (forVotes > (total?.cnt || 2) / 2) {
+      await db.prepare(`UPDATE ig_resolutions_v2 SET status='Passed',passed_at=? WHERE id=?`).bind(new Date().toISOString(), id).run()
+    }
+  }
+  return c.json({ success: true })
+})
+
+// ── CMS: Content ──────────────────────────────────────────────────────────
+app.get('/cms/content', requireSession(), async (c) => {
+  const db = getDB(c)
+  const page = c.req.query('page') || 'home'
+  if (!db) return c.json({ success: true, content: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_cms_content WHERE page=? AND is_published=1 ORDER BY section,key`).bind(page).all()
+    return c.json({ success: true, content: rows.results })
+  } catch { return c.json({ success: true, content: [] }) }
+})
+
+app.post('/cms/content', requireSession(), async (c) => {
+  const db = getDB(c)
+  const body = await c.req.json().catch(() => ({})) as any
+  if (!body.page || !body.key || body.value === undefined) return c.json({ success: false, error: 'page, key, value required' }, 400)
+  if (db) {
+    await db.prepare(`INSERT INTO ig_cms_content (page,section,key,value,content_type,is_published,updated_by,updated_at)
+      VALUES (?,?,?,?,?,1,?,?) ON CONFLICT(page,section,key) DO UPDATE SET value=excluded.value,version=version+1,updated_by=excluded.updated_by,updated_at=excluded.updated_at`)
+      .bind(body.page, body.section||'general', body.key, body.value, body.content_type||'text', 'admin', new Date().toISOString()).run()
+  }
+  await auditLog(c, 'CMS_CONTENT_UPDATE', { page: body.page, key: body.key })
+  return c.json({ success: true })
+})
+
+// ── SALES/CRM: Enquiries ──────────────────────────────────────────────────
+app.get('/crm/enquiries', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, enquiries: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_enquiries ORDER BY created_at DESC LIMIT 100`).all()
+    return c.json({ success: true, enquiries: rows.results })
+  } catch { return c.json({ success: true, enquiries: [] }) }
+})
+
+app.post('/crm/enquiries/:id/status', requireSession(), async (c) => {
+  const db = getDB(c)
+  const id = c.req.param('id')
+  const { status, notes } = await c.req.json().catch(() => ({})) as any
+  if (db && status) {
+    await db.prepare(`UPDATE ig_enquiries SET status=?,notes=?,updated_at=? WHERE id=?`)
+      .bind(status, notes||null, new Date().toISOString(), id).run()
+  }
+  return c.json({ success: true })
+})
+
+// ── SALES/CRM: Mandates Pipeline ──────────────────────────────────────────
+app.get('/crm/mandates', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, mandates: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_mandates_crm ORDER BY created_at DESC LIMIT 100`).all()
+    return c.json({ success: true, mandates: rows.results })
+  } catch { return c.json({ success: true, mandates: [] }) }
+})
+
+app.post('/crm/mandates/:id/stage', requireSession(), async (c) => {
+  const db = getDB(c)
+  const id = c.req.param('id')
+  const { stage, probability } = await c.req.json().catch(() => ({})) as any
+  if (db && stage) {
+    await db.prepare(`UPDATE ig_mandates_crm SET stage=?,probability=?,updated_at=? WHERE id=?`)
+      .bind(stage, probability||10, new Date().toISOString(), id).run()
+  }
+  return c.json({ success: true })
+})
+
+// ── CLIENTS ───────────────────────────────────────────────────────────────
+app.get('/crm/clients', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, clients: [] })
+  try {
+    const rows = await db.prepare(`SELECT * FROM ig_clients ORDER BY company_name LIMIT 100`).all()
+    return c.json({ success: true, clients: rows.results })
+  } catch { return c.json({ success: true, clients: [] }) }
+})
+
+app.post('/crm/clients', requireSession(), async (c) => {
+  const db = getDB(c)
+  const body = await c.req.json().catch(() => ({})) as any
+  if (!body.company_name) return c.json({ success: false, error: 'Company name required' }, 400)
+  let code = 'CLT-001'
+  if (db) {
+    const last = await db.prepare(`SELECT client_code FROM ig_clients ORDER BY id DESC LIMIT 1`).first() as any
+    if (last?.client_code) {
+      const num = parseInt(last.client_code.replace('CLT-', '')) + 1
+      code = `CLT-${String(num).padStart(3, '0')}`
+    }
+    await db.prepare(`INSERT INTO ig_clients (client_code,company_name,contact_name,email,phone,city,state,vertical,gstin,status) VALUES (?,?,?,?,?,?,?,?,?,'Active')`)
+      .bind(code, body.company_name, body.contact_name||'', body.email||'', body.phone||'', body.city||'', body.state||'', body.vertical||'General', body.gstin||'').run()
+  }
+  await auditLog(c, 'CRM_CLIENT_ADD', { code, company: body.company_name })
+  return c.json({ success: true, client_code: code })
+})
+
+// ── ERP DASHBOARD STATS (live D1) ─────────────────────────────────────────
+app.get('/erp/dashboard-stats', requireSession(), async (c) => {
+  const db = getDB(c)
+  if (!db) return c.json({ success: true, stats: {} })
+  try {
+    const [rev, recv, enq, emp, meetings, mandates] = await Promise.all([
+      db.prepare(`SELECT COALESCE(SUM(amount),0) AS v FROM ig_vouchers WHERE voucher_type='Sales' AND fy_year='2025-26' AND status='Posted'`).first() as Promise<any>,
+      db.prepare(`SELECT COALESCE(SUM(amount_net),0) AS v FROM ig_invoices WHERE status IN ('Sent','Overdue')`).first() as Promise<any>,
+      db.prepare(`SELECT COUNT(*) AS v FROM ig_enquiries WHERE status IN ('New','Active','Pending')`).first() as Promise<any>,
+      db.prepare(`SELECT COUNT(*) AS v FROM ig_employees WHERE is_active=1`).first() as Promise<any>,
+      db.prepare(`SELECT COUNT(*) AS v FROM ig_board_meetings`).first() as Promise<any>,
+      db.prepare(`SELECT COUNT(*) AS v FROM ig_mandates_crm WHERE stage NOT IN ('Closed Won','Closed Lost')`).first() as Promise<any>,
+    ])
+    return c.json({ success: true, stats: {
+      revenue_fy: (rev as any)?.v || 0,
+      receivables: (recv as any)?.v || 0,
+      open_enquiries: (enq as any)?.v || 0,
+      employees: (emp as any)?.v || 0,
+      board_meetings: (meetings as any)?.v || 0,
+      active_mandates: (mandates as any)?.v || 0,
+    }})
+  } catch(e) { return c.json({ success: true, stats: {}, error: String(e) }) }
+})
+
 export default app
