@@ -71,18 +71,15 @@ const INDIA_STATES_SVG = `
   </radialGradient>
 </defs>
 
-<!-- ── JAMMU & KASHMIR (including Ladakh) ── -->
-<path d="M 270,18 L 298,10 L 332,8 L 362,12 L 390,20 L 408,34 L 418,52 L 412,68
-         L 398,78 L 382,72 L 368,60 L 352,56 L 334,62 L 318,58 L 302,50 L 286,42
-         L 270,38 Z"
-  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
-<!-- PoK region (lighter) -->
-<path d="M 218,28 L 242,18 L 270,18 L 270,38 L 256,48 L 238,52 L 224,44 Z"
-  fill="#5a9a54" stroke="rgba(255,255,255,0.35)" stroke-width="0.8" stroke-dasharray="3,2"/>
-<!-- Ladakh -->
-<path d="M 362,12 L 418,8 L 468,14 L 480,36 L 472,56 L 452,68 L 428,72 L 418,52
-         L 408,34 L 390,20 Z"
-  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+<!-- ── JAMMU & KASHMIR (FULL INDIA CLAIM — Survey of India 2020) ── -->
+<!-- Covers: POK + Gilgit-Baltistan (west) + Indian J&K + Ladakh + Aksai Chin (east) -->
+<!-- lon 72.9-80.5°E, lat 32.2-37.5°N  (scale 800px/30deg = 26.67px/deg) -->
+<!-- FIXED Phase 44: Correct large shape — DO NOT SHRINK -->
+<path d="M 157.3,138.0 L 146.7,114.0 L 136.0,75.0 L 130.7,36.0 L 138.7,15.0
+         L 154.7,-3.0 L 173.3,-12.0 L 240.0,-15.0 L 306.7,-12.0 L 328.0,6.0
+         L 333.3,45.0 L 314.7,75.0 L 293.3,105.0 L 280.0,120.0 L 253.3,135.0
+         L 226.7,141.0 L 200.0,144.0 L 173.3,141.0 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-dasharray="4,2"/>
 
 <!-- ── HIMACHAL PRADESH ── -->
 <path d="M 298,88 L 318,78 L 334,78 L 348,86 L 358,100 L 348,112 L 330,118
@@ -339,7 +336,7 @@ app.get('/', (c) => {
 
       <!-- ── PERFECT INDIA SVG MAP ── -->
       <div style="position:relative;background:rgba(0,0,0,0);">
-        <svg id="indiaMap" viewBox="60 90 740 640" xmlns="http://www.w3.org/2000/svg"
+        <svg id="indiaMap" viewBox="60 -20 740 760" xmlns="http://www.w3.org/2000/svg"
              style="width:100%;max-width:500px;display:block;margin:0 auto;overflow:visible;">
 
           ${INDIA_STATES_SVG}
