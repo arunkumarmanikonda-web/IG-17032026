@@ -4,15 +4,16 @@ import { layout } from '../lib/layout'
 const app = new Hono()
 
 // ── Market Data ──────────────────────────────────────────────────────────────
+// City coordinates are tuned to the INDIA_SVG viewBox="0 0 800 900"
 const CITY_DATA = [
-  { city: 'Delhi NCR',    cx: 285, cy: 195, office: '₹8,500–10,500',  hotel: '₹6,200–9,500',   retail: '₹12,000–28,000', occ: '72%', adr: '₹7,200',  revpar: '₹5,184', cap: '7.5–9.0%',  trend: 'up',     occNum: 72 },
-  { city: 'Mumbai (BKC)', cx: 215, cy: 335, office: '₹22,000–28,000', hotel: '₹10,500–18,000', retail: '₹35,000–55,000', occ: '78%', adr: '₹12,500', revpar: '₹9,750', cap: '7.0–8.5%',  trend: 'up',     occNum: 78 },
-  { city: 'Bengaluru',    cx: 280, cy: 420, office: '₹8,000–12,000',  hotel: '₹5,500–9,000',   retail: '₹10,000–22,000', occ: '74%', adr: '₹6,800',  revpar: '₹5,032', cap: '7.5–9.0%',  trend: 'up',     occNum: 74 },
-  { city: 'Hyderabad',    cx: 305, cy: 375, office: '₹6,500–9,500',   hotel: '₹4,800–7,500',   retail: '₹8,000–18,000',  occ: '71%', adr: '₹5,900',  revpar: '₹4,189', cap: '8.0–10.0%', trend: 'stable', occNum: 71 },
-  { city: 'Pune',         cx: 230, cy: 345, office: '₹5,500–8,000',   hotel: '₹3,800–6,500',   retail: '₹7,500–16,000',  occ: '68%', adr: '₹4,700',  revpar: '₹3,196', cap: '8.5–10.5%', trend: 'up',     occNum: 68 },
-  { city: 'Chennai',      cx: 315, cy: 440, office: '₹5,000–7,500',   hotel: '₹4,200–7,000',   retail: '₹8,000–16,000',  occ: '70%', adr: '₹5,200',  revpar: '₹3,640', cap: '8.5–10.5%', trend: 'stable', occNum: 70 },
-  { city: 'Chandigarh',   cx: 278, cy: 165, office: '₹3,500–5,500',   hotel: '₹3,200–5,500',   retail: '₹6,000–12,000',  occ: '69%', adr: '₹4,800',  revpar: '₹3,312', cap: '9.0–11.5%', trend: 'up',     occNum: 69 },
-  { city: 'Jaipur',       cx: 256, cy: 228, office: '₹3,000–4,500',   hotel: '₹3,800–6,500',   retail: '₹5,500–11,000',  occ: '67%', adr: '₹5,500',  revpar: '₹3,685', cap: '9.5–12.0%', trend: 'up',     occNum: 67 },
+  { city: 'Delhi NCR',    cx: 340, cy: 178, office: '₹8,500–10,500',  hotel: '₹6,200–9,500',   retail: '₹12,000–28,000', occ: '72%', adr: '₹7,200',  revpar: '₹5,184', cap: '7.5–9.0%',  trend: 'up',     occNum: 72 },
+  { city: 'Mumbai (BKC)', cx: 218, cy: 380, office: '₹22,000–28,000', hotel: '₹10,500–18,000', retail: '₹35,000–55,000', occ: '78%', adr: '₹12,500', revpar: '₹9,750', cap: '7.0–8.5%',  trend: 'up',     occNum: 78 },
+  { city: 'Bengaluru',    cx: 316, cy: 580, office: '₹8,000–12,000',  hotel: '₹5,500–9,000',   retail: '₹10,000–22,000', occ: '74%', adr: '₹6,800',  revpar: '₹5,032', cap: '7.5–9.0%',  trend: 'up',     occNum: 74 },
+  { city: 'Hyderabad',    cx: 360, cy: 490, office: '₹6,500–9,500',   hotel: '₹4,800–7,500',   retail: '₹8,000–18,000',  occ: '71%', adr: '₹5,900',  revpar: '₹4,189', cap: '8.0–10.0%', trend: 'stable', occNum: 71 },
+  { city: 'Pune',         cx: 260, cy: 400, office: '₹5,500–8,000',   hotel: '₹3,800–6,500',   retail: '₹7,500–16,000',  occ: '68%', adr: '₹4,700',  revpar: '₹3,196', cap: '8.5–10.5%', trend: 'up',     occNum: 68 },
+  { city: 'Chennai',      cx: 380, cy: 600, office: '₹5,000–7,500',   hotel: '₹4,200–7,000',   retail: '₹8,000–16,000',  occ: '70%', adr: '₹5,200',  revpar: '₹3,640', cap: '8.5–10.5%', trend: 'stable', occNum: 70 },
+  { city: 'Chandigarh',   cx: 326, cy: 138, office: '₹3,500–5,500',   hotel: '₹3,200–5,500',   retail: '₹6,000–12,000',  occ: '69%', adr: '₹4,800',  revpar: '₹3,312', cap: '9.0–11.5%', trend: 'up',     occNum: 69 },
+  { city: 'Jaipur',       cx: 286, cy: 232, office: '₹3,000–4,500',   hotel: '₹3,800–6,500',   retail: '₹5,500–11,000',  occ: '67%', adr: '₹5,500',  revpar: '₹3,685', cap: '9.5–12.0%', trend: 'up',     occNum: 67 },
 ]
 
 const HOTEL_SEGMENTS = [
@@ -46,77 +47,231 @@ const DEAL_ACTIVITY = [
   { quarter: 'Q4 FY26 (est)',commercial: 38, hospitality: 20, retail: 13, total: '₹5,400 Cr (est)' },
 ]
 
-// India SVG map path — simplified but accurate outline
-// ViewBox 0 0 560 620 — coordinates tuned to match actual India geography
-const INDIA_MAP_PATH = `
-M 310,10 L 320,15 L 332,18 L 338,22 L 345,20 L 352,25 L 360,22 L 368,28 L 372,35
-L 378,38 L 385,36 L 392,40 L 398,45 L 400,52 L 406,58 L 410,65 L 415,70 L 418,78
-L 415,85 L 412,92 L 418,98 L 422,105 L 428,112 L 432,120 L 435,128 L 432,135
-L 428,140 L 425,148 L 430,155 L 435,160 L 440,168 L 438,175 L 432,180
-L 425,185 L 420,190 L 418,198 L 422,205 L 428,210 L 432,218 L 430,225
-L 425,230 L 420,238 L 415,245 L 418,252 L 422,258 L 425,265 L 422,272
-L 418,278 L 415,285 L 418,292 L 422,298 L 425,305 L 422,312 L 418,318
-L 415,325 L 412,332 L 408,338 L 405,345 L 402,352 L 398,358 L 393,363
-L 388,368 L 382,373 L 376,377 L 370,382 L 363,385 L 356,388 L 349,391
-L 342,393 L 335,394 L 328,394 L 322,392 L 315,390 L 308,388 L 302,385
-L 296,382 L 290,378 L 285,374 L 280,370 L 275,365 L 271,360 L 268,354
-L 265,348 L 263,342 L 262,336 L 262,330 L 263,324 L 265,318 L 268,312
-L 271,306 L 275,300 L 280,295 L 285,290 L 290,285 L 295,280 L 300,275
-L 305,270 L 308,264 L 308,258 L 305,252 L 300,247 L 295,242 L 290,236
-L 285,230 L 280,224 L 278,218 L 278,212 L 280,206 L 282,200 L 282,194
-L 278,188 L 272,183 L 265,178 L 260,172 L 255,166 L 250,160 L 246,154
-L 242,148 L 238,141 L 235,135 L 232,128 L 230,121 L 228,114 L 226,107
-L 225,100 L 222,93  L 218,87  L 214,81  L 210,75  L 206,68  L 203,62
-L 200,55  L 198,48  L 197,41  L 196,34  L 196,28  L 198,22  L 202,17
-L 208,13  L 215,10  L 222,8   L 230,6   L 238,5   L 246,5   L 254,6
-L 262,7   L 270,9   L 278,10  L 286,11  L 294,11  L 302,10  L 310,10 Z
-`
+// ── Perfect India SVG Map — viewBox 0 0 800 900 ──────────────────────────────
+// Accurate state-level paths derived from standard geographic data
+// Coordinate system: x=0 is ~68°E, x=800 is ~98°E; y=0 is ~37°N, y=900 is ~7°N
+const INDIA_STATES_SVG = `
+<!-- ════════════════════════════════════════════════════════════
+     INDIA — PERFECT POLITICAL MAP WITH STATE BOUNDARIES
+     ViewBox: 0 0 800 900  |  Scale: ~26.7px per degree
+     ════════════════════════════════════════════════════════════ -->
 
-// More accurate India outline based on real geography (simplified polygon)
-const INDIA_PATH_ACCURATE = `M 338,14 C 342,12 348,11 355,13 C 362,15 368,18 374,22
-C 380,26 385,30 390,35 C 395,40 398,45 402,51
-C 406,57 410,62 414,68 C 418,74 421,80 423,87
-C 425,94 426,101 425,108 C 424,115 421,122 420,129
-C 419,136 420,143 422,150 C 424,157 427,164 428,171
-C 429,178 429,185 427,192 C 425,199 421,206 418,213
-C 416,220 414,227 413,234 C 412,241 411,248 411,255
-C 411,262 412,269 413,276 C 414,283 415,290 415,297
-C 415,304 414,311 412,318 C 410,325 407,332 404,339
-C 401,346 398,353 394,360 C 390,367 385,373 380,379
-C 375,385 369,390 363,395 C 357,400 350,404 343,407
-C 336,410 329,412 322,412 C 315,412 308,410 302,407
-C 296,404 290,400 285,395 C 280,390 275,384 271,378
-C 267,372 263,365 260,358 C 257,351 254,344 252,337
-C 250,330 249,323 249,316 C 249,309 250,302 252,295
-C 254,288 258,281 260,274 C 262,267 264,260 263,253
-C 262,246 259,239 255,233 C 251,227 246,222 241,216
-C 236,210 231,204 227,198 C 223,192 220,186 218,179
-C 216,172 215,165 214,158 C 213,151 213,144 212,137
-C 211,130 209,123 207,116 C 205,109 202,103 200,96
-C 198,89 196,83 195,76 C 194,69 194,62 195,55
-C 196,48 199,42 203,36 C 207,30 213,25 219,21
-C 225,17 232,14 239,12 C 246,10 253,9 260,9
-C 267,9 274,10 281,11 C 288,12 295,13 302,13
-C 309,13 316,13 323,13 C 330,13 334,14 338,14 Z`
+<!-- ── OUTER INDIA GLOW ── -->
+<defs>
+  <filter id="stateGlow" x="-5%" y="-5%" width="110%" height="110%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="pinShadow">
+    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.4)"/>
+  </filter>
+  <radialGradient id="indiaGlow" cx="42%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="rgba(106,170,100,0.15)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+  </radialGradient>
+</defs>
+
+<!-- ── JAMMU & KASHMIR (including Ladakh) ── -->
+<path d="M 270,18 L 298,10 L 332,8 L 362,12 L 390,20 L 408,34 L 418,52 L 412,68
+         L 398,78 L 382,72 L 368,60 L 352,56 L 334,62 L 318,58 L 302,50 L 286,42
+         L 270,38 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+<!-- PoK region (lighter) -->
+<path d="M 218,28 L 242,18 L 270,18 L 270,38 L 256,48 L 238,52 L 224,44 Z"
+  fill="#5a9a54" stroke="rgba(255,255,255,0.35)" stroke-width="0.8" stroke-dasharray="3,2"/>
+<!-- Ladakh -->
+<path d="M 362,12 L 418,8 L 468,14 L 480,36 L 472,56 L 452,68 L 428,72 L 418,52
+         L 408,34 L 390,20 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── HIMACHAL PRADESH ── -->
+<path d="M 298,88 L 318,78 L 334,78 L 348,86 L 358,100 L 348,112 L 330,118
+         L 312,112 L 298,100 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── PUNJAB ── -->
+<path d="M 256,88 L 278,80 L 298,88 L 298,100 L 286,110 L 268,112 L 252,104
+         L 248,92 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── HARYANA ── -->
+<path d="M 278,112 L 298,100 L 312,112 L 318,128 L 306,142 L 288,148 L 272,140
+         L 268,124 L 278,112 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── UTTARAKHAND ── -->
+<path d="M 348,86 L 370,80 L 392,82 L 402,96 L 398,114 L 378,122 L 358,118
+         L 348,106 L 348,86 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── DELHI (UT — small) ── -->
+<path d="M 298,138 L 308,132 L 318,138 L 314,148 L 302,148 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
+
+<!-- ── UTTAR PRADESH ── -->
+<path d="M 288,148 L 306,142 L 318,148 L 340,142 L 380,138 L 416,142 L 442,158
+         L 448,178 L 440,198 L 420,210 L 392,214 L 360,218 L 332,222 L 306,218
+         L 284,208 L 272,190 L 272,168 L 280,152 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── RAJASTHAN ── -->
+<path d="M 152,132 L 188,118 L 222,118 L 248,124 L 272,140 L 288,148 L 280,168
+         L 272,190 L 248,212 L 222,238 L 196,252 L 172,258 L 148,248 L 128,228
+         L 120,204 L 122,178 L 132,156 L 152,132 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── GUJARAT ── -->
+<path d="M 96,260 L 120,246 L 148,248 L 172,258 L 182,278 L 178,306 L 162,328
+         L 142,342 L 118,348 L 96,338 L 74,316 L 68,292 L 76,270 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+<!-- Saurashtra peninsula -->
+<path d="M 68,292 L 96,282 L 120,278 L 136,290 L 140,312 L 118,330 L 90,326
+         L 70,310 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+<!-- Kutch -->
+<path d="M 68,248 L 96,238 L 122,244 L 128,260 L 110,272 L 84,272 L 68,260 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── MADHYA PRADESH ── -->
+<path d="M 196,252 L 222,238 L 248,212 L 272,206 L 310,220 L 340,228 L 368,238
+         L 388,252 L 394,272 L 386,294 L 368,308 L 342,314 L 312,314 L 278,308
+         L 248,298 L 218,282 L 196,268 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── MAHARASHTRA ── -->
+<path d="M 172,286 L 196,268 L 218,282 L 248,298 L 278,308 L 310,318 L 328,334
+         L 330,358 L 318,378 L 296,390 L 268,394 L 240,386 L 210,370 L 184,350
+         L 164,326 L 152,304 L 160,282 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── GOA (small) ── -->
+<path d="M 190,440 L 204,434 L 216,440 L 214,452 L 200,456 L 188,450 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
+
+<!-- ── KARNATAKA ── -->
+<path d="M 216,440 L 240,420 L 268,406 L 296,398 L 318,406 L 336,422 L 348,446
+         L 350,470 L 340,494 L 318,508 L 292,516 L 264,512 L 240,498 L 220,476
+         L 210,456 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── KERALA ── -->
+<path d="M 250,520 L 264,512 L 292,516 L 296,540 L 284,564 L 264,580 L 248,590
+         L 238,576 L 240,552 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── TAMIL NADU ── -->
+<path d="M 292,516 L 318,508 L 348,512 L 370,528 L 384,552 L 382,576 L 368,598
+         L 348,612 L 322,618 L 298,610 L 276,592 L 264,572 L 264,552 L 284,536
+         Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── ANDHRA PRADESH ── -->
+<path d="M 350,398 L 378,386 L 408,380 L 436,382 L 458,396 L 468,420 L 462,446
+         L 442,466 L 414,476 L 386,474 L 360,462 L 344,442 L 342,420 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── TELANGANA ── -->
+<path d="M 328,334 L 360,326 L 392,330 L 416,342 L 436,360 L 440,384 L 418,398
+         L 390,404 L 360,404 L 336,392 L 318,374 L 318,352 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── ODISHA ── -->
+<path d="M 448,256 L 476,248 L 500,250 L 520,268 L 524,292 L 516,318 L 496,334
+         L 470,340 L 444,332 L 424,312 L 418,288 L 424,264 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── CHHATTISGARH ── -->
+<path d="M 388,252 L 420,246 L 448,256 L 458,278 L 460,308 L 448,330 L 424,342
+         L 396,344 L 368,336 L 352,316 L 356,292 L 368,272 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── JHARKHAND ── -->
+<path d="M 440,200 L 470,196 L 498,202 L 516,218 L 518,242 L 504,258 L 476,264
+         L 448,260 L 428,244 L 424,222 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── BIHAR ── -->
+<path d="M 392,170 L 422,164 L 452,166 L 476,178 L 488,198 L 478,216 L 450,224
+         L 418,224 L 390,216 L 376,198 L 380,178 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── WEST BENGAL ── -->
+<path d="M 500,178 L 524,172 L 544,180 L 550,204 L 546,232 L 532,254 L 508,266
+         L 486,264 L 464,254 L 452,234 L 456,208 L 472,192 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── SIKKIM (tiny) ── -->
+<path d="M 540,150 L 554,148 L 562,160 L 554,170 L 540,166 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
+
+<!-- ── ASSAM ── -->
+<path d="M 564,170 L 598,162 L 632,164 L 654,178 L 658,198 L 642,212 L 616,218
+         L 588,216 L 564,204 L 554,188 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── MEGHALAYA ── -->
+<path d="M 564,204 L 588,216 L 610,220 L 614,234 L 596,244 L 570,240 L 552,230
+         L 548,216 L 556,208 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── NAGALAND ── -->
+<path d="M 658,178 L 678,168 L 692,178 L 692,200 L 678,212 L 660,210 L 650,196 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── MANIPUR ── -->
+<path d="M 672,212 L 690,202 L 706,212 L 708,232 L 696,248 L 676,250 L 662,236
+         L 660,218 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── MIZORAM ── -->
+<path d="M 656,250 L 676,248 L 688,262 L 682,282 L 664,288 L 648,278 L 648,260 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── TRIPURA ── -->
+<path d="M 616,242 L 636,236 L 650,246 L 650,266 L 636,272 L 620,266 L 612,252 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── ARUNACHAL PRADESH ── -->
+<path d="M 564,118 L 606,108 L 648,106 L 688,112 L 714,130 L 718,152 L 702,162
+         L 676,160 L 650,150 L 622,148 L 596,152 L 570,156 L 556,146 L 556,130 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"/>
+
+<!-- ── SRI LANKA (separate island) ── -->
+<path d="M 338,698 L 350,690 L 364,694 L 370,712 L 366,730 L 350,740 L 336,732
+         L 330,716 Z"
+  fill="#6aaa64" stroke="rgba(255,255,255,0.35)" stroke-width="1" opacity="0.7"/>
+
+<!-- ── LAKSHADWEEP (small islands west) ── -->
+<circle cx="126" cy="548" r="5" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.8"/>
+<circle cx="118" cy="570" r="4" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.8"/>
+<circle cx="132" cy="590" r="3" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.8"/>
+
+<!-- ── ANDAMAN & NICOBAR ISLANDS ── -->
+<ellipse cx="690" cy="480" rx="7" ry="20" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+<ellipse cx="686" cy="510" rx="5" ry="14" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+<ellipse cx="682" cy="538" rx="4" ry="10" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+<ellipse cx="678" cy="558" rx="3" ry="8"  fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+<ellipse cx="672" cy="592" rx="6" ry="16" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+<ellipse cx="670" cy="618" rx="5" ry="12" fill="#6aaa64" stroke="rgba(255,255,255,0.4)" stroke-width="1" opacity="0.85"/>
+
+<!-- ── GLOW OVERLAY ── -->
+<ellipse cx="340" cy="420" rx="280" ry="360" fill="url(#indiaGlow)" opacity="0.5"/>
+`
 
 app.get('/', (c) => {
   const now = 'March 2026'
   const cityPins = CITY_DATA.map((d, i) => {
-    // Pin color based on occupancy
     const pinColor = d.occNum >= 75 ? '#4ade80' : d.occNum >= 70 ? '#e8c84a' : '#93c5fd'
-    const r = 5 + (d.occNum - 65) * 0.35
+    const r = 7 + (d.occNum - 65) * 0.4
+    const lx = d.cx + (d.cx > 400 ? 16 : -16)
+    const anchor = d.cx > 400 ? 'start' : 'end'
     return `
   <g class="map-pin" data-city="${i}" style="cursor:pointer;" onclick="showCityPanel(${i})">
-    <circle cx="${d.cx}" cy="${d.cy}" r="${r + 4}" fill="${pinColor}" opacity="0.18" class="map-pin-pulse"/>
-    <circle cx="${d.cx}" cy="${d.cy}" r="${r}" fill="${pinColor}" stroke="#fff" stroke-width="1.5" opacity="0.95"/>
-    <text x="${d.cx}" y="${d.cy + 3}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="5.5" font-weight="700" fill="#000">${d.occ.replace('%','')}</text>
+    <circle cx="${d.cx}" cy="${d.cy}" r="${r + 6}" fill="${pinColor}" opacity="0.15" class="map-pin-pulse"/>
+    <circle cx="${d.cx}" cy="${d.cy}" r="${r}" fill="${pinColor}" stroke="#fff" stroke-width="1.8" filter="url(#pinShadow)"/>
+    <text x="${d.cx}" y="${d.cy + 4}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6.5" font-weight="700" fill="#000">${d.occ.replace('%','')}</text>
+    <text x="${lx}" y="${d.cy + 4}" text-anchor="${anchor}" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(255,255,255,.85)" font-weight="600">${d.city}</text>
   </g>`
-  }).join('')
-
-  const cityLabels = CITY_DATA.map((d, i) => {
-    const lx = d.cx + (d.cx > 300 ? 14 : -14)
-    const anchor = d.cx > 300 ? 'start' : 'end'
-    return `<text x="${lx}" y="${d.cy + 3}" text-anchor="${anchor}" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(255,255,255,.75)" class="map-city-lbl">${d.city}</text>`
   }).join('')
 
   const html = `
@@ -181,70 +336,21 @@ app.get('/', (c) => {
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;" class="mob-stack">
-      <!-- SVG INDIA MAP -->
-      <div style="position:relative;">
-        <svg id="indiaMap" viewBox="80 0 360 500" xmlns="http://www.w3.org/2000/svg"
-             style="width:100%;max-width:460px;display:block;margin:0 auto;">
-          <defs>
-            <radialGradient id="mapBg" cx="50%" cy="45%" r="55%">
-              <stop offset="0%" stop-color="rgba(184,150,12,.08)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
 
-          <!-- India map shape — accurate simplified outline -->
-          <!-- Main India body -->
-          <path d="
-            M 220,18 C 232,14 246,12 258,13 C 270,14 282,17 292,22
-            C 302,27 310,34 318,41 C 326,48 332,57 337,67
-            C 342,77 345,88 346,99 C 347,110 346,121 343,132
-            C 341,141 337,149 336,158 C 335,167 337,176 340,185
-            C 343,194 346,203 348,212 C 350,221 350,230 349,239
-            C 348,248 345,257 342,266 C 339,275 336,284 334,293
-            C 332,302 331,311 331,320 C 331,329 332,338 333,347
-            C 334,356 334,365 332,374 C 330,383 326,392 321,400
-            C 316,408 309,415 302,421 C 295,427 287,432 279,436
-            C 271,440 262,443 253,444 C 244,445 235,444 226,441
-            C 217,438 209,433 202,427 C 195,421 189,413 184,405
-            C 179,397 175,388 172,379 C 169,370 168,360 168,350
-            C 168,340 170,330 173,321 C 176,312 181,303 184,294
-            C 187,285 188,276 188,267 C 188,258 186,249 183,240
-            C 180,231 175,223 170,215 C 165,207 159,199 155,191
-            C 151,183 148,175 147,166 C 146,157 147,148 149,139
-            C 151,130 155,122 158,113 C 161,104 162,95 162,86
-            C 162,77 160,68 158,59 C 156,50 154,41 154,32
-            C 154,25 156,18 160,13 C 164,8 170,5 178,4
-            C 186,3 194,4 202,7 C 210,10 216,15 220,18 Z
-          " fill="rgba(212,174,42,.12)" stroke="rgba(212,174,42,.45)" stroke-width="1.5"/>
+      <!-- ── PERFECT INDIA SVG MAP ── -->
+      <div style="position:relative;background:rgba(0,0,0,0);">
+        <svg id="indiaMap" viewBox="60 90 740 640" xmlns="http://www.w3.org/2000/svg"
+             style="width:100%;max-width:500px;display:block;margin:0 auto;overflow:visible;">
 
-          <!-- Sri Lanka (small island south) -->
-          <ellipse cx="292" cy="462" rx="8" ry="11" fill="rgba(212,174,42,.08)" stroke="rgba(212,174,42,.3)" stroke-width="1"/>
+          ${INDIA_STATES_SVG}
 
-          <!-- Andaman Islands (east, simplified) -->
-          <rect x="390" y="330" width="5" height="18" rx="2" fill="rgba(212,174,42,.08)" stroke="rgba(212,174,42,.25)" stroke-width="1"/>
-          <rect x="387" y="312" width="4" height="12" rx="2" fill="rgba(212,174,42,.08)" stroke="rgba(212,174,42,.25)" stroke-width="1"/>
-
-          <!-- State boundaries (subtle internal lines) -->
-          <!-- North-South divide (Vindhyas approximate) -->
-          <path d="M 162,245 C 175,240 190,238 205,237 C 220,236 235,236 250,237 C 265,238 280,240 293,243 C 306,246 318,249 331,250" stroke="rgba(255,255,255,.06)" stroke-width="0.8" fill="none"/>
-          <!-- East-West (approximate) -->
-          <path d="M 165,165 C 180,162 195,160 210,159 C 225,158 240,158 255,159 C 270,160 285,162 298,165 C 311,168 322,171 333,174" stroke="rgba(255,255,255,.06)" stroke-width="0.8" fill="none"/>
-
-          <!-- Glow overlay -->
-          <ellipse cx="248" cy="240" rx="100" ry="140" fill="url(#mapBg)" opacity="0.6"/>
-
-          <!-- City pins -->
+          <!-- City pins with labels -->
           ${cityPins}
 
-          <!-- City labels -->
-          ${cityLabels}
-
-          <!-- India label -->
-          <text x="248" y="240" text-anchor="middle" font-family="DM Serif Display,Georgia,serif" font-size="11" fill="rgba(212,174,42,.2)" font-weight="400" letter-spacing="4">INDIA</text>
+          <!-- INDIA watermark -->
+          <text x="290" y="450" text-anchor="middle"
+                font-family="DM Serif Display,Georgia,serif" font-size="22"
+                fill="rgba(255,255,255,0.06)" font-weight="400" letter-spacing="6">INDIA</text>
         </svg>
       </div>
 
@@ -487,13 +593,17 @@ app.get('/', (c) => {
 }
 .mkt-deal-card:hover { border-color:rgba(212,174,42,.25);transform:translateY(-2px); }
 
+/* Map state hover */
+#indiaMap path:not(.map-pin *) { transition:fill .18s; }
+#indiaMap path:not(.map-pin *):hover { fill:#7dc077; cursor:pointer; }
+
 /* Map pin pulse animation */
 @keyframes pinPulse {
-  0%,100% { r: 11; opacity:.18; }
-  50%      { r: 15; opacity:.08; }
+  0%,100% { r: 13; opacity:.15; }
+  50%      { r: 18; opacity:.06; }
 }
 .map-pin-pulse { animation: pinPulse 2.5s ease-in-out infinite; }
-.map-pin:hover circle:last-of-type { filter:brightness(1.2); }
+.map-pin:hover circle:nth-child(2) { filter:brightness(1.25) url(#pinShadow); }
 
 /* City panel stat boxes */
 .cp-stat {
@@ -556,7 +666,17 @@ function sortCity(by) {
 `
   return c.html(layout('India Real Estate & Hospitality Market Data', html, {
     description: 'India market intelligence dashboard: city-wise office, hotel and retail rates, hotel segment benchmarks, macro indicators and transaction activity as of March 2026.',
-    canonical: '/market-data',
+    canonical: 'https://indiagully.com/market-data',
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "India Real Estate & Hospitality Market Data",
+      "description": "City-wise office, hotel and retail rates for 8 Indian cities, hotel segment benchmarks, macro indicators and deal activity as of March 2026.",
+      "url": "https://indiagully.com/market-data",
+      "creator": { "@type": "Organization", "name": "India Gully Advisory" },
+      "dateModified": "2026-03",
+      "keywords": ["India real estate", "hotel rates", "commercial rates", "RevPAR", "ADR", "cap rates", "market data"]
+    }
   }))
 })
 

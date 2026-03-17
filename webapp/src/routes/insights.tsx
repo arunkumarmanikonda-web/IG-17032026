@@ -8,17 +8,17 @@ const app = new Hono()
 // No generic stock / Unsplash images used.
 const CAT_IMAGES: Record<string, string> = {
   // Hotel Rajshree & Spa, Chandigarh — Real Estate / Commercial article header
-  'Real Estate':             '/static/mandates/chandigarh/chandigarh-img2.webp',
-  // WelcomHeritage Santa Roza, Kasauli — Heritage & Entertainment context
-  'Entertainment':           'https://www.welcomheritagehotels.in/wp-content/uploads/2024/09/santa-roza-overview.jpg',
+  'Real Estate':              '/static/mandates/chandigarh/chandigarh-img2.webp',
+  // WelcomHeritage Kasauli — Heritage & Entertainment context (local asset)
+  'Entertainment':            '/static/mandates/kasauli/kasauli-img1.jpg',
   // Hotel Rajshree interior — HORECA / F&B procurement context
-  'HORECA':                  '/static/mandates/chandigarh/chandigarh-img1.webp',
+  'HORECA':                   '/static/mandates/chandigarh/chandigarh-img1.webp',
   // Maple Resort Chail — mountain asset, suitable for Debt / Special Situations
   'Debt & Special Situations':'/static/mandates/chail/chail-slider1.jpg',
   // Maple Resort exterior — Retail / leasing context
-  'Retail':                  '/static/mandates/chail/chail-slider2.jpg',
-  // WelcomHeritage Santa Roza — Hospitality article header
-  'Hospitality':             'https://www.welcomheritagehotels.in/wp-content/uploads/2024/09/santa-roza-room.jpg',
+  'Retail':                   '/static/mandates/jaipur/jaipur-exterior-front.jpg',
+  // Jaipur heritage hotel — Hospitality article header (local asset)
+  'Hospitality':              '/static/mandates/kasauli/kasauli-cover.jpg',
 }
 
 // ── ARTICLES ─────────────────────────────────────────────────────────────────
@@ -1242,6 +1242,15 @@ app.get('/', (c) => {
 
   const content = `
 <style>
+/* ── Phase 40: Insights Search Bar ───────────────────────────────────── */
+.ins-search-wrap{position:relative;max-width:480px;margin-top:1.5rem;}
+.ins-search-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);color:#fff;padding:.72rem 1rem .72rem 2.8rem;font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .22s,background .22s;box-sizing:border-box;}
+.ins-search-input::placeholder{color:rgba(255,255,255,.35);}
+.ins-search-input:focus{border-color:rgba(184,150,12,.6);background:rgba(255,255,255,.1);}
+.ins-search-icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.4);font-size:.78rem;pointer-events:none;}
+.ins-search-clear{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:.75rem;padding:0;display:none;}
+.ins-search-results-count{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:.5rem;letter-spacing:.05em;}
+/* ── Insights Filter Row ───────────────────────────────────────────── */
 .ins-filter-row{display:flex;flex-wrap:wrap;gap:.5rem;}
 .ins-filter-btn{padding:.5rem 1.1rem;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);cursor:pointer;transition:all .25s;white-space:nowrap;backdrop-filter:blur(4px);}
 .ins-filter-btn:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8);}
@@ -1293,7 +1302,17 @@ app.get('/', (c) => {
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);">Insights &amp; Research</span>
       </div>
       <h1 class="h1" style="margin-bottom:1.5rem;">Thought Leadership<br><em style="color:var(--gold);font-style:italic;">from the Field</em></h1>
-      <p class="lead-lt" style="max-width:600px;margin-bottom:2.75rem;">Market research, sector analysis and operational insights from India Gully's advisory practice — drawn from active mandates across hospitality, real estate, retail and entertainment.</p>
+      <p class="lead-lt" style="max-width:600px;margin-bottom:2rem;">Market research, sector analysis and operational insights from India Gully's advisory practice — drawn from active mandates across hospitality, real estate, retail and entertainment.</p>
+      <!-- Phase 40: Inline Search Bar -->
+      <div class="ins-search-wrap" style="margin-bottom:1.75rem;">
+        <i class="fas fa-search ins-search-icon"></i>
+        <input type="search" id="insightsSearchInput" class="ins-search-input"
+               placeholder="Search articles, topics, sectors…"
+               oninput="insightsSearch(this.value)"
+               aria-label="Search articles">
+        <button class="ins-search-clear" id="insSearchClear" onclick="insightsClearSearch()" aria-label="Clear search"><i class="fas fa-times"></i></button>
+        <div class="ins-search-results-count" id="insSearchCount" style="display:none;"></div>
+      </div>
       <!-- Category Filter Buttons -->
       <div id="insightFilterRow" class="ins-filter-row" role="group" aria-label="Filter articles by category">
         ${ALL_CATS.map((cat: string, i: number) => `
@@ -1359,7 +1378,7 @@ app.get('/', (c) => {
     <!-- Articles Grid -->
     <div class="insight-grid" id="articleGrid">
       ${rest.map((a, i) => `
-      <article class="ins-card" data-cat="${a.category}" style="animation:fadeUp .5s ease ${i * 0.06}s both;">
+      <article class="ins-card" data-cat="${a.category}" data-tags="${(a.tags || []).join(' ').toLowerCase()}" style="animation:fadeUp .5s ease ${i * 0.06}s both;">
         <div class="ins-card__img">
           <img src="${CAT_IMAGES[a.category] || '/static/mandates/chandigarh/chandigarh-img2.webp'}"
                alt="${a.title}" loading="lazy">
@@ -1446,34 +1465,79 @@ app.get('/', (c) => {
 </div>
 
 <script>
-function filterInsights(cat) {
+/* ── Phase 40: Insights Search + Filter ──────────────────────────────── */
+var insCurrentCat = 'All';
+var insCurrentQuery = '';
+
+function insightsApplyFilters() {
+  var q = insCurrentQuery.trim().toLowerCase();
+  var cat = insCurrentCat;
   var cards = document.querySelectorAll('.ins-card');
   var featured = document.getElementById('featuredArticle');
-  var btns = document.querySelectorAll('.ins-filter-btn');
-  var grid = document.getElementById('articleGrid');
+  var empty = document.getElementById('insightsEmpty');
+  var countEl = document.getElementById('insSearchCount');
+  var clearBtn = document.getElementById('insSearchClear');
 
+  // Toggle clear button
+  if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+  // Featured article
+  if (featured) {
+    var featCat = featured.dataset.cat || '';
+    var featTitle = (featured.querySelector('.feat-title') || {}).textContent || '';
+    var featExcerpt = (featured.querySelector('.feat-excerpt') || {}).textContent || '';
+    var featMatch = (cat === 'All' || featCat === cat) &&
+                    (!q || featTitle.toLowerCase().includes(q) || featExcerpt.toLowerCase().includes(q) || featCat.toLowerCase().includes(q));
+    featured.style.display = featMatch ? '' : 'none';
+  }
+
+  var visibleCount = 0;
+  cards.forEach(function(card) {
+    var cardCat = card.dataset.cat || '';
+    var title = (card.querySelector('.ins-card__title') || {}).textContent || '';
+    var excerpt = (card.querySelector('.ins-card__excerpt') || {}).textContent || '';
+    var tags = (card.dataset.tags || '').toLowerCase();
+    var catMatch = (cat === 'All' || cardCat === cat);
+    var qMatch = !q || title.toLowerCase().includes(q) || excerpt.toLowerCase().includes(q) || cardCat.toLowerCase().includes(q) || tags.includes(q);
+    var show = catMatch && qMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+
+  if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+
+  // Update count display
+  if (countEl) {
+    if (q) {
+      countEl.style.display = 'block';
+      countEl.textContent = visibleCount + ' article' + (visibleCount !== 1 ? 's' : '') + ' found';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+}
+
+function filterInsights(cat) {
+  insCurrentCat = cat;
+  var btns = document.querySelectorAll('.ins-filter-btn');
   btns.forEach(function(b) {
     var isActive = b.dataset.cat === cat;
     b.classList.toggle('active', isActive);
     b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
   });
+  insightsApplyFilters();
+}
 
-  // Featured article
-  if (featured) {
-    var showFeat = (cat === 'All' || featured.dataset.cat === cat);
-    featured.style.display = showFeat ? '' : 'none';
-  }
+function insightsSearch(val) {
+  insCurrentQuery = val || '';
+  insightsApplyFilters();
+}
 
-  var visibleCount = 0;
-  cards.forEach(function(card) {
-    var match = cat === 'All' || card.dataset.cat === cat;
-    card.style.display = match ? '' : 'none';
-    if (match) visibleCount++;
-  });
-
-  // Show empty state if no articles match
-  var empty = document.getElementById('insightsEmpty');
-  if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+function insightsClearSearch() {
+  insCurrentQuery = '';
+  var inp = document.getElementById('insightsSearchInput');
+  if (inp) { inp.value = ''; inp.focus(); }
+  insightsApplyFilters();
 }
 </script>
 `

@@ -363,7 +363,67 @@ app.get('/', (c) => {
   </div>
 </div>
 
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes dash-draw { from { stroke-dashoffset: 340; } to { stroke-dashoffset: 0; } }
+/* Phase 42: Pipeline enhancements */
+.pip-animate-in { animation: fadeUp .6s ease both; }
+.pip-donut-wrap svg circle { transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+.pip-progress-bar { height: 6px; background: rgba(0,0,0,.08); overflow: hidden; }
+.pip-progress-fill { height: 100%; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
+.pip-activity-item { display: flex; gap: 1rem; padding: .875rem 0; border-bottom: 1px solid var(--border); }
+.pip-activity-item:last-child { border-bottom: none; }
+.pip-activity-icon { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(184,150,12,.25); background: rgba(184,150,12,.06); }
+.pip-trend-up { color: #16a34a; }
+.pip-trend-dn { color: #dc2626; }
+</style>
+<script>
+/* ── Phase 42: Animated SVG Donut Reveal ─────────────────────────────── */
+(function(){
+  function animatePipeline() {
+    /* Animate KPI count-up */
+    document.querySelectorAll('.pip-kpi-n').forEach(function(el) {
+      var raw = el.textContent;
+      var num = parseFloat(raw.replace(/[^0-9.]/g, ''));
+      if (!num || num < 5) return;
+      var prefix = raw.match(/^[₹$€£]/) ? raw.match(/^[₹$€£]/)[0] : '';
+      var suffix = raw.replace(/^[₹$€£]?[\d,.]+/, '');
+      var dur = 1400, start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        var cur = Math.round(num * ease);
+        el.textContent = prefix + cur + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = raw;
+      }
+      requestAnimationFrame(step);
+    });
+
+    /* Animate sector progress bars */
+    setTimeout(function() {
+      document.querySelectorAll('.pip-progress-fill').forEach(function(bar) {
+        var pct = bar.dataset.pct || '0';
+        bar.style.width = pct + '%';
+      });
+    }, 300);
+  }
+
+  /* Use IntersectionObserver to trigger on scroll */
+  var kpiGrid = document.querySelector('.pip-kpi-grid');
+  if (kpiGrid && 'IntersectionObserver' in window) {
+    var ob = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { animatePipeline(); ob.disconnect(); }
+      });
+    }, { threshold: 0.2 });
+    ob.observe(kpiGrid);
+  } else {
+    animatePipeline();
+  }
+})();
+</script>
 `
 
   return c.html(layout('Investor Pipeline Dashboard — India Gully', content, {
