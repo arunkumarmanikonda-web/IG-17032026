@@ -79,6 +79,19 @@ app.get('/', (c) => {
 <div class="sec-pd" style="padding-top:4.5rem;">
   <div class="wrap">
 
+    <!-- Phase 41: Mandate Search Bar -->
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div style="position:relative;flex:1;max-width:480px;">
+        <i class="fas fa-search" style="position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--ink-muted);font-size:.75rem;pointer-events:none;"></i>
+        <input type="search" id="mandateSearch" placeholder="Search by city, sector, size…"
+               oninput="mandateSearchFilter(this.value)"
+               style="width:100%;padding:.65rem 1rem .65rem 2.75rem;border:1px solid var(--border);background:var(--parch-dk);color:var(--ink);font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;transition:border-color .2s;"
+               onfocus="this.style.borderColor='var(--gold)'"
+               onblur="this.style.borderColor='var(--border)'">
+      </div>
+      <span id="searchMatchCount" style="font-size:.65rem;color:var(--ink-muted);display:none;"></span>
+    </div>
+
     <!-- Sort + Results bar -->
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
       <div id="resultsCount" style="font-size:.72rem;color:var(--ink-muted);"><span id="visibleCount">${LISTINGS.length}</span> mandates shown</div>
@@ -536,6 +549,23 @@ app.get('/', (c) => {
 <script>
 var _currentSector = 'All Mandates';
 var _showingOnlySaved = false;
+var _searchQuery = '';
+
+/* ── Phase 41: Mandate Search Filter ────────────────────────────────── */
+function mandateSearchFilter(val) {
+  _searchQuery = (val || '').trim().toLowerCase();
+  var countEl = document.getElementById('searchMatchCount');
+  applyFilters();
+  var visible = document.querySelectorAll('.mandate-card:not([style*="none"])').length;
+  if (countEl) {
+    if (_searchQuery) {
+      countEl.style.display = 'inline';
+      countEl.textContent = visible + ' mandate' + (visible !== 1 ? 's' : '') + ' match';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+}
 
 /* ── TRACK RECORD TABS ──────────────────────────────────────────────── */
 function igTrackTab(idx) {
@@ -615,12 +645,31 @@ function igToggleSaved(){
 
 function applyFilters(){
   var saved = igGetSaved();
+  var q = _searchQuery || '';
   document.querySelectorAll('.mandate-card').forEach(function(card){
     var sectorMatch = (_currentSector === 'All Mandates' || card.dataset.sector === _currentSector);
     var savedMatch  = !_showingOnlySaved || saved.indexOf(card.getAttribute('href')&&card.getAttribute('href').split('/').pop()) !== -1
       || saved.indexOf(card.querySelector('.ig-save-btn')&&card.querySelector('.ig-save-btn').getAttribute('data-id')) !== -1;
-    card.style.display = (sectorMatch && savedMatch) ? 'block' : 'none';
+    // Search match: check title, sector, location text
+    var searchMatch = true;
+    if (q) {
+      var titleEl = card.querySelector('.mandate-card-title, .pip-mandate-card-title, h3, h2');
+      var titleText = titleEl ? titleEl.textContent.toLowerCase() : '';
+      var sectorText = (card.dataset.sector || '').toLowerCase();
+      var locEl = card.querySelector('.mandate-card-loc, [data-location]');
+      var locText = locEl ? locEl.textContent.toLowerCase() : '';
+      var cardText = card.textContent.toLowerCase();
+      searchMatch = titleText.includes(q) || sectorText.includes(q) || locText.includes(q) || cardText.includes(q);
+    }
+    card.style.display = (sectorMatch && savedMatch && searchMatch) ? 'block' : 'none';
   });
+  // Update count
+  var vc = document.getElementById('visibleCount');
+  if (vc) {
+    var vis = document.querySelectorAll('.mandate-card[style*="block"]').length
+           || document.querySelectorAll('.mandate-card:not([style*="none"])').length;
+    vc.textContent = String(vis);
+  }
 }
 
 /* initialise badge on page load */
@@ -666,6 +715,11 @@ function sortMandates(order) {
 }
 
 function resetFilters() {
+  _searchQuery = '';
+  var searchInput = document.getElementById('mandateSearch');
+  if (searchInput) searchInput.value = '';
+  var countEl = document.getElementById('searchMatchCount');
+  if (countEl) countEl.style.display = 'none';
   document.getElementById('sortSelect').value = 'default';
   sortMandates('default');
   filterMandates('All Mandates');

@@ -46,6 +46,8 @@ ${opts?.canonical ? `<meta property="og:url" content="${opts.canonical}">` : ''}
 ${opts?.canonical ? `<link rel="canonical" href="${opts.canonical}">` : ''}
 <!-- FAVICON: hologram asset — locked, no AI, no optimisation, lossless only -->
 ${opts?.jsonLd ? `<script type="application/ld+json">${typeof opts.jsonLd === 'string' ? opts.jsonLd : JSON.stringify(opts.jsonLd)}</script>` : ''}
+<!-- Phase 42 — Base Organization JSON-LD on every page -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"India Gully Advisory","alternateName":"India Gully","url":"https://indiagully.com","logo":"https://indiagully.com/assets/logo-primary.png","description":"India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt and HORECA Solutions.","address":{"@type":"PostalAddress","addressCountry":"IN","addressLocality":"Gurugram"},"contactPoint":{"@type":"ContactPoint","contactType":"customer service","email":"advisory@indiagully.com"},"sameAs":["https://india-gully.pages.dev"]}</script>
 <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon-64.png">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
@@ -67,28 +69,6 @@ ${opts?.heroPreload ? `<link rel="preload" as="image" href="${opts.heroPreload}"
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css"></noscript>
-<!-- Tailwind CDN \u2014 defer so it does not block first paint; config script waits for load event -->
-<script>
-/* Tailwind config declared before CDN loads — tw CDN reads this on init */
-window.tailwind = window.tailwind || {};
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        gold:{ DEFAULT:'#B8960C', light:'#D4AE2A', dark:'#8A6E08', pale:'#FAF6E8', muted:'#F0E8C8' },
-        ink: { DEFAULT:'#111111', mid:'#1E1E1E', soft:'#444444', muted:'#6B6B6B', faint:'#A0A0A0' },
-        parchment:{ DEFAULT:'#FAF8F3', dark:'#F2EDE3', border:'#E4DECE' }
-      },
-      fontFamily: {
-        sans:  ['"DM Sans"','system-ui','sans-serif'],
-        serif: ['"DM Serif Display"','Georgia','serif'],
-      }
-    }
-  }
-}
-</script>
-<!-- Load Tailwind CDN async — runs after config object is set above -->
-<script src="https://cdn.tailwindcss.com" defer></script>
 <!-- DARK MODE: early init — defaults to LIGHT; only switches to dark if user explicitly enabled it -->
 <script>
 (function(){
@@ -263,7 +243,7 @@ html{scroll-behavior:smooth}
 body{font-family:"DM Sans",system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-button{font-family:inherit;}
+button{font-family:inherit;background:none;border:none;cursor:pointer;padding:0;}
 
 /* ── SELECTION ─────────────────────────────── */
 ::selection{background:rgba(184,150,12,.15);color:var(--ink)}
@@ -1608,7 +1588,7 @@ const NAV = `
       <a href="/about"    class="n-lk">About</a>
 
       <!-- Advisory & Services dropdown -->
-      <div class="relative n-par" style="position:relative;">
+      <div class="n-par" style="position:relative;">
         <button class="n-lk" style="display:flex;align-items:center;gap:.35rem;">Advisory <i class="fas fa-chevron-down" style="font-size:.48rem;opacity:.4;"></i></button>
         <div class="n-drop" style="min-width:16rem;">
           <div style="padding:.5rem 1.2rem .25rem;font-size:.56rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.28);">Services</div>
@@ -1630,7 +1610,7 @@ const NAV = `
       <a href="/insights" class="n-lk">Insights</a>
 
       <!-- More dropdown -->
-      <div class="relative n-par" style="position:relative;">
+      <div class="n-par" style="position:relative;">
         <button class="n-lk" style="display:flex;align-items:center;gap:.35rem;">More <i class="fas fa-chevron-down" style="font-size:.48rem;opacity:.4;"></i></button>
         <div class="n-drop" style="right:0;left:auto;min-width:12rem;">
           <a href="/works"        class="n-di"><i class="fas fa-trophy"       style="width:16px;font-size:.72rem;color:rgba(184,150,12,.6);"></i>Our Work</a>
@@ -1661,7 +1641,7 @@ const NAV = `
         <i id="dark-icon" class="fas fa-moon"></i>
       </button>
       <!-- Portals dropdown -->
-      <div class="relative n-par" style="position:relative;">
+      <div class="n-par" style="position:relative;">
         <button class="n-lk" style="display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);padding:.38rem .8rem;">
           <i class="fas fa-lock" style="font-size:.5rem;color:var(--gold);"></i>Portals
           <i class="fas fa-chevron-down" style="font-size:.45rem;opacity:.4;"></i>
@@ -1881,7 +1861,19 @@ const SCRIPTS = (_nonce?: string) => `
     a.addEventListener('click', function(){ mm.style.display='none'; mb && mb.classList.remove('open'); });
   });}
 
-  /* BACK-TO-TOP */
+  /* ACTIVE NAV LINK — Phase 40: mark current page nav item */
+  (function(){
+    var path = window.location.pathname.replace(/[/]$/, '') || '/';
+    var links = document.querySelectorAll('#nav-desktop-links a.n-lk, #mobileMenu a');
+    links.forEach(function(a){
+      var href = a.getAttribute('href');
+      if(!href) return;
+      var h = href.replace(/[/]$/, '') || '/';
+      if(h === path || (h !== '/' && path.startsWith(h))){
+        a.classList.add('current');
+      }
+    });
+  })();
   var btt = document.getElementById('btt');
   if(btt){
     window.addEventListener('scroll', function(){

@@ -3,6 +3,48 @@
 **Celebrating Desiness** | Multi-Vertical Advisory Firm  
 Vivacious Entertainment and Hospitality Pvt. Ltd.
 
+## 🚀 Phase 40–43 — Search UX, Listings Filter, Pipeline Animation & Home Velocity Section (v41–v44)
+
+**Version: v41–v44 | Build: 4.1 MB | Deploy: Pending**
+**Date: March 2026**
+
+### ✅ Phase 40 — Insights Full-Text Search
+
+| Area | What Changed |
+|------|-------------|
+| **Insights Search Bar** | Inline search input in hero — searches article title, excerpt, category and tags in real-time |
+| **JS Fix** | Fixed `Unexpected token 'var'` caused by `replace(//$/, '')` double-slash comment bug — replaced with `replace(/[/]$/, '')` |
+| **insightsSearch()** | New JS function for real-time filtering; `insightsClearSearch()` for reset; result count badge |
+| **Combined Filter+Search** | `insightsApplyFilters()` merges category chip filter with keyword query simultaneously |
+
+### ✅ Phase 41 — Enhanced Listings Search
+
+| Area | What Changed |
+|------|-------------|
+| **Mandate Search Bar** | New search input above the sort bar — filters by title, sector, location in real-time |
+| **mandateSearchFilter()** | JS function integrates with existing `applyFilters()` logic; `_searchQuery` state variable |
+| **resetFilters()** | Updated to also clear the search input and hide the match-count badge |
+| **Match Count Badge** | Inline `N mandates match` counter appears while user is actively searching |
+
+### ✅ Phase 42 — Pipeline Dashboard Animation
+
+| Area | What Changed |
+|------|-------------|
+| **KPI Count-Up** | IntersectionObserver triggers animated number count-up when KPI grid enters viewport |
+| **Sector Progress Bars** | `.pip-progress-fill` bars animate width from 0% to target via CSS transition |
+| **Pulse Keyframe** | Retained existing pulse; added `dash-draw` keyframe for future SVG stroke animation |
+| **Smooth Easing** | Count-up uses cubic ease-out (`1 - (1-p)^3`) for natural deceleration |
+
+### ✅ Phase 43 — Home Page Sector Velocity Section
+
+| Area | What Changed |
+|------|-------------|
+| **Sector Velocity Block** | New dark section between Brand Partners and Recent Insights — 2-column layout |
+| **Live Deal Activity Feed** | Left column: 5 active mandates with status badges (Active, Negotiation, Feasibility, Listed) |
+| **Animated Sector Bars** | Right column: 5 sector distribution bars animate width on scroll via IntersectionObserver |
+| **Advisory Mix Stats** | Shows ₹1,165 Cr+ total, 8 live mandates, Q1 2026 data period |
+| **Reveal Animations** | `.reveal` class on each deal row for staggered scroll-in |
+
 ---
 
 ## 🌐 Live URLs

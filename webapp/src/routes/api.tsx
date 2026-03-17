@@ -2442,6 +2442,30 @@ app.post('/enquiry', async (c) => {
       }
     } catch (_) { /* KV not available in dev — silent */ }
 
+    // ── Phase 41: Persist to D1 CRM database ───────────────────────────────
+    try {
+      if (env && env.DB) {
+        await env.DB.prepare(
+          `INSERT OR IGNORE INTO ig_enquiries
+           (ref_number, enquiry_type, name, email, phone, organisation, message, vertical, scale, status, source, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(
+          ref,
+          type,
+          name,
+          email,
+          phone || '',
+          org || '',
+          (message || '') + (mandateTitle ? ` [Mandate: ${mandateTitle}]` : '') + (ticketSize ? ` [Ticket: ${ticketSize}]` : ''),
+          mandate || '',
+          ticketSize || investorType || '',
+          'New',
+          'website',
+          ts
+        ).run()
+      }
+    } catch (_) { /* D1 not available in dev — silent */ }
+
     // ── SEND NOTIFICATION EMAILS (fire-and-forget) ─────────────────────────
     // 1. Notify listing owner / advisory team
     if (type === 'eoi' || type === 'nda_acceptance') {
@@ -2631,6 +2655,24 @@ app.post('/horeca-enquiry', async (c) => {
         }), { expirationTtl: 60 * 60 * 24 * 365 })
       }
     } catch (_) { /* KV not available in dev — silent */ }
+
+    // Phase 41: persist HORECA enquiry to D1 CRM
+    try {
+      if (env && env.DB) {
+        await env.DB.prepare(
+          `INSERT OR IGNORE INTO ig_enquiries
+           (ref_number, enquiry_type, name, email, phone, organisation, message, vertical, scale, status, source, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(
+          ref, 'horeca', name, email, phone || '',
+          property || '',
+          (message || '') + (categories ? ` [Categories: ${categories}]` : '') + (budget ? ` [Budget: ${budget}]` : ''),
+          location || '',
+          budget || '',
+          'New', 'horeca_form', ts
+        ).run()
+      }
+    } catch (_) { /* D1 not available in dev — silent */ }
 
     // ── NOTIFICATION EMAILS (fire-and-forget) ──────────────────────────────
     // HORECA enquiries ALWAYS go to Pavan Manikonda (unless admin changes)

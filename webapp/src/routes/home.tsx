@@ -1169,6 +1169,106 @@ function filterRB(cat){
 }
 </script>
 
+<!-- ══ Phase 43: SECTOR VELOCITY / DEAL ACTIVITY ══════════════════════ -->
+<div style="background:linear-gradient(135deg,#04040a 0%,#080810 60%,#0a0a14 100%);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);padding:4rem 0;overflow:hidden;position:relative;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;"></div>
+  <div class="wrap" style="position:relative;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;" class="mob-stack">
+
+      <!-- LEFT: Live Activity feed -->
+      <div>
+        <p style="font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;">Live Deal Activity</p>
+        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.95rem;color:#fff;line-height:1.2;margin-bottom:2rem;">Q1 2026<br><em style="color:var(--gold);font-style:italic;">Mandate Pulse</em></h2>
+        <div>
+          ${[
+            { icon:'rocket',       color:'#16a34a', badge:'Active',      text:'Prism Tower, Gurugram',           sub:'₹400 Cr · Mixed-Use · Due Diligence Stage' },
+            { icon:'handshake',    color:'#B8960C', badge:'Negotiation', text:'Belcibo Multi-Brand Platform',   sub:'₹120 Cr · F&B Franchise · Term Sheet Review' },
+            { icon:'hotel',        color:'#7C3AED', badge:'Feasibility', text:'Boutique Hotel Asset, Kasauli',  sub:'₹85 Cr · Heritage Hospitality · Site Approved' },
+            { icon:'store',        color:'#0369a1', badge:'Listed',      text:'Jaipur Heritage Estate',         sub:'₹575 Cr · Heritage Hospitality · IM Ready' },
+            { icon:'chart-line',   color:'#B8960C', badge:'Active',      text:'Sawasdee JLG Galleria, Noida',  sub:'HORECA Retail · Anchor Leasing · 12,000 sqft' },
+          ].map((item, ii) => `
+          <div class="reveal" style="display:flex;gap:1rem;padding:.875rem 0;border-bottom:1px solid rgba(255,255,255,.06);transition-delay:${ii*0.08}s;" class="mob-stack">
+            <div style="width:36px;height:36px;flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-${item.icon}" style="color:${item.color};font-size:.72rem;"></i>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem;">
+                <span style="font-size:.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.text}</span>
+                <span style="font-size:.52rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${item.color};background:rgba(255,255,255,.05);padding:.12rem .45rem;flex-shrink:0;">${item.badge}</span>
+              </div>
+              <div style="font-size:.68rem;color:rgba(255,255,255,.38);">${item.sub}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <a href="/pipeline" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1.5rem;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;transition:gap .2s;" onmouseover="this.style.gap='.75rem'" onmouseout="this.style.gap='.5rem'">
+          View Full Pipeline <i class="fas fa-arrow-right" style="font-size:.6rem;"></i>
+        </a>
+      </div>
+
+      <!-- RIGHT: Sector breakdown with animated bars -->
+      <div>
+        <p style="font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;">Advisory Mix</p>
+        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.95rem;color:#fff;line-height:1.2;margin-bottom:2rem;">Sector<br><em style="color:var(--gold);font-style:italic;">Distribution</em></h2>
+        <div id="sectorBarsHome" style="display:flex;flex-direction:column;gap:1.25rem;">
+          ${[
+            { label:'Real Estate & Commercial', pct:45, val:'₹524 Cr',  color:'#1A3A6B' },
+            { label:'Hospitality & Hotels',     pct:28, val:'₹325 Cr',  color:'#065F46' },
+            { label:'Retail & Leasing',         pct:14, val:'₹163 Cr',  color:'#7C3AED' },
+            { label:'HORECA & F&B',             pct: 9, val:'₹105 Cr',  color:'#B8960C' },
+            { label:'Debt & Special',            pct: 4, val:'₹48 Cr',   color:'#b91c1c' },
+          ].map((s, si) => `
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
+              <span style="font-size:.72rem;font-weight:600;color:rgba(255,255,255,.75);">${s.label}</span>
+              <span style="font-size:.68rem;color:var(--gold);font-weight:700;">${s.val} <span style="color:rgba(255,255,255,.3);font-weight:400;">(${s.pct}%)</span></span>
+            </div>
+            <div style="height:5px;background:rgba(255,255,255,.07);overflow:hidden;">
+              <div class="home-sector-bar" data-pct="${s.pct}" style="height:100%;width:0%;background:${s.color};transition:width 1.3s cubic-bezier(.4,0,.2,1);transition-delay:${si*0.12}s;"></div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);">
+          <div style="display:flex;gap:2.5rem;flex-wrap:wrap;">
+            ${[
+              { n:'₹1,165 Cr+', l:'Total Pipeline' },
+              { n:'8',           l:'Live Mandates'  },
+              { n:'Q1 2026',     l:'Data Period'    },
+            ].map(s => `
+            <div>
+              <div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.45rem;color:var(--gold);line-height:1;margin-bottom:.2rem;">${s.n}</div>
+              <div style="font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);">${s.l}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script>
+  /* Phase 43: Animate sector bars on scroll */
+  (function(){
+    var bars = document.querySelectorAll('.home-sector-bar');
+    if (!bars.length) return;
+    function animateBars() {
+      bars.forEach(function(bar) {
+        bar.style.width = (bar.dataset.pct || '0') + '%';
+      });
+    }
+    var section = document.getElementById('sectorBarsHome');
+    if (section && 'IntersectionObserver' in window) {
+      var ob = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { animateBars(); ob.disconnect(); }
+        });
+      }, { threshold: 0.25 });
+      ob.observe(section);
+    } else {
+      animateBars();
+    }
+  })();
+  </script>
+</div>
+
 <!-- ══ RECENT INSIGHTS ═════════════════════════════════════════════════ -->
 <div class="sec-wh" style="padding-top:5.5rem;padding-bottom:5.5rem;border-top:1px solid var(--border);">
   <div class="wrap">
@@ -1408,8 +1508,8 @@ function filterRB(cat){
 `
   return c.html(layout('Home', content, {
     description: "India Gully. Celebrating Desiness. India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt & HORECA Solutions. ₹1,165 Cr+ active mandate pipeline.",
-    canonical: 'https://india-gully.pages.dev/',
-    ogImage: 'https://india-gully.pages.dev/static/og.jpg',
+    canonical: 'https://indiagully.com/',
+    ogImage: 'https://indiagully.com/static/og.jpg',
     heroPreload: '/static/mandates/chail/chail-img1.jpg',
     jsonLd: JSON.stringify({
       "@context": "https://schema.org",

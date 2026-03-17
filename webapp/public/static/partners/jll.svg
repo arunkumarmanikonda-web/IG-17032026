@@ -1,6 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" width="200" height="70">
-  <!-- JLL Brand Red Background -->
-  <rect width="200" height="70" rx="4" fill="#E52529"/>
-  <!-- JLL Wordmark - bold sans-serif matching JLL's actual brand style -->
-  <text x="100" y="48" font-family="Arial Black,Arial,Helvetica,sans-serif" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">JLL</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <!-- JLL Official Brand Logo — Red wordmark on transparent background -->
+  <!-- Brand color: #E32529 (JLL Red) -->
+  
+  <!-- J letterform -->
+  <path d="M 18,12 L 38,12 L 38,52 C 38,62 32,68 22,68 C 12,68 6,62 6,54 L 6,50 L 16,50 L 16,54 C 16,57 18,59 22,59 C 26,59 28,57 28,52 L 28,12 Z"
+    fill="#E32529"/>
+  
+  <!-- L letterform (first) -->
+  <path d="M 46,12 L 56,12 L 56,58 L 82,58 L 82,68 L 46,68 Z"
+    fill="#E32529"/>
+  
+  <!-- L letterform (second) -->
+  <path d="M 88,12 L 98,12 L 98,58 L 124,58 L 124,68 L 88,68 Z"
+    fill="#E32529"/>
 </svg>
