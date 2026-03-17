@@ -642,6 +642,7 @@ export const RETAIL_BRANDS: Array<{ name: string; svg: string; color: string; ca
 export const ADVISORY_PARTNERS = [
   { name: 'Ernst & Young',   abbr: 'EY',        logo: '/static/partners/ey.jpg',              color: '#FFE600', textColor: '#2E2E2E', sub: 'Transaction Advisory & Assurance',  logoBg: '#fff' },
   { name: 'CBRE',            abbr: 'CBRE',       logo: '/static/partners/cbre.png',            color: '#006A4D', textColor: '#fff',    sub: 'Real Estate & Capital Markets',     logoBg: '#fff' },
+  { name: 'JLL',             abbr: 'JLL',        logo: '/static/partners/jll.svg',             color: '#E52529', textColor: '#fff',    sub: 'Co-listed Mandates & Leasing',      logoBg: '#E52529' },
   { name: 'ANAROCK',         abbr: 'ANAROCK',    logo: '/static/partners/anarock.jpg',         color: '#E4003A', textColor: '#fff',    sub: 'Property Consultants',              logoBg: '#fff' },
   { name: 'Pipara & Co LLP', abbr: 'PIPARA',     logo: '/static/partners/pipara-co.png',       color: '#1A5276', textColor: '#fff',    sub: 'Chartered Accountants',             logoBg: '#fff' },
   { name: 'Resurgent India', abbr: 'RESURGENT',  logo: '/static/partners/resurgent-india.png', color: '#F4A900', textColor: '#1e3a5f', sub: 'Investment Banking',                logoBg: '#fff' },

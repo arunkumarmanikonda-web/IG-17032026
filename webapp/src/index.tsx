@@ -53,12 +53,14 @@ app.use('*', async (c, next) => {
   c.header('Content-Security-Policy',
     `default-src 'self'; ` +
     `script-src 'self' 'unsafe-inline' ` +
-      `https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ` +
+      `https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com ` +
+      `https://static.cloudflareinsights.com; ` +
     `style-src 'self' 'unsafe-inline' ` +
       `https://fonts.googleapis.com https://cdn.jsdelivr.net; ` +
     `font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; ` +
     `img-src 'self' data: https: https://api.qrserver.com; ` +
-    `connect-src 'self' https://india-gully.pages.dev; ` +
+    `connect-src 'self' https://india-gully.pages.dev https://indiagully.com ` +
+      `https://cloudflareinsights.com; ` +
     `frame-ancestors 'none'; base-uri 'self'; form-action 'self';`
   )
 })

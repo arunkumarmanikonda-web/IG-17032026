@@ -1235,8 +1235,8 @@ function filterRB(cat){
           <p style="font-size:.82rem;line-height:1.8;color:var(--ink-soft);">Joint advisory with Ernst &amp; Young on the <strong style="color:var(--ink);">₹1,350+ Cr Entertainment City Limited divestment</strong> — a 100% shareholder-consented divestment, one of India's most significant entertainment real estate transactions.</p>
         </div>
       </div>
-      <div class="partners-grid">
-        ${ADVISORY_PARTNERS.slice(0,4).map((p: any) => `
+      <div class="partners-grid" style="grid-template-columns:repeat(3,1fr);">
+        ${ADVISORY_PARTNERS.slice(0,3).map((p: any) => `
         <div class="partner-card reveal">
           <div style="height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
             <img src="${p.logo}" alt="${p.name}" style="max-width:140px;max-height:42px;width:auto;height:auto;object-fit:contain;"
@@ -1251,11 +1251,11 @@ function filterRB(cat){
         </div>`).join('')}
       </div>
     </div>
-    <!-- 5th partner centred -->
-    ${ADVISORY_PARTNERS.slice(4).length > 0 ? `
-    <div style="display:flex;justify-content:center;margin-top:1.75rem;">
-      ${ADVISORY_PARTNERS.slice(4).map((p: any) => `
-      <div class="partner-card" style="padding:1.75rem 3rem;">
+    <!-- Row 2: remaining partners centred -->
+    ${ADVISORY_PARTNERS.slice(3).length > 0 ? `
+    <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1.75rem;flex-wrap:wrap;">
+      ${ADVISORY_PARTNERS.slice(3).map((p: any) => `
+      <div class="partner-card" style="padding:1.75rem 2.5rem;flex:0 0 auto;min-width:160px;">
         <div style="height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
           <img src="${p.logo}" alt="${p.name}" style="max-width:150px;max-height:46px;width:auto;height:auto;object-fit:contain;"
                loading="lazy" decoding="async"

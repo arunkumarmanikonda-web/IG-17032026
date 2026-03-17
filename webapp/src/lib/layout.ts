@@ -1797,12 +1797,27 @@ const FOOTER = `
 const SCRIPTS = (_nonce?: string) => `
 <script>
 (function(){
-  /* NAV SCROLL */
+  /* NAV SCROLL — detect dark-hero pages vs light pages */
   var nav = document.getElementById('mainNav');
+  /* Check if the first section uses a dark background (hero-dk class or bg-dk) */
+  var firstSection = document.querySelector('main section, main > div');
+  var hasDarkHero = firstSection && (
+    firstSection.classList.contains('hero-dk') ||
+    firstSection.classList.contains('hero-dk-grid') ||
+    firstSection.getAttribute('style')?.includes('var(--bg-dk)') ||
+    firstSection.getAttribute('style')?.includes('var(--ink)') ||
+    firstSection.getAttribute('style')?.includes('background:#0') ||
+    firstSection.getAttribute('style')?.includes('background:var(--bg-dk')
+  );
   function updNav(){
     if(!nav) return;
-    if(window.scrollY > 60){ nav.classList.remove('nav-clear'); nav.classList.add('nav-solid'); }
-    else                   { nav.classList.remove('nav-solid'); nav.classList.add('nav-clear'); }
+    if(window.scrollY > 60 || !hasDarkHero){
+      nav.classList.remove('nav-clear');
+      nav.classList.add('nav-solid');
+    } else {
+      nav.classList.remove('nav-solid');
+      nav.classList.add('nav-clear');
+    }
   }
   updNav();
   window.addEventListener('scroll', updNav, {passive:true});

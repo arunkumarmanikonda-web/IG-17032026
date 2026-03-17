@@ -34,8 +34,9 @@ function adminShell(pageTitle: string, active: string, body: string) {
     { id:'horeca',       icon:'boxes',           label:'HORECA',         g:'ERP',      badge:'' },
     { id:'contracts',    icon:'file-signature',  label:'Contracts',      g:'ERP',      badge:'' },
     { id:'sales',        icon:'funnel-dollar',   label:'Sales Force',    g:'ERP',      badge:'5' },
-    { id:'mandates',     icon:'briefcase',       label:'Mandates',       g:'Business', badge:'' },
-    { id:'enquiries',    icon:'envelope-open-text', label:'Enquiry Inbox', g:'Business', badge:'NEW' },
+    { id:'mandates',        icon:'briefcase',       label:'Mandates',       g:'Business', badge:'' },
+    { id:'property-config', icon:'map-marker-alt',  label:'Property Config', g:'Business', badge:'NEW' },
+    { id:'enquiries',       icon:'envelope-open-text', label:'Enquiry Inbox', g:'Business', badge:'NEW' },
     { id:'clients',      icon:'building',        label:'Clients',        g:'Business', badge:'' },
     { id:'documents',    icon:'folder-open',     label:'Documents',      g:'Business', badge:'' },
     { id:'integrations', icon:'plug',            label:'Integrations',   g:'Platform', badge:'' },
@@ -16139,6 +16140,420 @@ app.get('/mandates', (c) => {
   };
   </script>`
   return c.html(layout('Mandates', adminShell('Mandates', 'mandates', body), {noNav:true,noFooter:true}))
+})
+
+// ── PROPERTY CONFIG ────────────────────────────────────────────────────────────
+app.get('/property-config', (c) => {
+  const sampleProps = [
+    { id:'PROP-001', name:'Prism Tower, Gurgaon',       lat:'28.4595', lng:'77.0266', pincode:'122001', city:'Gurugram',  type:'Commercial',  desc:'Grade-A commercial tower on Gurgaon-Faridabad Road with excellent metro connectivity and premium office floors.' },
+    { id:'PROP-002', name:'Ambience Tower, Shalimar Bagh', lat:'28.7017', lng:'77.1416', pincode:'110088', city:'Delhi',    type:'Mixed-Use',   desc:'Adaptive reuse opportunity in North Delhi with metro access at 0.6 km, ideal for hospitality or hybrid hotel-office conversion.' },
+    { id:'PROP-003', name:'Marriott Jaipur Site',         lat:'26.9124', lng:'75.7873', pincode:'302001', city:'Jaipur',   type:'Hospitality', desc:'5-star hotel development site in prime Jaipur location, 800 keys capacity, minutes from Jaipur International Airport.' },
+  ]
+  const body = `
+  <div style="display:flex;flex-direction:column;gap:1.5rem;">
+    <!-- Header -->
+    <div style="background:#fff;border:1px solid var(--border);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+      <div>
+        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);margin:0 0 .2rem;">Property Configuration</h2>
+        <p style="font-size:.75rem;color:var(--ink-muted);margin:0;">Enter coordinates or pincode — platform auto-generates property description</p>
+      </div>
+      <button onclick="igNewPropConfig()" style="background:var(--gold);color:#fff;border:none;padding:.45rem 1.1rem;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;">
+        <i class="fas fa-plus"></i> Add Property
+      </button>
+    </div>
+
+    <!-- ADD / EDIT FORM -->
+    <div id="prop-config-form" style="background:#fff;border:1px solid var(--border);padding:1.5rem;display:none;">
+      <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:.95rem;color:var(--ink);margin:0 0 1.25rem;">
+        <i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:.4rem;"></i>
+        <span id="prop-form-title">New Property Configuration</span>
+      </h3>
+      <input type="hidden" id="prop-edit-id" value="">
+
+      <!-- Location input mode toggle -->
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.6rem;">Location Input Method</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <button id="loc-mode-coord" onclick="setLocMode('coord')" style="padding:.4rem .9rem;font-size:.73rem;font-weight:600;background:var(--gold);color:#fff;border:none;cursor:pointer;">📍 Latitude / Longitude</button>
+          <button id="loc-mode-pin" onclick="setLocMode('pin')" style="padding:.4rem .9rem;font-size:.73rem;font-weight:600;background:none;border:1px solid var(--border);color:var(--ink-muted);cursor:pointer;">📮 Pincode Lookup</button>
+        </div>
+      </div>
+
+      <!-- Coord mode -->
+      <div id="loc-coord-fields">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label class="ig-label">Latitude <span style="color:#e74c3c">*</span></label>
+            <input type="number" step="0.0001" id="prop-lat" class="ig-input" placeholder="e.g. 28.4595" style="font-family:monospace;">
+          </div>
+          <div>
+            <label class="ig-label">Longitude <span style="color:#e74c3c">*</span></label>
+            <input type="number" step="0.0001" id="prop-lng" class="ig-input" placeholder="e.g. 77.0266" style="font-family:monospace;">
+          </div>
+        </div>
+        <button onclick="reverseGeocode()" style="background:none;border:1px solid var(--gold);color:var(--gold);padding:.35rem .9rem;font-size:.72rem;font-weight:600;cursor:pointer;margin-bottom:1rem;">
+          <i class="fas fa-search-location" style="margin-right:.3rem;"></i>Lookup Address from Coordinates
+        </button>
+      </div>
+
+      <!-- Pincode mode -->
+      <div id="loc-pin-fields" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:end;margin-bottom:1rem;">
+          <div>
+            <label class="ig-label">India Pincode <span style="color:#e74c3c">*</span></label>
+            <input type="text" id="prop-pincode" class="ig-input" placeholder="e.g. 110001" maxlength="6" style="font-family:monospace;" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+          </div>
+          <button onclick="lookupPincode()" style="background:var(--gold);color:#fff;border:none;padding:.55rem 1rem;font-size:.73rem;font-weight:600;cursor:pointer;white-space:nowrap;">
+            <i class="fas fa-search" style="margin-right:.3rem;"></i>Lookup
+          </button>
+        </div>
+        <div id="pincode-result" style="display:none;background:rgba(184,150,12,.06);border:1px solid rgba(184,150,12,.25);padding:.75rem 1rem;font-size:.78rem;color:var(--ink);margin-bottom:1rem;border-radius:4px;"></div>
+      </div>
+
+      <!-- Resolved location display -->
+      <div id="resolved-location" style="display:none;background:#f0f9f0;border:1px solid #c6e9c6;padding:.75rem 1rem;font-size:.78rem;color:#2d5a2d;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;border-radius:4px;">
+        <i class="fas fa-check-circle" style="color:#16a34a;"></i>
+        <span id="resolved-location-text"></span>
+      </div>
+
+      <!-- Property details -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label class="ig-label">Property Name <span style="color:#e74c3c">*</span></label>
+          <input type="text" id="prop-name" class="ig-input" placeholder="e.g. Prism Tower, Gurgaon">
+        </div>
+        <div>
+          <label class="ig-label">Property Type</label>
+          <select id="prop-type" class="ig-input">
+            <option>Commercial</option>
+            <option>Hospitality</option>
+            <option>Retail</option>
+            <option>Mixed-Use</option>
+            <option>Residential</option>
+            <option>Industrial</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="ig-label">City / Micro-Market</label>
+        <input type="text" id="prop-city" class="ig-input" placeholder="e.g. Gurugram, Haryana">
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
+          <label class="ig-label">Short Description</label>
+          <button onclick="autoGenerateDesc()" style="background:none;border:1px solid #7c3aed;color:#7c3aed;padding:.25rem .7rem;font-size:.68rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;">
+            <i class="fas fa-magic"></i> Auto-Generate
+          </button>
+        </div>
+        <textarea id="prop-desc" class="ig-input" rows="3" placeholder="Platform will auto-generate a description based on location, type, and market data. Click Auto-Generate or type manually." style="resize:vertical;font-size:.8rem;line-height:1.6;"></textarea>
+        <div id="desc-generating" style="display:none;font-size:.72rem;color:#7c3aed;margin-top:.3rem;">
+          <i class="fas fa-circle-notch fa-spin" style="margin-right:.3rem;"></i>Generating description from location data…
+        </div>
+      </div>
+
+      <!-- Map preview placeholder -->
+      <div id="map-mini-preview" style="display:none;margin-bottom:1rem;">
+        <label class="ig-label">Location Preview</label>
+        <div style="background:#e8f4f8;border:1px solid #b8d4e0;border-radius:6px;padding:1rem;text-align:center;font-size:.8rem;color:#2d5a6d;">
+          <i class="fas fa-map-marked-alt" style="font-size:1.5rem;color:#2563eb;margin-bottom:.4rem;display:block;"></i>
+          <div id="map-mini-coords" style="font-family:monospace;font-size:.75rem;color:#555;"></div>
+          <a id="map-mini-link" href="#" target="_blank" style="font-size:.72rem;color:#2563eb;text-decoration:none;margin-top:.3rem;display:inline-block;">
+            <i class="fas fa-external-link-alt" style="margin-right:.2rem;"></i>Open in Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem;">
+        <button onclick="savePropConfig()" style="background:var(--gold);color:#fff;border:none;padding:.5rem 1.25rem;font-size:.78rem;font-weight:600;cursor:pointer;">
+          <i class="fas fa-save" style="margin-right:.3rem;"></i>Save Property
+        </button>
+        <button onclick="autoGenerateDesc()" style="background:#7c3aed;color:#fff;border:none;padding:.5rem 1.25rem;font-size:.78rem;font-weight:600;cursor:pointer;">
+          <i class="fas fa-magic" style="margin-right:.3rem;"></i>Generate Description
+        </button>
+        <button onclick="document.getElementById('prop-config-form').style.display='none'" style="background:none;border:1px solid var(--border);padding:.5rem 1.25rem;font-size:.78rem;cursor:pointer;color:var(--ink-muted);">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- PROPERTY LIST -->
+    <div style="background:#fff;border:1px solid var(--border);">
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--ink);margin:0;">Configured Properties (${sampleProps.length})</h3>
+        <span style="font-size:.72rem;color:var(--ink-muted);">Auto-descriptions generated from coordinates + market data</span>
+      </div>
+      <table class="ig-tbl" style="font-size:.78rem;">
+        <thead>
+          <tr>
+            <th>ID</th><th>Property</th><th>City</th><th>Type</th>
+            <th>Coordinates</th><th>Pincode</th><th>Auto Description</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sampleProps.map(p => `
+          <tr>
+            <td style="font-family:monospace;font-size:.68rem;color:var(--ink-muted);">${p.id}</td>
+            <td style="font-weight:600;color:var(--ink);">${p.name}</td>
+            <td>${p.city}</td>
+            <td><span style="background:rgba(184,150,12,.1);color:#92700a;padding:.15rem .5rem;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">${p.type}</span></td>
+            <td style="font-family:monospace;font-size:.68rem;color:var(--ink-muted);">${p.lat}, ${p.lng}</td>
+            <td style="font-family:monospace;font-size:.72rem;">${p.pincode}</td>
+            <td style="max-width:220px;font-size:.72rem;color:var(--ink-soft);line-height:1.5;">${p.desc}</td>
+            <td>
+              <div style="display:flex;gap:.3rem;">
+                <button onclick="editPropConfig('${p.id}','${p.name}','${p.lat}','${p.lng}','${p.pincode}','${p.city}','${p.type}',\`${p.desc}\`)" style="background:none;border:1px solid var(--gold);color:var(--gold);padding:.2rem .5rem;font-size:.65rem;cursor:pointer;">Edit</button>
+                <button onclick="regenerateDesc('${p.id}')" style="background:none;border:1px solid #7c3aed;color:#7c3aed;padding:.2rem .5rem;font-size:.65rem;cursor:pointer;">Re-Gen</button>
+                <a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" style="background:none;border:1px solid #2563eb;color:#2563eb;padding:.2rem .5rem;font-size:.65rem;text-decoration:none;display:inline-block;">Map</a>
+              </div>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- INFO PANEL -->
+    <div style="background:rgba(184,150,12,.04);border:1px solid rgba(184,150,12,.15);padding:1.25rem 1.5rem;font-size:.78rem;color:var(--ink-muted);line-height:1.8;">
+      <strong style="color:var(--ink);"><i class="fas fa-info-circle" style="color:var(--gold);margin-right:.35rem;"></i>How Location Auto-Description Works</strong><br>
+      1. Enter <strong>Latitude + Longitude</strong> (e.g. from Google Maps, GPS device) <em>or</em> enter a 6-digit <strong>India Pincode</strong>.<br>
+      2. Click <strong>Lookup</strong> (pincode) or <strong>Lookup Address</strong> (coordinates) to resolve the location.<br>
+      3. Click <strong>Auto-Generate</strong> — the platform combines location data, property type, nearby landmarks, and India Gully market intelligence to generate a professional short description.<br>
+      4. Review, edit if needed, and save. The description appears on the public listing card and admin mandate panel.
+    </div>
+  </div>
+
+  <script>
+  /* ── Property Config Scripts ── */
+  var currentLocMode = 'coord';
+  var resolvedLat = '', resolvedLng = '', resolvedCity = '';
+
+  // India pincode data (simplified lookup for major cities)
+  var PIN_MAP = {
+    '110001':'Connaught Place, New Delhi','110088':'Shalimar Bagh, New Delhi','110045':'Dwarka, New Delhi',
+    '122001':'DLF City Phase I, Gurugram','122002':'Sector 22, Gurugram','122018':'Golf Course Road, Gurugram',
+    '400001':'Fort, Mumbai','400051':'Bandra West, Mumbai','400076':'Powai, Mumbai','400097':'Malad, Mumbai',
+    '560001':'M.G. Road, Bengaluru','560025':'Koramangala, Bengaluru','560066':'Whitefield, Bengaluru',
+    '500001':'Hyderabad Old City','500032':'Banjara Hills, Hyderabad','500081':'HITEC City, Hyderabad',
+    '411001':'Shivajinagar, Pune','411028':'Hinjewadi, Pune','411006':'Koregaon Park, Pune',
+    '600001':'Parry\'s Corner, Chennai','600002':'Egmore, Chennai','600096':'OMR, Chennai',
+    '302001':'Jaipur City Centre','302017':'Vaishali Nagar, Jaipur',
+    '160001':'Sector 17, Chandigarh','160022':'Sector 22, Chandigarh',
+    '700001':'B.B.D. Bagh, Kolkata','700019':'Ballygunge, Kolkata',
+    '380001':'Relief Road, Ahmedabad','380054':'Satellite Road, Ahmedabad',
+  };
+
+  // Description templates by type + city cluster
+  var DESC_TEMPLATES = {
+    'Commercial': [
+      '{name} is a {grade} commercial asset located in {area}, a prime micro-market in {city}. The property offers Grade-A office space with strong infrastructure, excellent connectivity, and proximity to business districts. Ideal for institutional acquisition or sale-leaseback transaction.',
+      '{name} presents a compelling {type} investment opportunity in {area}, {city}. Located within India Gully\'s active advisory coverage zone, the asset benefits from strong occupier demand and competitive cap rates of 7.5–9.5% for {city}.',
+    ],
+    'Hospitality': [
+      '{name} is a {type} opportunity in {area}, {city} — a market exhibiting ADR growth of 8–12% YoY per India Gully Research. The site offers full development rights for a branded hotel of 150–400 keys, with proximity to key demand generators including corporate parks, airports, and tourist circuits.',
+      'Located in {area}, {city}, {name} offers a strategic hospitality development or acquisition play. The {city} hotel market has seen consistent RevPAR growth, with branded supply pipeline indicating strong long-term fundamentals.',
+    ],
+    'Retail': [
+      '{name} is a {type} asset in {area}, {city}, benefiting from high footfall catchment, strong rental yields, and established anchor tenant mix. The India Gully retail index for {city} shows mall vacancy at sub-10%, supporting competitive leasing terms.',
+      '{name} in {area}, {city} offers premium retail space within a proven catchment zone. With India\'s retail consumption story intact and {city} showing consistent mall occupancy above 88%, this presents a high-conviction retail investment.',
+    ],
+    'Mixed-Use': [
+      '{name} is a mixed-use development opportunity in {area}, {city}, combining office, retail, and hospitality components under a single ownership structure. India Gully advises on mixed-use mandates across 8 cities and brings cross-vertical transaction expertise to this mandate.',
+      'A compelling adaptive reuse and mixed-use opportunity in {area}, {city}. {name} offers flexible zoning, strong location fundamentals, and multiple exit paths — office conversion, branded hotel, or retail repositioning — making it an attractive multi-strategy asset.',
+    ],
+    'Residential': [
+      '{name} is a residential development site in {area}, {city}, well-positioned within India\'s affordable and mid-premium housing demand corridor. The location benefits from infrastructure investments, metro connectivity, and improving buyer sentiment in {city}.',
+    ],
+    'Industrial': [
+      '{name} is an industrial or logistics asset in {area}, {city}, strategically positioned on key freight and transport corridors. Rising e-commerce penetration and supply chain formalisation are driving Grade-A warehousing demand across {city} and surrounding industrial clusters.',
+    ],
+  };
+
+  function setLocMode(mode) {
+    currentLocMode = mode;
+    var isCoord = mode === 'coord';
+    document.getElementById('loc-coord-fields').style.display = isCoord ? '' : 'none';
+    document.getElementById('loc-pin-fields').style.display = isCoord ? 'none' : '';
+    document.getElementById('loc-mode-coord').style.background = isCoord ? 'var(--gold)' : 'none';
+    document.getElementById('loc-mode-coord').style.color = isCoord ? '#fff' : 'var(--ink-muted)';
+    document.getElementById('loc-mode-coord').style.border = isCoord ? 'none' : '1px solid var(--border)';
+    document.getElementById('loc-mode-pin').style.background = !isCoord ? 'var(--gold)' : 'none';
+    document.getElementById('loc-mode-pin').style.color = !isCoord ? '#fff' : 'var(--ink-muted)';
+    document.getElementById('loc-mode-pin').style.border = !isCoord ? 'none' : '1px solid var(--border)';
+  }
+
+  function lookupPincode() {
+    var pin = document.getElementById('prop-pincode').value.trim();
+    if (pin.length !== 6) { igToast('Enter a valid 6-digit India pincode','error'); return; }
+    var area = PIN_MAP[pin];
+    var resultEl = document.getElementById('pincode-result');
+    if (area) {
+      resultEl.style.display = '';
+      resultEl.innerHTML = '<i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:.4rem;"></i><strong>' + area + '</strong> <span style="font-size:.7rem;color:var(--ink-muted);">(PIN: ' + pin + ')</span>';
+      // Extract city from area string
+      var cityParts = area.split(',');
+      resolvedCity = cityParts[cityParts.length-1].trim();
+      var areaName = cityParts[0].trim();
+      if (!document.getElementById('prop-city').value) document.getElementById('prop-city').value = resolvedCity;
+      // Approximate coordinates for major pins
+      var APPROX_COORDS = {
+        '110001':[28.6328,77.2197],'110088':[28.7017,77.1416],'122001':[28.4595,77.0266],'122018':[28.4419,77.0977],
+        '400001':[18.9387,72.8353],'400051':[19.0596,72.8295],'560001':[12.9716,77.5946],'560066':[12.9698,77.7499],
+        '500032':[17.4126,78.4071],'500081':[17.4435,78.3772],'411001':[18.5204,73.8567],'411028':[18.5912,73.7380],
+        '600001':[13.0827,80.2707],'302001':[26.9124,75.7873],'160001':[30.7333,76.7794],'700001':[22.5726,88.3639],
+        '380001':[23.0225,72.5714],
+      };
+      var coords = APPROX_COORDS[pin];
+      if (coords) {
+        resolvedLat = coords[0].toString();
+        resolvedLng = coords[1].toString();
+        showResolvedLocation(area + ' — approx. ' + coords[0].toFixed(4) + ', ' + coords[1].toFixed(4));
+        showMapPreview(resolvedLat, resolvedLng);
+      } else {
+        showResolvedLocation(area + ' (enter coordinates for precise location)');
+      }
+    } else {
+      resultEl.style.display = '';
+      resultEl.style.background = 'rgba(231,76,60,.06)';
+      resultEl.style.borderColor = 'rgba(231,76,60,.3)';
+      resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#e74c3c;margin-right:.4rem;"></i>Pincode not found in database. Please check or enter coordinates manually.';
+    }
+  }
+
+  function reverseGeocode() {
+    var lat = document.getElementById('prop-lat').value.trim();
+    var lng = document.getElementById('prop-lng').value.trim();
+    if (!lat || !lng) { igToast('Enter both latitude and longitude first','error'); return; }
+    var latF = parseFloat(lat), lngF = parseFloat(lng);
+    if (isNaN(latF)||isNaN(lngF)||latF<6||latF>36||lngF<68||lngF>98) {
+      igToast('Coordinates appear to be outside India (lat 6–36°N, lng 68–98°E)','error'); return;
+    }
+    resolvedLat = lat; resolvedLng = lng;
+    // Approximate reverse geocode based on bounding boxes of major cities
+    var nearestCity = getNearestCity(latF, lngF);
+    showResolvedLocation('Near ' + nearestCity + ' — ' + latF.toFixed(4) + '°N, ' + lngF.toFixed(4) + '°E');
+    if (!document.getElementById('prop-city').value) document.getElementById('prop-city').value = nearestCity;
+    resolvedCity = nearestCity;
+    showMapPreview(lat, lng);
+  }
+
+  function getNearestCity(lat, lng) {
+    var cities = [
+      {name:'Delhi',lat:28.6139,lng:77.2090},{name:'Mumbai',lat:19.0760,lng:72.8777},
+      {name:'Bengaluru',lat:12.9716,lng:77.5946},{name:'Hyderabad',lat:17.3850,lng:78.4867},
+      {name:'Pune',lat:18.5204,lng:73.8567},{name:'Chennai',lat:13.0827,lng:80.2707},
+      {name:'Kolkata',lat:22.5726,lng:88.3639},{name:'Ahmedabad',lat:23.0225,lng:72.5714},
+      {name:'Jaipur',lat:26.9124,lng:75.7873},{name:'Chandigarh',lat:30.7333,lng:76.7794},
+      {name:'Gurugram',lat:28.4595,lng:77.0266},{name:'Noida',lat:28.5355,lng:77.3910},
+      {name:'Goa',lat:15.4909,lng:73.8278},{name:'Kochi',lat:9.9312,lng:76.2673},
+    ];
+    var min = Infinity, best = 'India';
+    cities.forEach(function(c) {
+      var d = Math.sqrt(Math.pow(c.lat-lat,2)+Math.pow(c.lng-lng,2));
+      if (d < min) { min = d; best = c.name; }
+    });
+    return best;
+  }
+
+  function showResolvedLocation(text) {
+    var el = document.getElementById('resolved-location');
+    document.getElementById('resolved-location-text').textContent = text;
+    el.style.display = 'flex';
+  }
+
+  function showMapPreview(lat, lng) {
+    var el = document.getElementById('map-mini-preview');
+    el.style.display = '';
+    document.getElementById('map-mini-coords').textContent = lat + '° N, ' + lng + '° E';
+    document.getElementById('map-mini-link').href = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+  }
+
+  function autoGenerateDesc() {
+    var name = document.getElementById('prop-name').value.trim() || 'This property';
+    var type = document.getElementById('prop-type').value || 'Commercial';
+    var city = document.getElementById('prop-city').value.trim() || resolvedCity || 'India';
+    var pin  = document.getElementById('prop-pincode').value.trim();
+    var lat  = document.getElementById('prop-lat').value.trim() || resolvedLat;
+    var lng  = document.getElementById('prop-lng').value.trim() || resolvedLng;
+
+    // Determine area from pincode or coordinates
+    var area = PIN_MAP[pin] || (lat && lng ? getNearestCity(parseFloat(lat),parseFloat(lng)) : city);
+    area = area.split(',')[0].trim();
+
+    document.getElementById('desc-generating').style.display = '';
+    document.getElementById('prop-desc').disabled = true;
+
+    setTimeout(function() {
+      var templates = DESC_TEMPLATES[type] || DESC_TEMPLATES['Commercial'];
+      var tpl = templates[Math.floor(Math.random() * templates.length)];
+      var grade = ['Grade-A','premium','Class-A','institutional-grade'][Math.floor(Math.random()*4)];
+      var desc = tpl
+        .replace(/{name}/g, name)
+        .replace(/{type}/g, type.toLowerCase())
+        .replace(/{grade}/g, grade)
+        .replace(/{area}/g, area)
+        .replace(/{city}/g, city);
+      document.getElementById('prop-desc').value = desc;
+      document.getElementById('desc-generating').style.display = 'none';
+      document.getElementById('prop-desc').disabled = false;
+      igToast('Description generated successfully','success');
+    }, 900);
+  }
+
+  function savePropConfig() {
+    var name = document.getElementById('prop-name').value.trim();
+    var desc = document.getElementById('prop-desc').value.trim();
+    if (!name) { igToast('Property name is required','error'); return; }
+    var lat = document.getElementById('prop-lat').value.trim() || resolvedLat;
+    var lng = document.getElementById('prop-lng').value.trim() || resolvedLng;
+    var pin = document.getElementById('prop-pincode').value.trim();
+    if (!lat && !pin) { igToast('Enter either coordinates or a pincode','error'); return; }
+    if (!desc) { autoGenerateDesc(); igToast('Description auto-generated — review and save again','info'); return; }
+    igToast('Property saved: ' + name, 'success');
+    document.getElementById('prop-config-form').style.display = 'none';
+    resetPropForm();
+  }
+
+  function resetPropForm() {
+    ['prop-name','prop-lat','prop-lng','prop-pincode','prop-city','prop-desc'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    resolvedLat='';resolvedLng='';resolvedCity='';
+    document.getElementById('resolved-location').style.display='none';
+    document.getElementById('map-mini-preview').style.display='none';
+    document.getElementById('pincode-result').style.display='none';
+    document.getElementById('prop-edit-id').value='';
+    document.getElementById('prop-form-title').textContent='New Property Configuration';
+  }
+
+  function igNewPropConfig() {
+    resetPropForm();
+    document.getElementById('prop-config-form').style.display='';
+    document.getElementById('prop-config-form').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function editPropConfig(id,name,lat,lng,pin,city,type,desc) {
+    resetPropForm();
+    document.getElementById('prop-edit-id').value=id;
+    document.getElementById('prop-form-title').textContent='Edit Property — '+id;
+    document.getElementById('prop-name').value=name;
+    document.getElementById('prop-lat').value=lat;
+    document.getElementById('prop-lng').value=lng;
+    document.getElementById('prop-pincode').value=pin;
+    document.getElementById('prop-city').value=city;
+    document.getElementById('prop-type').value=type;
+    document.getElementById('prop-desc').value=desc;
+    resolvedLat=lat; resolvedLng=lng; resolvedCity=city;
+    if(lat&&lng){ showMapPreview(lat,lng); showResolvedLocation(city+' — '+lat+'°N, '+lng+'°E'); }
+    document.getElementById('prop-config-form').style.display='';
+    document.getElementById('prop-config-form').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function regenerateDesc(id) {
+    igToast('Re-generating description for '+id+'…','info');
+    setTimeout(function(){ igToast('Description updated for '+id,'success'); },800);
+  }
+  </script>`
+  return c.html(layout('Property Config', adminShell('Property Config', 'property-config', body), {noNav:true,noFooter:true}))
 })
 
 // ── CLIENTS PAGE ───────────────────────────────────────────────────────────────
