@@ -3419,12 +3419,27 @@ app.get('/horeca/suppliers', (c) => {
 })
 
 // KV helpers for catalogue
+// CATALOGUE_VERSION: bump this to force-reset stale KV data on all live workers
+const CATALOGUE_VERSION = 'v4-63skus-2026-mar18'
 async function kvGetProducts(kv?: KVNamespace): Promise<typeof HORECA_DEFAULT_PRODUCTS> {
   if (!kv) return HORECA_DEFAULT_PRODUCTS
   try {
     const raw = await kv.get('horeca_products')
-    if (!raw) { await kv.put('horeca_products', JSON.stringify(HORECA_DEFAULT_PRODUCTS)); return HORECA_DEFAULT_PRODUCTS }
-    return JSON.parse(raw)
+    if (!raw) {
+      await kv.put('horeca_products', JSON.stringify(HORECA_DEFAULT_PRODUCTS))
+      await kv.put('horeca_catalogue_version', CATALOGUE_VERSION)
+      return HORECA_DEFAULT_PRODUCTS
+    }
+    // Auto-migrate: if stored version is stale or product count is below current defaults, reset
+    const storedVersion = await kv.get('horeca_catalogue_version')
+    const parsed = JSON.parse(raw)
+    if (storedVersion !== CATALOGUE_VERSION || !Array.isArray(parsed) || parsed.length < HORECA_DEFAULT_PRODUCTS.length) {
+      await kv.put('horeca_products', JSON.stringify(HORECA_DEFAULT_PRODUCTS))
+      await kv.put('horeca_catalogue_version', CATALOGUE_VERSION)
+      await kv.put('horeca_categories', JSON.stringify(HORECA_DEFAULT_CATEGORIES))
+      return HORECA_DEFAULT_PRODUCTS
+    }
+    return parsed
   } catch { return HORECA_DEFAULT_PRODUCTS }
 }
 async function kvSaveProducts(kv: KVNamespace | undefined, products: unknown[]): Promise<void> {
@@ -3436,7 +3451,13 @@ async function kvGetCategories(kv?: KVNamespace): Promise<typeof HORECA_DEFAULT_
   try {
     const raw = await kv.get('horeca_categories')
     if (!raw) { await kv.put('horeca_categories', JSON.stringify(HORECA_DEFAULT_CATEGORIES)); return HORECA_DEFAULT_CATEGORIES }
-    return JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    // If categories are stale (old names), reset
+    if (!Array.isArray(parsed) || parsed.length < HORECA_DEFAULT_CATEGORIES.length) {
+      await kv.put('horeca_categories', JSON.stringify(HORECA_DEFAULT_CATEGORIES))
+      return HORECA_DEFAULT_CATEGORIES
+    }
+    return parsed
   } catch { return HORECA_DEFAULT_CATEGORIES }
 }
 async function kvSaveCategories(kv: KVNamespace | undefined, cats: unknown[]): Promise<void> {

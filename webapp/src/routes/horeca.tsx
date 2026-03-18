@@ -76,25 +76,36 @@ app.get('/', (c) => {
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);">
       ${[
-        { icon:'chair',          name:'FF&E',                  desc:'Furniture, Fixtures & Equipment to brand standard. Guest rooms, lobby, restaurant, spa.',       color:'rgba(26,58,107,.1)' },
-        { icon:'utensils',       name:'OS&E',                  desc:'Operating Supplies & Equipment. Tableware, glassware, silverware, kitchen smallwares.',         color:'rgba(184,150,12,.08)' },
-        { icon:'fire-alt',       name:'Kitchen Equipment',     desc:'Commercial kitchen — ranges, ovens, refrigeration, warewashing to FSSAI and brand standards.',  color:'rgba(220,38,38,.07)' },
-        { icon:'bed',            name:'Linen & Towelling',     desc:'Room linen, bath towels, pool towels to brand par stock specification (3–4× room count).',     color:'rgba(6,95,70,.07)' },
-        { icon:'tshirt',         name:'Uniforms',              desc:'Staff uniforms across all departments. Design, procurement, tailoring, branding and logistics.',  color:'rgba(124,58,237,.07)' },
-        { icon:'gift',           name:'Guest Amenities',       desc:'Brand-approved bathroom amenities, room stationery, in-room guest kits and branded items.',    color:'rgba(146,64,14,.07)' },
-        { icon:'tools',          name:'SPA & Wellness',        desc:'Spa equipment, treatment beds, wellness product ranges, fitness equipment and AV systems.',    color:'rgba(22,163,74,.07)' },
-        { icon:'clipboard-list', name:'Turnkey Packages',      desc:'Complete turnkey procurement from single vendor. Full project management and delivery.',        color:'rgba(184,150,12,.06)' },
+        { icon:'fire-alt',       name:'Kitchen Equipment',     catKey:'Kitchen Equipment',         desc:'Commercial ranges, ovens, refrigeration, warewashing. 8 SKUs from Crispo, Unox, Blue Star.',  color:'rgba(220,38,38,.07)',  skus:8 },
+        { icon:'glass-cheers',   name:'Glassware & Tableware', catKey:'Glassware & Tableware',     desc:'Crystal glassware, fine porcelain, 18/10 cutlery from Ocean. 8 SKUs.',                        color:'rgba(37,99,235,.07)',  skus:8 },
+        { icon:'bed',            name:'Hotel Linen',           catKey:'Hotel Linen & Textiles',    desc:'500TC Egyptian cotton, 600GSM towels, pool towels, robes. 7 SKUs from Welspun & Trident.',    color:'rgba(124,58,237,.07)', skus:7 },
+        { icon:'spa',            name:'Guest Amenities',       catKey:'Guest Amenities',           desc:'Wall dispensers, amenity kits, bamboo toothbrushes, slippers. 7 SKUs from Ariane.',           color:'rgba(219,39,119,.07)', skus:7 },
+        { icon:'soap',           name:'Washroom & Hygiene',    catKey:'Washroom & Hygiene',        desc:'Hand dryers, soap dispensers, bins, tissue dispensers. 8 SKUs from Dolphy.',                   color:'rgba(5,150,105,.07)',  skus:8 },
+        { icon:'broom',          name:'Housekeeping',          catKey:'Housekeeping Supplies',     desc:'Cleaning trolleys, vacuums, mops and housekeeping equipment. 5 SKUs.',                         color:'rgba(22,163,74,.07)',  skus:5 },
+        { icon:'couch',          name:'Furniture & Fixtures',  catKey:'Furniture & Fixtures',      desc:'Restaurant tables, lobby chairs, lounge furniture, pool deck. 5 SKUs.',                        color:'rgba(146,64,14,.07)',  skus:5 },
+        { icon:'tv',             name:'Tech & AV Systems',     catKey:'Tech & AV Systems',         desc:'Hotel TVs, Wi-Fi, POS terminals, CCTV, room safes. 5 SKUs from Samsung, HIK, Godrej.',        color:'rgba(29,78,216,.07)',  skus:5 },
       ].map(cat =>
-      '<div style="background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:default;" onmouseover="this.style.background=\'var(--parch)\';this.style.boxShadow=\'0 8px 32px rgba(0,0,0,.06)\'" onmouseout="this.style.background=\'#fff\';this.style.boxShadow=\'none\'">'
-      + '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;" class="cat-top"></div>'
+      '<a href="/horeca/catalogue#cat-' + encodeURIComponent(cat.catKey) + '" data-cat="' + cat.catKey + '" onclick="igGoToCat(event,\'' + cat.catKey.replace(/'/g,'\\x27') + '\')" style="text-decoration:none;display:block;background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:pointer;" onmouseover="this.style.background=\'var(--parch)\';this.style.boxShadow=\'0 8px 32px rgba(0,0,0,.06)\';this.querySelector(\'.cat-top\').style.opacity=\'1\'" onmouseout="this.style.background=\'#fff\';this.style.boxShadow=\'none\';this.querySelector(\'.cat-top\').style.opacity=\'0\'">'
+      + '<div class="cat-top" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;"></div>'
       + '<div style="width:52px;height:52px;background:' + cat.color + ';border:1px solid rgba(184,150,12,.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">'
       + '<i class="fas fa-' + cat.icon + '" style="color:var(--gold);font-size:1.1rem;"></i>'
       + '</div>'
-      + '<h3 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.625rem;">' + cat.name + '</h3>'
-      + '<p style="font-size:.8rem;color:var(--ink-muted);line-height:1.7;">' + cat.desc + '</p>'
+      + '<h3 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.5rem;">' + cat.name + '</h3>'
+      + '<p style="font-size:.78rem;color:var(--ink-muted);line-height:1.65;margin-bottom:.75rem;">' + cat.desc + '</p>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;">'
+      + '<span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);">' + cat.skus + ' SKUs</span>'
+      + '<span style="font-size:.65rem;color:var(--ink-muted);display:flex;align-items:center;gap:.3rem;">Browse <i class="fas fa-arrow-right" style="font-size:.55rem;"></i></span>'
       + '</div>'
+      + '</a>'
       ).join('')}
     </div>
+<script>
+function igGoToCat(e, catName) {
+  e.preventDefault();
+  sessionStorage.setItem('horeca_cat_filter', catName);
+  window.location.href = '/horeca/catalogue';
+}
+</script>
   </div>
 </div>
 
@@ -933,7 +944,7 @@ window.igQuickRFQSubmit = function(){
 </script>
 
 <style>
-  .prod-card { background:#fff; border:1px solid var(--border); transition:box-shadow .2s,transform .2s; }
+  .prod-card { background:#fff; border:1px solid var(--border); transition:box-shadow .2s,transform .2s; cursor:pointer; }
   .prod-card:hover { box-shadow:0 8px 24px rgba(0,0,0,.09); transform:translateY(-2px); }
   .prod-quote-btn { display:flex; align-items:center; justify-content:center; gap:.4rem; background:var(--gold); color:#fff; text-decoration:none; padding:.45rem .875rem; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; transition:background .2s; }
   .prod-quote-btn:hover { background:#a37a08; }
@@ -951,8 +962,29 @@ var _igCatView = 'grid';
 var _igCatActiveCategory = '';
 var _igCatFilterTimer = null;
 
+// ── Apply deep-link category filter from sessionStorage (set by landing page) ─
+function igCatApplyDeepLink() {
+  var cat = sessionStorage.getItem('horeca_cat_filter');
+  if (cat) {
+    sessionStorage.removeItem('horeca_cat_filter');
+    _igCatActiveCategory = cat;
+  }
+  // Also support URL hash like #cat-Kitchen+Equipment
+  var hash = window.location.hash;
+  if (hash && hash.startsWith('#cat-')) {
+    var decoded = decodeURIComponent(hash.slice(5));
+    _igCatActiveCategory = decoded;
+    // Smooth scroll to grid
+    setTimeout(function() {
+      var grid = document.getElementById('cat-grid-view');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 400);
+  }
+}
+
 // ── Fetch catalogue from API ──────────────────────────────────────────────────
 function igCatLoad() {
+  igCatApplyDeepLink();
   fetch('/api/horeca/catalogue', { credentials: 'include' })
     .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function(d) {
@@ -992,14 +1024,16 @@ function igCatLoad() {
 
 function igCatBuildSidebar() {
   var sb = document.getElementById('cat-sidebar');
-  var html = '<div class="cat-sidebar-btn active" onclick="igCatSelectCategory(\\'\\')" id="cat-btn-all">'
+  var allActive = !_igCatActiveCategory ? ' active' : '';
+  var html = '<div class="cat-sidebar-btn' + allActive + '" onclick="igCatSelectCategory(\'\')" id="cat-btn-all">'
     + '<span style="font-size:.8rem;font-weight:600;color:var(--ink);">All Categories</span>'
     + '<span id="cat-count-all" style="font-size:.65rem;color:var(--gold);font-weight:700;">' + _igCatProducts.length + '</span>'
     + '</div>';
   _igCatCategories.forEach(function(cat) {
     var count = _igCatProducts.filter(function(p){ return p.category === cat.name; }).length;
     var iconColor = cat.color || '#475569';
-    html += '<div class="cat-sidebar-btn" onclick="igCatSelectCategory(\\'' + cat.name.replace(/'/g,"\\'") + '\\')" id="cat-btn-' + cat.id + '">'
+    var isActive = (_igCatActiveCategory === cat.name) ? ' active' : '';
+    html += '<div class="cat-sidebar-btn' + isActive + '" onclick="igCatSelectCategory(\'' + cat.name.replace(/'/g,"\'") + '\')" id="cat-btn-' + cat.id + '">'
       + '<span style="font-size:.78rem;color:var(--ink);display:flex;align-items:center;gap:.4rem;"><i class="fas fa-' + (cat.icon||'box') + '" style="color:' + iconColor + ';font-size:.7rem;width:14px;"></i>' + cat.name + '</span>'
       + '<span style="font-size:.65rem;color:#94a3b8;font-weight:600;">' + count + '</span>'
       + '</div>';
@@ -1120,7 +1154,10 @@ function igCatRenderGrid(products) {
       });
       specsHtml += '</div>';
     }
-    html += '<div class="prod-card" style="display:flex;flex-direction:column;">'
+    var encodedSku  = (p.sku||p.id||'').replace(/"/g,'').replace(/'/g,'\\x27');
+    var encodedName = (p.name||'').replace(/"/g,'&quot;').replace(/'/g,'\\x27');
+    var encodedCat  = (p.category||'').replace(/"/g,'').replace(/'/g,'\\x27');
+    html += '<div class="prod-card" style="display:flex;flex-direction:column;cursor:pointer;" onclick="igCatEnquire(event,\'' + encodedSku + '\',\'' + encodedName + '\',\'' + encodedCat + '\')" title="Click to enquire about this product">'
       // Featured banner
       + (p.featured ? '<div style="background:linear-gradient(90deg,var(--gold),#a37a08);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .875rem;display:flex;align-items:center;gap:.3rem;"><i class="fas fa-star" style="font-size:.55rem;"></i>Featured SKU</div>' : '')
       // Image area — shows actual product image with fallback icon
@@ -1155,7 +1192,7 @@ function igCatRenderGrid(products) {
       // CTA footer — no pricing, just enquiry
       + '<div style="padding:.625rem 1rem;border-top:1px solid var(--border);background:#fafaf7;display:flex;align-items:center;justify-content:space-between;">'
       + '<span style="font-size:.6rem;color:#94a3b8;font-family:monospace;">' + (p.hsn ? 'HSN: ' + p.hsn : '') + '</span>'
-      + '<a href="/horeca#enquiry" class="prod-quote-btn" data-sku="' + (p.sku||p.id||'').replace(/"/g,'') + '" data-name="' + (p.name||'').replace(/"/g,'&quot;') + '" onclick="igCatEnquire(event,this.dataset.sku,this.dataset.name)" style="font-size:.65rem;padding:.35rem .75rem;">'
+      + '<a href="#" class="prod-quote-btn" data-sku="' + (p.sku||p.id||'').replace(/"/g,'') + '" data-name="' + (p.name||'').replace(/"/g,'&quot;') + '" data-cat="' + (p.category||'').replace(/"/g,'') + '" onclick="igCatEnquire(event,this.dataset.sku,this.dataset.name,this.dataset.cat)" style="font-size:.65rem;padding:.35rem .75rem;">'
       + '<i class="fas fa-paper-plane" style="font-size:.55rem;margin-right:.3rem;"></i>Enquire</a>'
       + '</div>'
       + '</div>';
@@ -1418,14 +1455,41 @@ function igCatDownloadBOQ() {
   igShowToast('BOQ Excel downloaded — ' + products.length + ' products, ready to fill quantities', 'success');
 }
 
-function igCatEnquire(e, sku, name) {
+window.igCatEnquire = function(e, sku, name, category) {
   e.preventDefault();
-  // Pre-fill enquiry form with product info
-  igShowToast('Redirecting to enquiry form for ' + sku + '…', 'info');
-  setTimeout(function(){
+  e.stopPropagation();
+  // Open RFQ panel directly with product pre-filled
+  var rfqNotes = document.getElementById('rfq-notes');
+  var rfqPanel = document.getElementById('rfq-panel');
+  var rfqOverlay = document.getElementById('rfq-overlay');
+  if (!rfqPanel || !rfqOverlay) {
     window.location.href = '/horeca#enquiry';
-  }, 700);
-}
+    return;
+  }
+  // Reset and open the RFQ panel
+  window.igQuickRFQOpen();
+  // Pre-fill notes with the product SKU and name
+  if (rfqNotes) rfqNotes.value = 'Enquiring about: [' + sku + '] ' + name + '\nPlease provide availability and quote.';
+  // Pre-tick the matching supply category checkbox
+  if (category) {
+    var catMap = {
+      'Kitchen Equipment': 'Kitchen Equipment',
+      'Glassware & Tableware': 'OS&E',
+      'Hotel Linen & Textiles': 'Linen & Towelling',
+      'Guest Amenities': 'Guest Amenities',
+      'Washroom & Hygiene': 'OS&E',
+      'Housekeeping Supplies': 'OS&E',
+      'Furniture & Fixtures': 'FF&E',
+      'Tech & AV Systems': 'FF&E',
+      'Bar & Beverage Equipment': 'Kitchen Equipment',
+      'Safety & Security': 'OS&E'
+    };
+    var rfqCat = catMap[category] || 'OS&E';
+    var checkbox = document.querySelector('input[name="rfq-cat"][value="' + rfqCat + '"]');
+    if (checkbox) checkbox.checked = true;
+  }
+  igShowToast('Product added to RFQ: ' + sku, 'success');
+};
 
 // ── Toast Helper (standalone, works without admin layout) ────────────────────
 function igShowToast(msg, type) {
