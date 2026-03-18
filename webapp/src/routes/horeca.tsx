@@ -1883,4 +1883,863 @@ document.addEventListener('DOMContentLoaded', igPortalLoad);
   return c.html(body)
 })
 
+// ── Requirement Basket Page ───────────────────────────────────────────────────
+app.get('/basket', (c) => {
+  const content = `
+<!-- BASKET HERO -->
+<div style="background:var(--ink);padding:3rem 0 2.5rem;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,.04) 1px,transparent 1px);background-size:48px 48px;"></div>
+  <div class="wrap" style="position:relative;">
+    <p style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,150,12,.8);margin-bottom:.75rem;">
+      <a href="/horeca" style="color:inherit;text-decoration:none;">HORECA Solutions</a>
+      <span style="color:rgba(255,255,255,.3);margin:0 .4rem;">/</span>
+      <a href="/horeca/catalogue" style="color:inherit;text-decoration:none;">Catalogue</a>
+      <span style="color:rgba(255,255,255,.3);margin:0 .4rem;">/</span>
+      Requirement Basket
+    </p>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:2.2rem;color:#fff;margin:0 0 .5rem;">Requirement Basket</h1>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.55);max-width:520px;margin:0;">Curate your HORECA procurement list, add custom requirements, then submit a single RFQ to India Gully.</p>
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+        <a href="/horeca/catalogue" style="background:none;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25);padding:.6rem 1.25rem;font-size:.78rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;">
+          <i class="fas fa-arrow-left" style="font-size:.65rem;"></i>Continue Browsing
+        </a>
+        <button onclick="igBasketSubmitRFQ()" id="btn-submit-rfq" style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.5rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.5rem;">
+          <i class="fas fa-paper-plane" style="font-size:.65rem;"></i>Submit as RFQ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BASKET BODY -->
+<div style="background:#f8f6f1;min-height:60vh;padding:2rem 0;">
+  <div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start;" class="basket-layout mob-stack">
+
+      <!-- LEFT: Items -->
+      <div>
+        <!-- Loading -->
+        <div id="bkt-loading" style="text-align:center;padding:3rem;background:#fff;border:1px solid var(--border);">
+          <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--gold);"></i>
+          <p style="margin-top:.875rem;font-size:.85rem;color:var(--ink-muted);">Loading your basket…</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="bkt-empty" style="display:none;text-align:center;padding:4rem 2rem;background:#fff;border:1px solid var(--border);">
+          <div style="width:72px;height:72px;background:#f8f6f1;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+            <i class="fas fa-shopping-basket" style="color:var(--border);font-size:2rem;"></i>
+          </div>
+          <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.3rem;color:var(--ink);margin-bottom:.5rem;">Basket is Empty</h3>
+          <p style="font-size:.82rem;color:var(--ink-muted);margin-bottom:1.5rem;">Browse the catalogue and click <strong>Add to Basket</strong> on any product, or add a custom requirement below.</p>
+          <a href="/horeca/catalogue" class="btn btn-g" style="font-size:.78rem;"><i class="fas fa-th-large" style="margin-right:.4rem;"></i>Browse Catalogue</a>
+        </div>
+
+        <!-- Items List -->
+        <div id="bkt-items" style="display:none;flex-direction:column;gap:1rem;"></div>
+
+        <!-- Add Custom Requirement -->
+        <div style="margin-top:1.5rem;background:#fff;border:1px solid var(--border);padding:1.5rem;">
+          <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;">
+            <i class="fas fa-plus-circle" style="color:var(--gold);font-size:.85rem;"></i>Add Custom / Non-Catalogue Requirement
+          </h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;" class="mob-stack">
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Item Name *</label>
+              <input id="cx-name" type="text" placeholder="e.g. Custom Stainless Steel Work Table" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Category</label>
+              <select id="cx-cat" class="ig-inp" style="font-size:.82rem;">
+                <option value="Kitchen Equipment">Kitchen Equipment</option>
+                <option value="Glassware & Tableware">Glassware & Tableware</option>
+                <option value="Hotel Linen & Textiles">Hotel Linen & Textiles</option>
+                <option value="Guest Amenities">Guest Amenities</option>
+                <option value="Washroom & Hygiene">Washroom & Hygiene</option>
+                <option value="Housekeeping Supplies">Housekeeping Supplies</option>
+                <option value="Furniture & Fixtures">Furniture & Fixtures</option>
+                <option value="Tech & AV Systems">Tech & AV Systems</option>
+                <option value="Bar & Beverage Equipment">Bar & Beverage Equipment</option>
+                <option value="Safety & Security">Safety & Security</option>
+                <option value="Custom">Custom / Other</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Quantity</label>
+              <input id="cx-qty" type="number" min="1" value="1" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Unit</label>
+              <input id="cx-unit" type="text" placeholder="Piece / Set / Pack" class="ig-inp" style="font-size:.82rem;" value="Piece">
+            </div>
+            <div style="grid-column:span 2;">
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Description / Specifications *</label>
+              <textarea id="cx-desc" rows="3" placeholder="Describe what you need — dimensions, material, capacity, brand references…" class="ig-inp" style="font-size:.82rem;resize:vertical;min-height:70px;"></textarea>
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Reference Brand (optional)</label>
+              <input id="cx-brand" type="text" placeholder="e.g. Unox, Winterhalter" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Target Specification (optional)</label>
+              <input id="cx-spec" type="text" placeholder="e.g. 304 SS, 10-tray, 400V" class="ig-inp" style="font-size:.82rem;">
+            </div>
+          </div>
+          <div id="cx-err" style="display:none;margin-top:.75rem;background:#fef2f2;border:1px solid #fecaca;padding:.5rem .75rem;font-size:.72rem;color:#dc2626;"></div>
+          <button onclick="igBktAddCustom()" style="margin-top:1rem;background:var(--gold);color:#fff;border:none;padding:.65rem 1.5rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.5rem;">
+            <i class="fas fa-plus" style="font-size:.65rem;"></i>Add to Basket
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Summary + RFQ Form -->
+      <div style="position:sticky;top:1.5rem;">
+        <!-- Summary Box -->
+        <div style="background:#fff;border:1px solid var(--border);margin-bottom:1rem;">
+          <div style="background:var(--ink);padding:1rem 1.25rem;display:flex;align-items:center;gap:.75rem;">
+            <i class="fas fa-clipboard-list" style="color:var(--gold);font-size:.9rem;"></i>
+            <span style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:#fff;">Basket Summary</span>
+          </div>
+          <div style="padding:1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:.78rem;color:var(--ink-muted);">Catalogue Items</span>
+              <span id="bkt-cat-count" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--gold);">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:.78rem;color:var(--ink-muted);">Custom Requirements</span>
+              <span id="bkt-cx-count" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--gold);">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.625rem 0;">
+              <span style="font-size:.82rem;font-weight:700;color:var(--ink);">Total Items</span>
+              <span id="bkt-total-count" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.3rem;color:var(--ink);">0</span>
+            </div>
+            <div style="background:var(--gold-pale);border:1px solid rgba(184,150,12,.2);padding:.625rem .875rem;margin-top:.5rem;">
+              <p style="font-size:.65rem;color:var(--gold);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.2rem;">No Pricing Displayed</p>
+              <p style="font-size:.7rem;color:var(--ink-muted);line-height:1.5;">All pricing is negotiated privately. Our team prepares a GST-inclusive quotation within 5 business days.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RFQ Contact Form -->
+        <div style="background:#fff;border:1px solid var(--border);">
+          <div style="padding:.875rem 1.25rem;border-bottom:1px solid var(--border);">
+            <p style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;">Step 2 of 2</p>
+            <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--ink);margin:0;">Your Contact Details</h3>
+          </div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.875rem;">
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Full Name *</label>
+              <input id="rfq-contact-name" type="text" placeholder="Your full name" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Property / Company *</label>
+              <input id="rfq-company" type="text" placeholder="Hotel / Restaurant name" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Location *</label>
+              <input id="rfq-location" type="text" placeholder="City, State" class="ig-inp" style="font-size:.82rem;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;">
+              <div>
+                <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Email *</label>
+                <input id="rfq-email" type="email" placeholder="your@email.com" class="ig-inp" style="font-size:.82rem;">
+              </div>
+              <div>
+                <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Phone *</label>
+                <input id="rfq-phone" type="tel" placeholder="+91 XXXXX XXXXX" class="ig-inp" style="font-size:.82rem;">
+              </div>
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Property Type</label>
+              <select id="rfq-prop-type" class="ig-inp" style="font-size:.82rem;">
+                <option value="">Select type</option>
+                <option>Hotel (New Opening)</option>
+                <option>Hotel (Refurbishment)</option>
+                <option>Restaurant / F&B</option>
+                <option>Resort / Boutique</option>
+                <option>Hospital / Institutional</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Budget Range</label>
+              <select id="rfq-budget" class="ig-inp" style="font-size:.82rem;">
+                <option value="">Select range (optional)</option>
+                <option>Under ₹25 Lakhs</option>
+                <option>₹25–75 Lakhs</option>
+                <option>₹75 Lakhs – ₹1 Cr</option>
+                <option>₹1 Cr – ₹3 Cr</option>
+                <option>₹3 Cr+</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Additional Notes</label>
+              <textarea id="rfq-notes" rows="2" placeholder="Timeline, brand standards, special requirements…" class="ig-inp" style="font-size:.82rem;resize:vertical;min-height:60px;"></textarea>
+            </div>
+            <div id="rfq-err" style="display:none;background:#fef2f2;border:1px solid #fecaca;padding:.5rem .75rem;font-size:.72rem;color:#dc2626;"></div>
+            <button onclick="igBasketSubmitRFQ()" id="btn-submit-rfq-form" style="width:100%;padding:.875rem;background:var(--gold);color:#fff;border:none;font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;">
+              <i class="fas fa-paper-plane" style="font-size:.7rem;"></i>Submit RFQ
+            </button>
+            <button onclick="igRFQWhatsApp()" style="width:100%;padding:.7rem;background:#25D366;color:#fff;border:none;font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;">
+              <i class="fab fa-whatsapp" style="font-size:.8rem;"></i>Send via WhatsApp Instead
+            </button>
+            <p style="font-size:.62rem;color:var(--ink-faint);text-align:center;"><i class="fas fa-lock" style="color:var(--gold);margin-right:.3rem;font-size:.52rem;"></i>Confidential · No pricing shared publicly · 48h response</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div id="bkt-success-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+  <div style="background:#fff;max-width:480px;width:90%;padding:2.5rem;text-align:center;">
+    <div style="width:72px;height:72px;background:rgba(22,163,74,.1);border:2px solid rgba(22,163,74,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+      <i class="fas fa-check" style="color:#16a34a;font-size:1.75rem;"></i>
+    </div>
+    <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.6rem;color:var(--ink);margin-bottom:.625rem;">RFQ Submitted!</h2>
+    <p style="font-size:.82rem;color:var(--ink-muted);line-height:1.75;margin-bottom:1.5rem;">Your requirement basket has been submitted. Pavan Manikonda will respond within 48 business hours with a detailed specification and quote.</p>
+    <div style="background:var(--parch);border:1px solid var(--border);padding:1rem;margin-bottom:1.5rem;">
+      <p style="font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.35rem;">Your RFQ Reference</p>
+      <div id="bkt-rfq-ref" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.3rem;color:var(--gold);"></div>
+    </div>
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+      <a href="/horeca/catalogue" class="btn btn-g" style="font-size:.75rem;">Continue Browsing</a>
+      <button onclick="document.getElementById('bkt-success-overlay').style.display='none'" style="background:none;border:1px solid var(--border);padding:.5rem 1.25rem;font-size:.75rem;cursor:pointer;color:var(--ink);">Close</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ig-inp { width:100%;box-sizing:border-box;border:1.5px solid var(--border);padding:.625rem .875rem;font-size:.875rem;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;background:#fff;transition:border-color .2s; }
+  .ig-inp:focus { border-color:var(--gold); }
+  .bkt-item-card { background:#fff;border:1px solid var(--border);padding:1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start;position:relative; }
+  .bkt-item-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.07); }
+  .bkt-custom-badge { display:inline-flex;align-items:center;padding:.12rem .45rem;font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe; }
+  @media(max-width:768px){
+    .basket-layout { grid-template-columns:1fr !important; }
+  }
+</style>
+
+<script>
+// ── Basket State ──────────────────────────────────────────────────────────────
+var _bktId = null;
+var _bktData = null;
+
+function igBktGetOrCreate() {
+  _bktId = localStorage.getItem('ig_basket_id') || null;
+  if (!_bktId) {
+    // Create new basket on server
+    return fetch('/api/horeca/basket/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: 'basket_page' })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.success) {
+        _bktId = d.basket_id;
+        _bktData = d.basket;
+        localStorage.setItem('ig_basket_id', _bktId);
+      }
+    });
+  } else {
+    return fetch('/api/horeca/basket/' + _bktId)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.success) {
+          _bktData = d.basket;
+        } else {
+          // Basket expired — create new
+          localStorage.removeItem('ig_basket_id');
+          _bktId = null;
+          return igBktGetOrCreate();
+        }
+      });
+  }
+}
+
+function igBktRender() {
+  var loading = document.getElementById('bkt-loading');
+  var empty = document.getElementById('bkt-empty');
+  var items = document.getElementById('bkt-items');
+  if (loading) loading.style.display = 'none';
+  var allItems = (_bktData && _bktData.items) ? _bktData.items : [];
+  var catItems = allItems.filter(function(i){ return !i.custom; });
+  var cxItems  = allItems.filter(function(i){ return i.custom; });
+  document.getElementById('bkt-cat-count').textContent = catItems.length;
+  document.getElementById('bkt-cx-count').textContent = cxItems.length;
+  document.getElementById('bkt-total-count').textContent = allItems.length;
+  if (allItems.length === 0) {
+    if (empty) empty.style.display = 'block';
+    if (items) items.style.display = 'none';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (items) {
+    items.style.display = 'flex';
+    var html = '';
+    allItems.forEach(function(item, idx) {
+      var safeSku = (item.sku||'').replace(/[^a-z0-9\-]/gi,'');
+      html += '<div class="bkt-item-card" id="bkt-item-' + idx + '">'
+        + '<div style="flex:0 0 48px;height:48px;background:#f8f6f1;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">'
+        + (item.custom ? '<i class="fas fa-pencil-alt" style="color:#2563eb;font-size:.85rem;"></i>' : '<i class="fas fa-box" style="color:var(--gold);font-size:.85rem;"></i>')
+        + '</div>'
+        + '<div style="flex:1;min-width:0;">'
+        + '<div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem;">'
+        + '<span style="font-size:.62rem;font-weight:700;font-family:monospace;color:#0d9488;">' + (item.sku||item.product_id||'CX') + '</span>'
+        + (item.custom ? '<span class="bkt-custom-badge">Custom</span>' : '')
+        + '</div>'
+        + '<h4 style="font-size:.875rem;font-weight:700;color:var(--ink);margin:0 0 .2rem;line-height:1.3;">' + (item.name||'') + '</h4>'
+        + '<p style="font-size:.72rem;color:var(--ink-muted);margin:0 0 .3rem;">' + (item.category||'') + (item.unit ? ' · per ' + item.unit : '') + '</p>'
+        + (item.notes ? '<p style="font-size:.7rem;color:#64748b;margin:0;line-height:1.4;border-top:1px solid var(--border);padding-top:.35rem;margin-top:.35rem;">' + item.notes + '</p>' : '')
+        + '</div>'
+        + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0;">'
+        + '<button onclick="igBktRemove(\'' + safeSku + '\')" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:.7rem;padding:.25rem;" title="Remove">'
+        + '<i class="fas fa-times"></i></button>'
+        + '<div style="display:flex;align-items:center;gap:.35rem;border:1px solid var(--border);padding:.2rem;">'
+        + '<button onclick="igBktQtyChange(\'' + safeSku + '\',-1)" style="background:none;border:none;width:22px;height:22px;cursor:pointer;color:var(--ink-muted);font-size:.7rem;">−</button>'
+        + '<span id="qty-' + safeSku + '" style="font-size:.82rem;font-weight:700;min-width:22px;text-align:center;">' + (item.quantity||1) + '</span>'
+        + '<button onclick="igBktQtyChange(\'' + safeSku + '\',1)" style="background:none;border:none;width:22px;height:22px;cursor:pointer;color:var(--ink-muted);font-size:.7rem;">+</button>'
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    });
+    items.innerHTML = html;
+  }
+}
+
+window.igBktRemove = function(sku) {
+  if (!_bktId || !sku) return;
+  fetch('/api/horeca/basket/' + _bktId + '/item/' + sku, { method: 'DELETE' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success && _bktData) {
+        _bktData.items = _bktData.items.filter(function(i){ return i.sku !== sku && i.product_id !== sku; });
+        igBktRender();
+        igBktUpdateGlobalCounter();
+        igShowBktToast('Item removed from basket', 'info');
+      }
+    }).catch(function(){
+      // Fallback: remove locally
+      if (_bktData) {
+        _bktData.items = _bktData.items.filter(function(i){ return i.sku !== sku && i.product_id !== sku; });
+        igBktRender();
+      }
+    });
+};
+
+window.igBktQtyChange = function(sku, delta) {
+  if (!_bktId || !sku) return;
+  var item = _bktData && _bktData.items ? _bktData.items.find(function(i){ return i.sku === sku || i.product_id === sku; }) : null;
+  if (!item) return;
+  var newQty = Math.max(0, (item.quantity || 1) + delta);
+  if (newQty === 0) { igBktRemove(sku); return; }
+  fetch('/api/horeca/basket/' + _bktId + '/item/' + sku, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quantity: newQty })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      item.quantity = newQty;
+      var qtyEl = document.getElementById('qty-' + sku);
+      if (qtyEl) qtyEl.textContent = newQty;
+      document.getElementById('bkt-total-count').textContent = _bktData.items.length;
+      igBktUpdateGlobalCounter();
+    }
+  }).catch(function(){
+    item.quantity = newQty;
+    var qtyEl = document.getElementById('qty-' + sku);
+    if (qtyEl) qtyEl.textContent = newQty;
+  });
+};
+
+window.igBktAddCustom = function() {
+  var name = (document.getElementById('cx-name')||{value:''}).value.trim();
+  var desc = (document.getElementById('cx-desc')||{value:''}).value.trim();
+  var cat  = (document.getElementById('cx-cat')||{value:'Custom'}).value;
+  var qty  = parseInt((document.getElementById('cx-qty')||{value:'1'}).value) || 1;
+  var unit = (document.getElementById('cx-unit')||{value:'Piece'}).value.trim() || 'Piece';
+  var brand = (document.getElementById('cx-brand')||{value:''}).value.trim();
+  var spec  = (document.getElementById('cx-spec')||{value:''}).value.trim();
+  var errEl = document.getElementById('cx-err');
+  if (!name) { if(errEl){errEl.style.display='block';errEl.textContent='Item name is required.';} return; }
+  if (!desc || desc.length < 5) { if(errEl){errEl.style.display='block';errEl.textContent='Please describe the requirement (min 5 chars).';} return; }
+  if (errEl) errEl.style.display = 'none';
+  if (!_bktId) { igShowBktToast('Creating your basket first…','info'); return; }
+  fetch('/api/horeca/basket/' + _bktId + '/custom-item', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name, category: cat, quantity: qty, unit: unit, description: desc, reference_brand: brand, target_spec: spec })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      if (_bktData) {
+        _bktData.items.push({ product_id: d.custom_id, sku: d.custom_id, name: name, category: cat, unit: unit, quantity: qty, notes: desc, custom: true });
+        igBktRender();
+        igBktUpdateGlobalCounter();
+      }
+      // Clear form
+      ['cx-name','cx-desc','cx-brand','cx-spec'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      var qEl = document.getElementById('cx-qty'); if(qEl) qEl.value='1';
+      igShowBktToast('Custom requirement added to basket', 'success');
+    } else {
+      if(errEl){ errEl.style.display='block'; errEl.textContent = d.error || 'Failed to add item.'; }
+    }
+  }).catch(function(){
+    // Fallback: add locally
+    if (_bktData) {
+      var cxId = 'CX-' + Date.now();
+      _bktData.items.push({ product_id: cxId, sku: cxId, name: name, category: cat, unit: unit, quantity: qty, notes: desc, custom: true });
+      igBktRender();
+    }
+    igShowBktToast('Custom requirement added (local)', 'info');
+  });
+};
+
+window.igBasketSubmitRFQ = function() {
+  var name     = (document.getElementById('rfq-contact-name')||{value:''}).value.trim();
+  var email    = (document.getElementById('rfq-email')||{value:''}).value.trim();
+  var phone    = (document.getElementById('rfq-phone')||{value:''}).value.trim();
+  var company  = (document.getElementById('rfq-company')||{value:''}).value.trim();
+  var location = (document.getElementById('rfq-location')||{value:''}).value.trim();
+  var propType = (document.getElementById('rfq-prop-type')||{value:''}).value;
+  var budget   = (document.getElementById('rfq-budget')||{value:''}).value;
+  var notes    = (document.getElementById('rfq-notes')||{value:''}).value.trim();
+  var errEl    = document.getElementById('rfq-err');
+  var items    = (_bktData && _bktData.items) ? _bktData.items : [];
+
+  if (!name) { if(errEl){errEl.style.display='block';errEl.textContent='Please enter your full name.';} return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { if(errEl){errEl.style.display='block';errEl.textContent='Please enter a valid email.';} return; }
+  if (!phone) { if(errEl){errEl.style.display='block';errEl.textContent='Please enter your phone number.';} return; }
+  if (!company) { if(errEl){errEl.style.display='block';errEl.textContent='Please enter your property/company name.';} return; }
+  if (items.length === 0) { if(errEl){errEl.style.display='block';errEl.textContent='Please add at least one item to your basket before submitting.';} return; }
+  if (errEl) errEl.style.display = 'none';
+
+  var btns = document.querySelectorAll('#btn-submit-rfq, #btn-submit-rfq-form');
+  btns.forEach(function(b){ b.disabled=true; b.innerHTML='<i class="fas fa-circle-notch fa-spin" style="font-size:.7rem;"></i>&nbsp;Submitting…'; });
+
+  // Get categories from items
+  var cats = [...new Set(items.map(function(i){ return i.category; }).filter(Boolean))];
+
+  fetch('/api/horeca/rfq/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: name, email: email, phone: phone,
+      company: company, location: location,
+      property_type: propType, budget_range: budget,
+      supply_categories: cats,
+      items: items.map(function(i){ return { sku: i.sku, name: i.name, category: i.category, quantity: i.quantity, notes: i.notes }; }),
+      custom_requirements: notes,
+      basket_id: _bktId,
+      source: 'basket_page_v2'
+    })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      var refEl = document.getElementById('bkt-rfq-ref');
+      if (refEl) refEl.textContent = d.rfq_id || d.ref || 'RFQ-' + Date.now();
+      var overlay = document.getElementById('bkt-success-overlay');
+      if (overlay) overlay.style.display = 'flex';
+      // Clear basket
+      localStorage.removeItem('ig_basket_id');
+      igBktUpdateGlobalCounter();
+    } else {
+      if(errEl){ errEl.style.display='block'; errEl.textContent = d.error || 'Submission failed. Please try again.'; }
+      btns.forEach(function(b){ b.disabled=false; b.innerHTML='<i class="fas fa-paper-plane"></i>&nbsp;Submit RFQ'; });
+    }
+  }).catch(function(){
+    if(errEl){ errEl.style.display='block'; errEl.textContent='Network error. Please call +91 62825 56067 or WhatsApp us.'; }
+    btns.forEach(function(b){ b.disabled=false; b.innerHTML='<i class="fas fa-paper-plane"></i>&nbsp;Submit RFQ'; });
+  });
+};
+
+window.igRFQWhatsApp = function() {
+  var name    = (document.getElementById('rfq-contact-name')||{value:''}).value.trim();
+  var company = (document.getElementById('rfq-company')||{value:''}).value.trim();
+  var items   = (_bktData && _bktData.items) ? _bktData.items : [];
+  var n = '\\n';
+  var msg = 'Hi Pavan, I have a HORECA procurement requirement:' + n
+    + (name ? 'Contact: ' + name + n : '')
+    + (company ? 'Property: ' + company + n : '')
+    + 'Items (' + items.length + '): ' + items.slice(0,5).map(function(i){ return i.sku + ' ' + i.name + ' x' + i.quantity; }).join(', ')
+    + (items.length > 5 ? ' + ' + (items.length-5) + ' more' : '');
+  window.open('https://wa.me/916282556067?text=' + encodeURIComponent(msg), '_blank');
+};
+
+function igBktUpdateGlobalCounter() {
+  var count = (_bktData && _bktData.items) ? _bktData.items.length : 0;
+  localStorage.setItem('ig_basket_count', String(count));
+  // Update any global basket counter badge in the nav
+  document.querySelectorAll('.ig-basket-count').forEach(function(el){ el.textContent = count; el.style.display = count > 0 ? 'inline-flex' : 'none'; });
+}
+
+function igShowBktToast(msg, type) {
+  var bg = type==='success'?'#16a34a':type==='info'?'#2563eb':type==='warn'?'#d97706':'#dc2626';
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:'+bg+';color:#fff;padding:.75rem 1.5rem;font-size:.78rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(function(){ t.remove(); }, 400); }, 3000);
+}
+
+// ── Global: Add to Basket from Catalogue (called by catalogue page) ──────────
+window.igAddToBasket = function(sku, name, category, unit) {
+  _bktId = localStorage.getItem('ig_basket_id') || null;
+  var doAdd = function() {
+    fetch('/api/horeca/basket/' + _bktId + '/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sku: sku, product_id: sku, name: name, category: category, unit: unit, quantity: 1 })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.success) {
+        if (!_bktData) _bktData = { items: [] };
+        var existing = _bktData.items.find(function(i){ return i.sku === sku || i.product_id === sku; });
+        if (existing) existing.quantity = (existing.quantity||1) + 1;
+        else _bktData.items.push({ product_id: sku, sku: sku, name: name, category: category, unit: unit, quantity: 1 });
+        igBktUpdateGlobalCounter();
+        igShowBktToast('\u2714 Added to basket: ' + sku, 'success');
+      }
+    }).catch(function(){
+      igShowBktToast('Added to basket (local)', 'info');
+    });
+  };
+  if (!_bktId) {
+    fetch('/api/horeca/basket/create', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: 'catalogue_add' })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.success) {
+        _bktId = d.basket_id;
+        _bktData = d.basket;
+        localStorage.setItem('ig_basket_id', _bktId);
+        doAdd();
+      }
+    }).catch(doAdd);
+  } else { doAdd(); }
+};
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  igBktGetOrCreate().then(function(){
+    document.getElementById('bkt-loading').style.display = 'none';
+    igBktRender();
+    igBktUpdateGlobalCounter();
+  }).catch(function(){
+    document.getElementById('bkt-loading').style.display = 'none';
+    document.getElementById('bkt-empty').style.display = 'block';
+  });
+});
+</script>
+`
+  return c.html(layout('Requirement Basket — HORECA', content, {
+    description: 'Build your HORECA procurement requirement list and submit a single RFQ to India Gully. No pricing displayed.',
+    canonical: 'https://indiagully.com/horeca/basket'
+  }))
+})
+
+// ── Product Detail Page ───────────────────────────────────────────────────────
+app.get('/product/:id', (c) => {
+  const productId = c.req.param('id')
+  const content = `
+<!-- PRODUCT DETAIL HERO -->
+<div style="background:var(--ink);padding:3rem 0 2.5rem;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,.04) 1px,transparent 1px);background-size:48px 48px;"></div>
+  <div class="wrap" style="position:relative;">
+    <p style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,150,12,.8);margin-bottom:.75rem;">
+      <a href="/horeca" style="color:inherit;text-decoration:none;">HORECA</a>
+      <span style="color:rgba(255,255,255,.3);margin:0 .4rem;">/</span>
+      <a href="/horeca/catalogue" style="color:inherit;text-decoration:none;">Catalogue</a>
+      <span style="color:rgba(255,255,255,.3);margin:0 .4rem;">/</span>
+      <span id="pd-breadcrumb">Product</span>
+    </p>
+    <h1 id="pd-title" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#fff;margin:0 0 .5rem;"></h1>
+    <p id="pd-sku-line" style="font-size:.72rem;color:rgba(255,255,255,.5);font-family:monospace;"></p>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL BODY -->
+<div style="background:#f8f6f1;padding:2rem 0;">
+  <div class="wrap">
+    <div id="pd-loading" style="text-align:center;padding:4rem;background:#fff;border:1px solid var(--border);">
+      <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--gold);"></i>
+      <p style="margin-top:1rem;font-size:.85rem;color:var(--ink-muted);">Loading product…</p>
+    </div>
+    <div id="pd-body" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:2rem;align-items:start;" class="mob-stack">
+        <!-- Left: Image + Specs -->
+        <div>
+          <div id="pd-img-wrap" style="background:#fff;border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden;"></div>
+          <div style="background:#fff;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+            <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:1rem;">Technical Specifications</h3>
+            <div id="pd-specs-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem;"></div>
+          </div>
+          <div id="pd-related-wrap" style="display:none;">
+            <h3 style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:1rem;">Related Products</h3>
+            <div id="pd-related-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;" class="mob-stack"></div>
+          </div>
+        </div>
+        <!-- Right: Info + Actions -->
+        <div style="position:sticky;top:1.5rem;">
+          <div style="background:#fff;border:1px solid var(--border);margin-bottom:1rem;">
+            <div style="padding:1.5rem;border-bottom:1px solid var(--border);">
+              <div id="pd-cat-badge" style="margin-bottom:.75rem;"></div>
+              <h2 id="pd-name" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.4rem;color:var(--ink);margin:0 0 .5rem;"></h2>
+              <p id="pd-description" style="font-size:.82rem;color:var(--ink-muted);line-height:1.75;margin:0;"></p>
+            </div>
+            <div style="padding:1.25rem;border-bottom:1px solid var(--border);">
+              <div id="pd-supplier-info" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+            </div>
+            <div style="padding:1.25rem;border-bottom:1px solid var(--border);">
+              <div style="background:#fffbeb;border:1px solid rgba(184,150,12,.2);padding:.75rem;margin-bottom:1rem;">
+                <p style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:.2rem;"><i class="fas fa-info-circle" style="margin-right:.3rem;"></i>No Pricing Shown</p>
+                <p style="font-size:.7rem;color:var(--ink-muted);line-height:1.5;">All pricing is negotiated directly. Contact us for a GST-inclusive quotation.</p>
+              </div>
+              <button id="pd-btn-basket" onclick="igPdAddToBasket()" style="width:100%;padding:.875rem;background:var(--gold);color:#fff;border:none;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.625rem;">
+                <i class="fas fa-shopping-basket" style="font-size:.7rem;"></i>Add to Basket
+              </button>
+              <a href="/horeca/basket" style="display:block;width:100%;box-sizing:border-box;padding:.75rem;background:#fff;color:var(--ink);border:1.5px solid var(--border);font-size:.78rem;font-weight:600;text-align:center;text-decoration:none;margin-bottom:.5rem;">
+                <i class="fas fa-clipboard-list" style="margin-right:.4rem;color:var(--gold);"></i>View Basket
+              </a>
+              <button onclick="igPdQuickRFQ()" style="width:100%;padding:.75rem;background:none;color:var(--ink);border:1.5px solid var(--border);font-size:.78rem;font-weight:600;cursor:pointer;">
+                <i class="fas fa-paper-plane" style="margin-right:.4rem;color:var(--gold);"></i>Quick RFQ for This Product
+              </button>
+            </div>
+            <div style="padding:1rem 1.25rem;">
+              <div id="pd-meta-info" style="display:flex;flex-direction:column;gap:.375rem;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="pd-error" style="display:none;text-align:center;padding:4rem;background:#fff;border:1px solid var(--border);">
+      <i class="fas fa-exclamation-triangle" style="font-size:2rem;color:#dc2626;"></i>
+      <p style="margin-top:1rem;font-size:.875rem;color:var(--ink-muted);">Product not found. <a href="/horeca/catalogue" style="color:var(--gold);">Browse catalogue →</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+var _pdProduct = null;
+var _pdId = '${productId}';
+
+function igPdLoad() {
+  fetch('/api/horeca/product/' + _pdId + '/detail')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      document.getElementById('pd-loading').style.display = 'none';
+      if (!d.success || !d.product) {
+        document.getElementById('pd-error').style.display = 'block';
+        return;
+      }
+      _pdProduct = d.product;
+      igPdRender(d.product, d.related || []);
+    })
+    .catch(function(){
+      document.getElementById('pd-loading').style.display = 'none';
+      document.getElementById('pd-error').style.display = 'block';
+    });
+}
+
+function igPdRender(p, related) {
+  document.getElementById('pd-body').style.display = 'block';
+  var titleEl = document.getElementById('pd-title'); if(titleEl) titleEl.textContent = p.name||'';
+  var bcEl = document.getElementById('pd-breadcrumb'); if(bcEl) bcEl.textContent = p.name||'';
+  var skuEl = document.getElementById('pd-sku-line'); if(skuEl) skuEl.textContent = 'SKU: ' + (p.sku||p.id||'') + (p.spaceType ? '  ·  ' + p.spaceType : '');
+  document.title = (p.name||'Product') + ' — India Gully HORECA';
+
+  // Image
+  var imgWrap = document.getElementById('pd-img-wrap');
+  if (imgWrap) {
+    if (p.image) {
+      imgWrap.innerHTML = '<img src="' + p.image + '" alt="' + (p.name||'').replace(/"/g,'') + '" style="width:100%;height:320px;object-fit:cover;" onerror="this.style.display=\'none\'">';
+    } else {
+      imgWrap.innerHTML = '<div style="height:200px;display:flex;align-items:center;justify-content:center;background:#f8f6f1;"><i class=\\"fas fa-box\\" style=\\"font-size:3rem;color:var(--border);\\"></i></div>';
+    }
+  }
+
+  // Category badge
+  var catBadge = document.getElementById('pd-cat-badge');
+  if (catBadge) catBadge.innerHTML = '<span style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .6rem;background:rgba(184,150,12,.12);color:var(--gold);border:1px solid rgba(184,150,12,.25);">' + (p.category||'') + '</span>' + (p.featured ? '<span style="margin-left:.5rem;font-size:.6rem;font-weight:700;padding:.2rem .6rem;background:#fef9c3;color:#ca8a04;border:1px solid #fde047;"><i class=\\"fas fa-star\\" style=\\"font-size:.5rem;margin-right:.2rem;\\"></i>Featured</span>' : '');
+
+  var nameEl = document.getElementById('pd-name'); if(nameEl) nameEl.textContent = p.name||'';
+  var descEl = document.getElementById('pd-description'); if(descEl) descEl.textContent = p.description||'';
+
+  // Specs
+  var specs = p.specs || {};
+  var specGrid = document.getElementById('pd-specs-grid');
+  if (specGrid) {
+    var specHtml = '';
+    Object.keys(specs).forEach(function(k){
+      specHtml += '<div style="border-bottom:1px solid var(--border);padding-bottom:.5rem;">'
+        + '<p style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 .15rem;">' + k + '</p>'
+        + '<p style="font-size:.82rem;color:var(--ink);margin:0;font-weight:600;">' + specs[k] + '</p>'
+        + '</div>';
+    });
+    specGrid.innerHTML = specHtml || '<p style="font-size:.82rem;color:var(--ink-muted);">No specs available.</p>';
+  }
+
+  // Supplier info (masked)
+  var supInfo = document.getElementById('pd-supplier-info');
+  if (supInfo) {
+    supInfo.innerHTML = '<div style="display:flex;justify-content:space-between;"><span style="font-size:.72rem;color:var(--ink-muted);">Supplier</span><span style="font-size:.78rem;font-weight:600;color:var(--ink);">' + (p.supplierMasked||p.supplierCode||'—') + '</span></div>'
+      + (p.supplierTier ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.72rem;color:var(--ink-muted);">Tier</span><span style="font-size:.72rem;font-weight:700;color:var(--gold);">' + p.supplierTier + '</span></div>' : '')
+      + (p.supplierRating ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.72rem;color:var(--ink-muted);">Rating</span><span style="font-size:.72rem;font-weight:600;color:#16a34a;">★ ' + p.supplierRating + '/5</span></div>' : '')
+      + (p.supplierLeadDays ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.72rem;color:var(--ink-muted);">Est. Lead Time</span><span style="font-size:.72rem;font-weight:600;color:var(--ink);">' + p.supplierLeadDays + ' business days</span></div>' : '');
+  }
+
+  // Meta info
+  var metaInfo = document.getElementById('pd-meta-info');
+  if (metaInfo) {
+    metaInfo.innerHTML = (p.hsn ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.68rem;color:var(--ink-muted);">HSN Code</span><span style="font-size:.68rem;font-family:monospace;color:var(--ink);">' + p.hsn + '</span></div>' : '')
+      + (p.gst_rate ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.68rem;color:var(--ink-muted);">GST Rate</span><span style="font-size:.68rem;color:var(--ink);">' + p.gst_rate + '%</span></div>' : '')
+      + (p.unit ? '<div style="display:flex;justify-content:space-between;"><span style="font-size:.68rem;color:var(--ink-muted);">Unit of Sale</span><span style="font-size:.68rem;color:var(--ink);">per ' + p.unit + '</span></div>' : '')
+      + '<div style="font-size:.62rem;color:var(--ink-faint);padding-top:.5rem;border-top:1px solid var(--border);margin-top:.25rem;">No pricing displayed. All quotes are confidential and property-specific.</div>';
+  }
+
+  // Related products
+  if (related && related.length > 0) {
+    var relWrap = document.getElementById('pd-related-wrap');
+    var relGrid = document.getElementById('pd-related-grid');
+    if (relWrap) relWrap.style.display = 'block';
+    if (relGrid) {
+      relGrid.innerHTML = related.map(function(rp){
+        return '<a href="/horeca/product/' + (rp.id||rp.sku) + '" style="background:#fff;border:1px solid var(--border);padding:.875rem;text-decoration:none;display:block;transition:box-shadow .2s;" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.08)\'" onmouseout="this.style.boxShadow=\'none\'">'
+          + (rp.image ? '<img src="' + rp.image + '" alt="" style="width:100%;height:80px;object-fit:cover;margin-bottom:.5rem;">' : '')
+          + '<p style="font-size:.62rem;font-family:monospace;color:#0d9488;margin:0 0 .2rem;">' + (rp.sku||rp.id||'') + '</p>'
+          + '<p style="font-size:.75rem;font-weight:600;color:var(--ink);margin:0;line-height:1.3;">' + (rp.name||'') + '</p>'
+          + '</a>';
+      }).join('');
+    }
+  }
+}
+
+window.igPdAddToBasket = function() {
+  if (!_pdProduct) return;
+  window.igAddToBasket(_pdProduct.sku||_pdProduct.id, _pdProduct.name, _pdProduct.category, _pdProduct.unit);
+  var btn = document.getElementById('pd-btn-basket');
+  if (btn) { btn.innerHTML = '<i class="fas fa-check" style="font-size:.7rem;"></i>&nbsp;Added to Basket'; btn.style.background='#16a34a'; setTimeout(function(){ btn.innerHTML='<i class="fas fa-shopping-basket" style="font-size:.7rem;"></i>&nbsp;Add to Basket'; btn.style.background='var(--gold)'; },2000); }
+};
+
+window.igPdQuickRFQ = function() {
+  if (!_pdProduct) return;
+  window.igAddToBasket(_pdProduct.sku||_pdProduct.id, _pdProduct.name, _pdProduct.category, _pdProduct.unit);
+  setTimeout(function(){ window.location.href = '/horeca/basket'; }, 800);
+};
+
+function igShowBktToast(msg, type) {
+  var bg = type==='success'?'#16a34a':type==='info'?'#2563eb':'#dc2626';
+  var t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:'+bg+';color:#fff;padding:.75rem 1.5rem;font-size:.78rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(function(){ t.remove(); },400); },3000);
+}
+
+// Stub igAddToBasket if basket.js not yet loaded
+if (typeof window.igAddToBasket !== 'function') {
+  window.igAddToBasket = function(sku, name, cat, unit) {
+    var bktId = localStorage.getItem('ig_basket_id');
+    var doAdd = function(id) {
+      fetch('/api/horeca/basket/' + id + '/add', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ sku:sku, product_id:sku, name:name, category:cat, unit:unit, quantity:1 })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.success) igShowBktToast('\\u2714 Added to basket: ' + sku, 'success');
+      }).catch(function(){ igShowBktToast('Added locally','info'); });
+    };
+    if (!bktId) {
+      fetch('/api/horeca/basket/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'product_detail'})})
+        .then(function(r){return r.json();}).then(function(d){ if(d.success){localStorage.setItem('ig_basket_id',d.basket_id);doAdd(d.basket_id);} });
+    } else { doAdd(bktId); }
+  };
+}
+
+document.addEventListener('DOMContentLoaded', igPdLoad);
+</script>
+`
+  return c.html(layout('Product Detail — HORECA', content, {
+    description: `India Gully HORECA product detail page. Supplier-sourced, specification-grade procurement for hotels and F&B operators.`,
+    canonical: `https://indiagully.com/horeca/product/${productId}`
+  }))
+})
+
+// ── RFQ Tracking Page ─────────────────────────────────────────────────────────
+app.get('/rfq/:id', (c) => {
+  const rfqId = c.req.param('id')
+  const content = `
+<div style="background:var(--ink);padding:3rem 0 2.5rem;position:relative;">
+  <div class="wrap">
+    <p style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(184,150,12,.8);margin-bottom:.75rem;">
+      <a href="/horeca" style="color:inherit;text-decoration:none;">HORECA</a> <span style="color:rgba(255,255,255,.3);margin:0 .4rem;">/</span> RFQ Status
+    </p>
+    <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#fff;margin:0 0 .5rem;">RFQ Status</h1>
+    <p style="font-size:.875rem;color:rgba(255,255,255,.55);margin:0;">Reference: <strong style="color:var(--gold);font-family:monospace;">${rfqId}</strong></p>
+  </div>
+</div>
+<div style="background:#f8f6f1;padding:3rem 0;min-height:50vh;">
+  <div class="wrap" style="max-width:680px;">
+    <div id="rfq-loading" style="text-align:center;padding:3rem;background:#fff;border:1px solid var(--border);">
+      <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--gold);"></i>
+      <p style="margin-top:1rem;font-size:.85rem;">Loading RFQ details…</p>
+    </div>
+    <div id="rfq-detail" style="display:none;"></div>
+    <div id="rfq-not-found" style="display:none;text-align:center;padding:3rem;background:#fff;border:1px solid var(--border);">
+      <i class="fas fa-search" style="font-size:2rem;color:var(--border);"></i>
+      <h3 style="margin-top:1rem;font-family:'DM Serif Display',Georgia,serif;">RFQ Not Found</h3>
+      <p style="font-size:.82rem;color:var(--ink-muted);">We couldn't locate RFQ <strong>${rfqId}</strong>. Please check your reference number or contact us.</p>
+      <a href="/contact" style="margin-top:1rem;display:inline-flex;background:var(--gold);color:#fff;padding:.65rem 1.5rem;font-size:.78rem;font-weight:700;text-decoration:none;align-items:center;gap:.5rem;"><i class="fas fa-phone"></i>Contact Us</a>
+    </div>
+  </div>
+</div>
+<script>
+var _rfqStatusMap = { new:'Received', acknowledged:'Acknowledged', in_progress:'In Progress', quoted:'Quote Ready', closed_won:'Order Confirmed', closed_lost:'Closed' };
+var _rfqStatusColor = { new:'#d97706', acknowledged:'#2563eb', in_progress:'#7c3aed', quoted:'#16a34a', closed_won:'#16a34a', closed_lost:'#64748b' };
+fetch('/api/horeca/rfq/${rfqId}')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    document.getElementById('rfq-loading').style.display='none';
+    if (!d.success || !d.rfq) { document.getElementById('rfq-not-found').style.display='block'; return; }
+    var r = d.rfq;
+    var status = r.status || 'new';
+    var statusLabel = _rfqStatusMap[status] || status;
+    var statusColor = _rfqStatusColor[status] || '#475569';
+    var itemsHtml = (r.items||[]).map(function(i){ return '<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);">'
+      + '<span style="font-size:.78rem;color:var(--ink);">' + (i.sku?'<code style=\\"color:#0d9488;font-size:.65rem;\\">' + i.sku + '</code> ':'') + (i.name||'') + '</span>'
+      + '<span style="font-size:.72rem;color:var(--ink-muted);">×' + (i.quantity||1) + '</span>'
+      + '</div>'; }).join('') || '<p style="font-size:.78rem;color:var(--ink-muted);">No catalogue items — custom requirements only.</p>';
+    document.getElementById('rfq-detail').style.display='block';
+    document.getElementById('rfq-detail').innerHTML = '<div style="background:#fff;border:1px solid var(--border);padding:2rem;margin-bottom:1rem;">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;">'
+      + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.25rem;">RFQ Reference</p><p style="font-family:monospace;font-size:1.2rem;color:var(--gold);font-weight:700;">' + (r.id||r.ref||'') + '</p></div>'
+      + '<div style="background:' + statusColor + '22;border:1px solid ' + statusColor + '55;padding:.5rem 1rem;"><span style="font-size:.72rem;font-weight:700;color:' + statusColor + ';">' + statusLabel + '</span></div>'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">'
+      + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;">Contact</p><p style="font-size:.82rem;font-weight:600;">' + (r.contact_name||'—') + '</p></div>'
+      + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;">Property</p><p style="font-size:.82rem;font-weight:600;">' + (r.company||'—') + '</p></div>'
+      + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;">Location</p><p style="font-size:.82rem;">' + (r.location||'—') + '</p></div>'
+      + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.2rem;">Budget Range</p><p style="font-size:.82rem;">' + (r.budget_range||'—') + '</p></div>'
+      + '</div>'
+      + '<h4 style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.75rem;">' + (r.items&&r.items.length?r.items.length:0) + ' Items in Basket</h4>'
+      + itemsHtml
+      + '</div>'
+      + '<div style="background:var(--gold-pale);border:1px solid rgba(184,150,12,.25);padding:1.25rem;">'
+      + '<p style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;">Next Steps</p>'
+      + '<p style="font-size:.78rem;color:var(--ink-muted);line-height:1.75;">Our team is reviewing your requirements. Pavan Manikonda (+91 62825 56067) will contact you within 48 business hours with a detailed specification and GST-inclusive quote.</p>'
+      + '<div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap;">'
+      + '<a href="tel:+916282556067" style="background:var(--gold);color:#fff;padding:.5rem 1.1rem;font-size:.72rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;"><i class="fas fa-phone"></i>Call Now</a>'
+      + '<a href="https://wa.me/916282556067" target="_blank" style="background:#25D366;color:#fff;padding:.5rem 1.1rem;font-size:.72rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;"><i class="fab fa-whatsapp"></i>WhatsApp</a>'
+      + '<a href="/horeca/catalogue" style="background:#fff;color:var(--ink);border:1px solid var(--border);padding:.5rem 1.1rem;font-size:.72rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;"><i class="fas fa-th-large" style="color:var(--gold);"></i>Browse More</a>'
+      + '</div>'
+      + '</div>';
+  })
+  .catch(function(){
+    document.getElementById('rfq-loading').style.display='none';
+    document.getElementById('rfq-not-found').style.display='block';
+  });
+</script>
+`
+  return c.html(layout(`RFQ ${rfqId} — HORECA`, content, {
+    description: 'Track your India Gully HORECA RFQ status.',
+  }))
+})
+
 export default app

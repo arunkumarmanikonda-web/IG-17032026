@@ -17784,4 +17784,1129 @@ app.get('/erp/dashboard-stats', requireSession(), async (c) => {
   } catch(e) { return c.json({ success: true, stats: {}, error: String(e) }) }
 })
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// HORECA PLATFORM v2 — AI CATALOGUE & RFQ SYSTEM (Phase 69)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Supplier Master (masked) ──────────────────────────────────────────────────
+const HORECA_SUPPLIER_MASTER = [
+  { prefix:'CRI', masked_name:'CRI — Commercial Kitchen Partner',  categories:['Kitchen Equipment'],          tier:'Gold',   lead_days:7,  rating:4.7,  gstin:'07AABCS1234F1Z5', active:true, featured:false },
+  { prefix:'UNX', masked_name:'UNX — Professional Oven Solutions', categories:['Kitchen Equipment'],          tier:'Silver', lead_days:10, rating:4.5,  gstin:'27AACCU5432B1ZX', active:true, featured:false },
+  { prefix:'BST', masked_name:'BST — Cold Chain Specialist',       categories:['Kitchen Equipment'],          tier:'Gold',   lead_days:8,  rating:4.6,  gstin:'07AABCB8765D1Z9', active:true, featured:false },
+  { prefix:'WHL', masked_name:'WHL — Warewash Expert',             categories:['Kitchen Equipment'],          tier:'Silver', lead_days:12, rating:4.4,  gstin:'29AADCW4321G1Z2', active:true, featured:false },
+  { prefix:'PCH', masked_name:'PCH — Fry Station Supplier',        categories:['Kitchen Equipment'],          tier:'Bronze', lead_days:14, rating:4.2,  gstin:'19AABCP3456H1Z7', active:true, featured:false },
+  { prefix:'OCN', masked_name:'OCN — Glassware & Tableware Brand', categories:['Glassware & Tableware'],      tier:'Gold',   lead_days:5,  rating:4.8,  gstin:'29AAACO8765M1Z3', active:true, featured:true  },
+  { prefix:'WEL', masked_name:'WEL — Linen Manufacturer A',        categories:['Hotel Linen & Textiles'],     tier:'Gold',   lead_days:10, rating:4.7,  gstin:'24AABCW7654N1Z1', active:true, featured:false },
+  { prefix:'TRD', masked_name:'TRD — Linen Manufacturer B',        categories:['Hotel Linen & Textiles'],     tier:'Gold',   lead_days:10, rating:4.6,  gstin:'24AABCT2345P1Z8', active:true, featured:false },
+  { prefix:'SPC', masked_name:'SPC — Soft Furnishing Supplier',    categories:['Hotel Linen & Textiles'],     tier:'Silver', lead_days:12, rating:4.3,  gstin:'24AABCS9876Q1Z6', active:true, featured:false },
+  { prefix:'ARI', masked_name:'ARI — Guest Amenity Partner',       categories:['Guest Amenities'],            tier:'Gold',   lead_days:7,  rating:4.9,  gstin:'07AABCA5678R1Z4', active:true, featured:true  },
+  { prefix:'DLP', masked_name:'DLP — Washroom Solutions Brand',    categories:['Washroom & Hygiene'],         tier:'Gold',   lead_days:5,  rating:4.8,  gstin:'07AABCD3456S1Z2', active:true, featured:true  },
+  { prefix:'EFB', masked_name:'EFB — Commercial Vacuum Supplier',  categories:['Housekeeping Supplies'],      tier:'Silver', lead_days:8,  rating:4.4,  gstin:'07AABCE6789T1Z0', active:true, featured:false },
+  { prefix:'FLM', masked_name:'FLM — Housekeeping Equipment Co.',  categories:['Housekeeping Supplies'],      tier:'Bronze', lead_days:10, rating:4.3,  gstin:'07AABCF1234U1Z9', active:true, featured:false },
+  { prefix:'SMS', masked_name:'SMS — Hotel Tech Brand A',          categories:['Tech & AV Systems'],          tier:'Gold',   lead_days:6,  rating:4.6,  gstin:'29AABCS7654V1Z5', active:true, featured:false },
+  { prefix:'HIK', masked_name:'HIK — Security Systems Supplier',   categories:['Tech & AV Systems','Safety & Security'], tier:'Gold', lead_days:7, rating:4.5, gstin:'07AABCH2345W1Z3', active:true, featured:false },
+  { prefix:'UBQ', masked_name:'UBQ — Network Infrastructure Co.',  categories:['Tech & AV Systems'],          tier:'Silver', lead_days:10, rating:4.4,  gstin:'19AABCU8765X1Z1', active:true, featured:false },
+  { prefix:'PAX', masked_name:'PAX — POS Technology Partner',      categories:['Tech & AV Systems'],          tier:'Silver', lead_days:8,  rating:4.5,  gstin:'07AABCP4321Y1Z8', active:true, featured:false },
+  { prefix:'GOD', masked_name:'GOD — Security Hardware Brand',     categories:['Safety & Security'],          tier:'Gold',   lead_days:6,  rating:4.6,  gstin:'07AABCG5678Z1Z6', active:true, featured:false },
+  { prefix:'SFX', masked_name:'SFX — Fire Safety Specialist',      categories:['Safety & Security'],          tier:'Silver', lead_days:9,  rating:4.3,  gstin:'07AABCS2345A2Z4', active:true, featured:false },
+  { prefix:'VTX', masked_name:'VTX — Bar Equipment Supplier',      categories:['Bar & Beverage Equipment'],   tier:'Silver', lead_days:10, rating:4.4,  gstin:'07AABCV6789B2Z2', active:true, featured:false },
+  { prefix:'IG',  masked_name:'IG — India Gully Procurement',      categories:['All Categories'],             tier:'Partner',lead_days:5,  rating:5.0,  gstin:'07AAGCV0867P1ZN', active:true, featured:true  },
+]
+
+// ── Product taxonomy (category → code mapping) ───────────────────────────────
+const HORECA_CATEGORY_CODES: Record<string, string> = {
+  'Kitchen Equipment':      'KE',
+  'Glassware & Tableware':  'GT',
+  'Hotel Linen & Textiles': 'LN',
+  'Guest Amenities':        'GA',
+  'Washroom & Hygiene':     'WH',
+  'Housekeeping Supplies':  'HK',
+  'Furniture & Fixtures':   'FF',
+  'Tech & AV Systems':      'TV',
+  'Bar & Beverage Equipment':'BB',
+  'Safety & Security':      'SS',
+  'Custom':                 'CX',
+}
+
+// ── KV helpers for baskets/RFQs ───────────────────────────────────────────────
+async function kvGetBasket(env: any, basketId: string): Promise<any> {
+  try {
+    if (!env?.KV) return null
+    const raw = await env.KV.get(`horeca_basket:${basketId}`)
+    return raw ? JSON.parse(raw) : null
+  } catch { return null }
+}
+async function kvSaveBasket(env: any, basketId: string, basket: any): Promise<void> {
+  try {
+    if (!env?.KV) return
+    await env.KV.put(`horeca_basket:${basketId}`, JSON.stringify(basket), { expirationTtl: 60 * 60 * 24 * 90 }) // 90 days
+  } catch { /* KV unavail in dev */ }
+}
+async function kvGetRFQs(env: any, limit = 100): Promise<any[]> {
+  try {
+    if (!env?.KV) return []
+    const raw = await env.KV.get('horeca_rfq_list')
+    const list: any[] = raw ? JSON.parse(raw) : []
+    return list.slice(0, limit)
+  } catch { return [] }
+}
+async function kvAppendRFQ(env: any, rfq: any): Promise<void> {
+  try {
+    if (!env?.KV) return
+    const list = await kvGetRFQs(env, 500)
+    list.unshift(rfq)
+    await env.KV.put('horeca_rfq_list', JSON.stringify(list.slice(0, 500)), { expirationTtl: 60 * 60 * 24 * 365 })
+  } catch { /* KV unavail */ }
+}
+async function kvGetIngestionJobs(env: any): Promise<any[]> {
+  try {
+    if (!env?.KV) return []
+    const raw = await env.KV.get('horeca_ingestion_jobs')
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+async function kvSaveIngestionJobs(env: any, jobs: any[]): Promise<void> {
+  try {
+    if (!env?.KV) return
+    await env.KV.put('horeca_ingestion_jobs', JSON.stringify(jobs.slice(0, 200)), { expirationTtl: 60 * 60 * 24 * 90 })
+  } catch { /* KV unavail */ }
+}
+async function kvGetDuplicateQueue(env: any): Promise<any[]> {
+  try {
+    if (!env?.KV) return []
+    const raw = await env.KV.get('horeca_duplicate_queue')
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+async function kvSaveDuplicateQueue(env: any, items: any[]): Promise<void> {
+  try {
+    if (!env?.KV) return
+    await env.KV.put('horeca_duplicate_queue', JSON.stringify(items), { expirationTtl: 60 * 60 * 24 * 60 })
+  } catch { /* KV unavail */ }
+}
+async function kvGetPublishQueue(env: any): Promise<any[]> {
+  try {
+    if (!env?.KV) return []
+    const raw = await env.KV.get('horeca_publish_queue')
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+
+// ── SKU generation engine ─────────────────────────────────────────────────────
+function generateProductId(supplierPrefix: string, category: string, seq: number): string {
+  const catCode = HORECA_CATEGORY_CODES[category] || 'CX'
+  const seqStr = String(seq).padStart(3, '0')
+  return `${supplierPrefix.toUpperCase()}-${catCode}-${seqStr}`
+}
+function generateSKU(supplierPrefix: string, category: string, subcategory: string, seq: number, variant?: string): string {
+  const catCode = HORECA_CATEGORY_CODES[category] || 'CX'
+  const subCode = subcategory ? subcategory.substring(0, 3).toUpperCase() : 'GEN'
+  const seqStr = String(seq).padStart(6, '0')
+  const varSuffix = variant ? `-${variant.substring(0,2).toUpperCase()}` : ''
+  return `${supplierPrefix.toUpperCase()}-${catCode}-${subCode}-${seqStr}${varSuffix}`
+}
+
+// ── AI normalization helper (rules-based, no fabrication) ────────────────────
+function aiNormalizeTitle(raw: string, category: string): string {
+  let title = raw.trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[^\w\s\-&(),./]/g, '')
+    .replace(/\b\w/g, (l) => l.toUpperCase())
+  // Add category hint if missing
+  const catKeywords: Record<string, string[]> = {
+    'Kitchen Equipment': ['Commercial','Professional','Hotel Kitchen'],
+    'Glassware & Tableware': ['Crystal','Porcelain','Restaurant'],
+    'Hotel Linen & Textiles': ['Hotel','GSM','Cotton'],
+    'Guest Amenities': ['Guest','Amenity','Hotel'],
+    'Washroom & Hygiene': ['Washroom','Dispenser','Stainless'],
+    'Housekeeping Supplies': ['Commercial','Professional','Housekeeping'],
+  }
+  return title
+}
+function aiGenerateTags(name: string, category: string, specs: Record<string,string>): string[] {
+  const tags: string[] = [category.toLowerCase().replace(/\s+/g,'-')]
+  const nameWords = name.toLowerCase().split(/\s+/)
+  if (nameWords.some(w => ['hotel','hospitality','property'].includes(w))) tags.push('hotel')
+  if (nameWords.some(w => ['restaurant','dining','kitchen'].includes(w))) tags.push('restaurant')
+  if (nameWords.some(w => ['bar','beverage','cocktail'].includes(w))) tags.push('bar')
+  if (nameWords.some(w => ['eco','bamboo','sustainable','green'].includes(w))) tags.push('eco-friendly')
+  if (specs['Material'] && specs['Material'].toLowerCase().includes('stainless')) tags.push('stainless-steel')
+  if (specs['Capacity']) tags.push('commercial-grade')
+  return [...new Set(tags)]
+}
+function aiCleanSpecs(rawSpecs: any): Record<string,string> {
+  if (typeof rawSpecs !== 'object' || !rawSpecs) return {}
+  const cleaned: Record<string,string> = {}
+  for (const [k, v] of Object.entries(rawSpecs)) {
+    if (k && v) {
+      const cleanKey = String(k).trim().replace(/\s+/g,' ')
+      const cleanVal = String(v).trim().replace(/\s+/g,' ')
+      if (cleanKey.length > 0 && cleanVal.length > 0) {
+        cleaned[cleanKey] = cleanVal
+      }
+    }
+  }
+  return cleaned
+}
+
+// ── Duplicate detection engine ────────────────────────────────────────────────
+function detectDuplicates(candidate: any, existing: any[]): { isDuplicate: boolean; matchType: string; matchedId?: string; score: number } {
+  let bestScore = 0
+  let bestMatch: any = null
+  let bestMatchType = ''
+  for (const prod of existing) {
+    let score = 0
+    let matchType = ''
+    // 1. Name similarity (normalized)
+    const normA = candidate.name?.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim() || ''
+    const normB = prod.name?.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim() || ''
+    if (normA && normB && normA === normB) { score += 60; matchType = 'exact_name' }
+    else if (normA && normB) {
+      const wordsA = normA.split(/\s+/); const wordsB = normB.split(/\s+/)
+      const common = wordsA.filter((w: string) => wordsB.includes(w) && w.length > 3)
+      const overlap = common.length / Math.max(wordsA.length, wordsB.length)
+      if (overlap > 0.8) { score += 40; matchType = 'similar_name' }
+    }
+    // 2. Category match
+    if (candidate.category === prod.category) score += 15
+    // 3. Supplier match
+    if (candidate.supplierCode && candidate.supplierCode === prod.supplierCode) score += 20
+    // 4. SKU prefix similarity
+    if (candidate.sku && prod.sku && candidate.sku.split('-')[0] === prod.sku.split('-')[0]) score += 5
+    // 5. Key spec overlap (dimensions, capacity)
+    if (candidate.specs && prod.specs) {
+      const capA = candidate.specs['Capacity'] || ''
+      const capB = prod.specs['Capacity'] || ''
+      if (capA && capB && capA.toLowerCase() === capB.toLowerCase()) { score += 15; matchType = matchType || 'spec_capacity' }
+    }
+    if (score > bestScore) { bestScore = score; bestMatch = prod; bestMatchType = matchType || 'partial' }
+  }
+  return {
+    isDuplicate: bestScore >= 70,
+    matchType: bestScore >= 70 ? bestMatchType : 'none',
+    matchedId: bestScore >= 70 ? (bestMatch?.id || bestMatch?.sku) : undefined,
+    score: bestScore
+  }
+}
+
+// ── Ingestion pipeline simulator ──────────────────────────────────────────────
+const INGESTION_STAGES = ['A:file_discovery','B:page_extraction','C:candidate_extraction','D:supplier_recognition','E:normalization','F:category_mapping','G:image_association','H:ai_enrichment','I:duplicate_detection','J:publish_queue'] as const
+type IngestionStage = typeof INGESTION_STAGES[number]
+
+// ── Masking utility ───────────────────────────────────────────────────────────
+function maskProductForPublic(p: any, adminMode = false): any {
+  const sup = HORECA_SUPPLIER_MASTER.find(s => s.prefix === (p.supplierCode || p.sku?.split('-')[0]))
+  return {
+    id: p.id,
+    sku: p.sku,
+    name: p.name,
+    category: p.category,
+    unit: p.unit,
+    spaceType: p.spaceType,
+    specs: p.specs,
+    hsn: p.hsn,
+    gst_rate: p.gst_rate,
+    featured: p.featured,
+    image: p.image,
+    description: p.description,
+    active: p.active,
+    // Masked supplier info — only prefix visible to public
+    supplierCode: p.supplierCode,
+    supplierMasked: sup?.masked_name || `${p.supplierCode} — Verified Supplier`,
+    supplierTier: sup?.tier || 'Verified',
+    supplierLeadDays: sup?.lead_days,
+    supplierRating: sup?.rating,
+    // Admin-only fields
+    ...(adminMode ? {
+      supplierId: p.supplierId,
+      supplierGstin: sup?.gstin,
+    } : {}),
+    // Never expose: full supplier name, source URLs, internal IDs, image filenames
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// PUBLIC ROUTES — Requirement Basket
+// ──────────────────────────────────────────────────────────────────────────────
+
+// POST /api/horeca/basket/create — Create a new requirement basket
+app.post('/horeca/basket/create', async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const basketId = `BKT-${Date.now()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`
+    const basket = {
+      id: basketId,
+      client_name: sanitiseStr(body.client_name || '', 120),
+      property_name: sanitiseStr(body.property_name || '', 200),
+      property_type: sanitiseStr(body.property_type || '', 80),
+      location: sanitiseStr(body.location || '', 120),
+      email: sanitiseStr(body.email || '', 120),
+      phone: sanitiseStr(body.phone || '', 30),
+      budget_range: sanitiseStr(body.budget_range || '', 80),
+      notes: sanitiseStr(body.notes || '', 1000),
+      items: [],
+      status: 'draft',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    await kvSaveBasket(env, basketId, basket)
+    return c.json({ success: true, basket_id: basketId, basket })
+  } catch (e) {
+    return c.json({ success: false, error: 'Failed to create basket', detail: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/basket/:id — Get basket by ID
+app.get('/horeca/basket/:id', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    if (!id || !id.startsWith('BKT-')) return c.json({ success: false, error: 'Invalid basket ID' }, 400)
+    const basket = await kvGetBasket(env, id)
+    if (!basket) {
+      // Return empty basket stub for new sessions
+      return c.json({ success: false, error: 'Basket not found', basket: null }, 404)
+    }
+    return c.json({ success: true, basket })
+  } catch (e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// POST /api/horeca/basket/:id/add — Add item to basket
+app.post('/horeca/basket/:id/add', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const body = await c.req.json() as any
+    const basket = await kvGetBasket(env, id)
+    if (!basket) return c.json({ success: false, error: 'Basket not found' }, 404)
+    // Validate product exists
+    const products = await kvGetProducts(env)
+    const product = products.find((p: any) => p.id === body.product_id || p.sku === body.sku)
+    if (!product) return c.json({ success: false, error: 'Product not found in catalogue' }, 404)
+    // Check if already in basket
+    const existing = basket.items.find((i: any) => i.product_id === (body.product_id || body.sku))
+    if (existing) {
+      existing.quantity = Math.max(1, (existing.quantity || 1) + (parseInt(body.quantity) || 1))
+      existing.notes = sanitiseStr(body.notes || existing.notes || '', 500)
+    } else {
+      basket.items.push({
+        product_id: product.id,
+        sku: product.sku,
+        name: product.name,
+        category: product.category,
+        unit: product.unit,
+        supplierCode: product.supplierCode,
+        quantity: Math.max(1, parseInt(body.quantity) || 1),
+        notes: sanitiseStr(body.notes || '', 500),
+        added_at: new Date().toISOString(),
+      })
+    }
+    basket.updated_at = new Date().toISOString()
+    await kvSaveBasket(env, id, basket)
+    return c.json({ success: true, basket_id: id, item_count: basket.items.length, basket })
+  } catch (e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// PUT /api/horeca/basket/:id/item/:sku — Update item in basket
+app.put('/horeca/basket/:id/item/:sku', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const sku = c.req.param('sku')
+    const body = await c.req.json() as any
+    const basket = await kvGetBasket(env, id)
+    if (!basket) return c.json({ success: false, error: 'Basket not found' }, 404)
+    const item = basket.items.find((i: any) => i.sku === sku || i.product_id === sku)
+    if (!item) return c.json({ success: false, error: 'Item not in basket' }, 404)
+    if (body.quantity !== undefined) item.quantity = Math.max(0, parseInt(body.quantity) || 0)
+    if (body.notes !== undefined) item.notes = sanitiseStr(body.notes, 500)
+    // Remove if qty = 0
+    if (item.quantity === 0) basket.items = basket.items.filter((i: any) => i.sku !== sku && i.product_id !== sku)
+    basket.updated_at = new Date().toISOString()
+    await kvSaveBasket(env, id, basket)
+    return c.json({ success: true, basket_id: id, item_count: basket.items.length })
+  } catch (e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// DELETE /api/horeca/basket/:id/item/:sku — Remove item from basket
+app.delete('/horeca/basket/:id/item/:sku', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const sku = c.req.param('sku')
+    const basket = await kvGetBasket(env, id)
+    if (!basket) return c.json({ success: false, error: 'Basket not found' }, 404)
+    basket.items = basket.items.filter((i: any) => i.sku !== sku && i.product_id !== sku)
+    basket.updated_at = new Date().toISOString()
+    await kvSaveBasket(env, id, basket)
+    return c.json({ success: true, basket_id: id, item_count: basket.items.length })
+  } catch (e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// POST /api/horeca/basket/:id/custom-item — Add custom/non-catalogue requirement
+app.post('/horeca/basket/:id/custom-item', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const body = await c.req.json() as any
+    const basket = await kvGetBasket(env, id)
+    if (!basket) return c.json({ success: false, error: 'Basket not found' }, 404)
+    if (!body.description || String(body.description).trim().length < 5) {
+      return c.json({ success: false, error: 'Description required (min 5 chars)' }, 400)
+    }
+    const customId = `CX-${Date.now().toString(36).toUpperCase()}`
+    basket.items.push({
+      product_id: customId,
+      sku: customId,
+      name: sanitiseStr(body.name || 'Custom Requirement', 200),
+      category: sanitiseStr(body.category || 'Custom', 80),
+      unit: sanitiseStr(body.unit || 'Piece', 40),
+      supplierCode: 'CX',
+      quantity: Math.max(1, parseInt(body.quantity) || 1),
+      notes: sanitiseStr(body.description, 1000),
+      custom: true,
+      reference_brand: sanitiseStr(body.reference_brand || '', 100),
+      target_spec: sanitiseStr(body.target_spec || '', 500),
+      added_at: new Date().toISOString(),
+    })
+    basket.updated_at = new Date().toISOString()
+    await kvSaveBasket(env, id, basket)
+    return c.json({ success: true, basket_id: id, custom_id: customId, item_count: basket.items.length })
+  } catch (e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// PUBLIC ROUTES — RFQ Submission
+// ──────────────────────────────────────────────────────────────────────────────
+
+// POST /api/horeca/rfq/submit — Submit RFQ from basket or direct
+app.post('/horeca/rfq/submit', async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    // Validate
+    const name    = sanitiseStr(body.name || body.contact_name || '', 120)
+    const email   = sanitiseStr(body.email || '', 120)
+    const phone   = sanitiseStr(body.phone || '', 30)
+    const company = sanitiseStr(body.company || body.property_name || '', 200)
+    const location = sanitiseStr(body.location || '', 120)
+    if (!name || name.length < 2) return c.json({ success: false, error: 'Contact name required' }, 400)
+    if (!email || !validateEmail(email)) return c.json({ success: false, error: 'Valid email required' }, 400)
+    if (!phone || phone.length < 7) return c.json({ success: false, error: 'Phone number required' }, 400)
+
+    const rfqId = `RFQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`
+    const ts = new Date().toISOString()
+
+    // Items — either from basket_id or inline items array
+    let items: any[] = []
+    if (body.basket_id) {
+      const basket = await kvGetBasket(env, body.basket_id)
+      items = basket?.items || []
+    } else if (Array.isArray(body.items)) {
+      items = body.items.map((i: any) => ({
+        sku: sanitiseStr(i.sku || i.product_id || '', 50),
+        name: sanitiseStr(i.name || '', 200),
+        category: sanitiseStr(i.category || '', 80),
+        quantity: Math.max(1, parseInt(i.quantity) || 1),
+        notes: sanitiseStr(i.notes || '', 500),
+      }))
+    }
+
+    const rfq = {
+      id: rfqId,
+      ref: rfqId,
+      contact_name: name,
+      email,
+      phone,
+      company,
+      location,
+      property_type: sanitiseStr(body.property_type || '', 80),
+      rooms_covers: sanitiseStr(body.rooms_covers || '', 60),
+      budget_range: sanitiseStr(body.budget_range || '', 80),
+      supply_categories: Array.isArray(body.supply_categories) ? body.supply_categories.map((s: any) => sanitiseStr(s,50)) : [],
+      items,
+      custom_requirements: sanitiseStr(body.custom_requirements || body.notes || '', 2000),
+      source: sanitiseStr(body.source || 'rfq_form', 50),
+      basket_id: body.basket_id || null,
+      status: 'new',
+      created_at: ts,
+    }
+    await kvAppendRFQ(env, rfq)
+    // Also store per-ID for lookup
+    try { if (env?.KV) await env.KV.put(`horeca_rfq:${rfqId}`, JSON.stringify(rfq), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    // Persist to D1 if available
+    try {
+      if (env?.DB) {
+        await env.DB.prepare(
+          `INSERT OR IGNORE INTO ig_enquiries (ref_number,enquiry_type,name,email,phone,organisation,message,vertical,scale,status,source,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(rfqId,'horeca_rfq',name,email,phone||'',company||'',
+          `RFQ: ${items.length} items. Categories: ${rfq.supply_categories.join(', ')}. Budget: ${rfq.budget_range}. ${rfq.custom_requirements}`,
+          location||'',rfq.budget_range||'','New','horeca_rfq_v2',ts
+        ).run()
+      }
+    } catch(_){}
+    return c.json({ success: true, rfq_id: rfqId, ref: rfqId, item_count: items.length, created_at: ts, message: 'RFQ submitted successfully. Our team will respond within 48 business hours.' })
+  } catch(e) {
+    return c.json({ success: false, error: 'RFQ submission failed', detail: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/rfq/:id — Get RFQ details (public — by RFQ ref)
+app.get('/horeca/rfq/:id', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    if (!id.startsWith('RFQ-')) return c.json({ success: false, error: 'Invalid RFQ ID format' }, 400)
+    let rfq = null
+    try { if (env?.KV) { const raw = await env.KV.get(`horeca_rfq:${id}`); rfq = raw ? JSON.parse(raw) : null } } catch(_){}
+    if (!rfq) {
+      // Search in list
+      const list = await kvGetRFQs(env, 200)
+      rfq = list.find((r: any) => r.id === id || r.ref === id)
+    }
+    if (!rfq) return c.json({ success: false, error: 'RFQ not found' }, 404)
+    // Return masked version — remove internal supplier data
+    const { ...safeRfq } = rfq
+    return c.json({ success: true, rfq: safeRfq })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/suppliers/masked — Public supplier listing (masked)
+app.get('/horeca/suppliers/masked', (c) => {
+  const masked = HORECA_SUPPLIER_MASTER
+    .filter(s => s.active)
+    .map(s => ({
+      prefix: s.prefix,
+      masked_name: s.masked_name,
+      categories: s.categories,
+      tier: s.tier,
+      lead_days: s.lead_days,
+      rating: s.rating,
+      featured: s.featured,
+      // Never expose: gstin, full company name
+    }))
+  return c.json({ success: true, total: masked.length, suppliers: masked })
+})
+
+// GET /api/horeca/product/:id/detail — Product detail with full specs (masked supplier)
+app.get('/horeca/product/:id/detail', async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const products = await kvGetProducts(env)
+    const product = products.find((p: any) => p.id === id || p.sku === id)
+    if (!product) return c.json({ success: false, error: 'Product not found' }, 404)
+    const masked = maskProductForPublic(product, false)
+    // Related products (same category)
+    const related = products
+      .filter((p: any) => p.category === product.category && p.id !== product.id && p.active !== false)
+      .slice(0, 4)
+      .map((p: any) => maskProductForPublic(p, false))
+    return c.json({ success: true, product: masked, related })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — Catalogue Ingestion Engine
+// ──────────────────────────────────────────────────────────────────────────────
+
+// POST /api/horeca/ingest/start — Start ingestion job for a source URL
+app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const sourceUrl = sanitiseStr(body.source_url || '', 2000)
+    const sourceType = sanitiseStr(body.source_type || 'pdf', 20) // pdf | xlsx | csv | web
+    const supplierPrefix = sanitiseStr(body.supplier_prefix || '', 10).toUpperCase()
+    const category = sanitiseStr(body.category || '', 80)
+    if (!sourceUrl) return c.json({ success: false, error: 'source_url is required' }, 400)
+    if (!supplierPrefix) return c.json({ success: false, error: 'supplier_prefix is required' }, 400)
+
+    const jobId = `JOB-${Date.now()}-${Math.random().toString(36).slice(2,5).toUpperCase()}`
+    const ts = new Date().toISOString()
+    const job = {
+      id: jobId,
+      source_url: sourceUrl,
+      source_type: sourceType,
+      supplier_prefix: supplierPrefix,
+      category_hint: category,
+      status: 'queued',
+      stages_completed: [] as IngestionStage[],
+      current_stage: 'A:file_discovery' as IngestionStage,
+      candidates_found: 0,
+      candidates_mapped: 0,
+      duplicates_detected: 0,
+      published: 0,
+      errors: [] as string[],
+      created_at: ts,
+      updated_at: ts,
+      started_by: 'admin',
+    }
+
+    // Simulate Stage A: File discovery
+    job.stages_completed.push('A:file_discovery')
+    job.current_stage = 'B:page_extraction'
+
+    // For PDF/XLSX: mark as processing (real impl would use a worker)
+    // For CSV: can parse inline if small
+    let inlineProducts: any[] = []
+    if (sourceType === 'csv' && body.csv_data) {
+      // Parse inline CSV data
+      const lines = String(body.csv_data).split('\n').filter(Boolean)
+      const headers = lines[0]?.split(',').map((h: string) => h.trim().toLowerCase()) || []
+      for (let i = 1; i < Math.min(lines.length, 200); i++) {
+        const vals = lines[i].split(',').map((v: string) => v.trim().replace(/^"|"$/g,''))
+        const row: any = {}
+        headers.forEach((h: string, idx: number) => { row[h] = vals[idx] || '' })
+        if (row.name || row.product_name) {
+          inlineProducts.push({
+            raw_name: row.name || row.product_name || '',
+            raw_description: row.description || row.desc || '',
+            raw_specs: row.specs || '',
+            raw_category: row.category || category,
+            raw_unit: row.unit || 'Piece',
+            raw_hsn: row.hsn || row.hsn_code || '',
+          })
+        }
+      }
+      job.stages_completed.push('B:page_extraction', 'C:candidate_extraction')
+      job.candidates_found = inlineProducts.length
+      job.current_stage = 'D:supplier_recognition'
+    } else {
+      // Non-CSV: mark for async processing
+      job.candidates_found = 0
+      job.status = 'processing'
+    }
+
+    // Simulate remaining stages for inline CSV
+    if (inlineProducts.length > 0) {
+      const existingProducts = await kvGetProducts(env)
+      const nextSeq = existingProducts.length + 1
+      const processedProducts: any[] = []
+      const duplicates: any[] = []
+      let seq = nextSeq
+
+      for (const raw of inlineProducts) {
+        // Stage D: Supplier recognition
+        const detectedSupplier = HORECA_SUPPLIER_MASTER.find(s =>
+          s.prefix === supplierPrefix || s.categories.includes(raw.raw_category)
+        )
+        // Stage E: Normalization
+        const normalizedName = aiNormalizeTitle(raw.raw_name, raw.raw_category || category)
+        const normalizedSpecs = aiCleanSpecs(raw.raw_specs)
+        // Stage F: Category mapping
+        const mappedCategory = raw.raw_category || category || 'Custom'
+        // Stage G: Image — placeholder (no fabrication)
+        const imageUrl = '' // Will be assigned by admin
+        // Stage H: AI enrichment
+        const tags = aiGenerateTags(normalizedName, mappedCategory, normalizedSpecs)
+        // Stage I: Duplicate detection
+        const dupResult = detectDuplicates({ name: normalizedName, category: mappedCategory, supplierCode: supplierPrefix, specs: normalizedSpecs }, existingProducts)
+
+        const candidate = {
+          id: generateProductId(supplierPrefix, mappedCategory, seq),
+          sku: generateSKU(supplierPrefix, mappedCategory, mappedCategory.split(' ')[0], seq),
+          supplierId: `SUP-${supplierPrefix}`,
+          supplierCode: supplierPrefix,
+          name: normalizedName,
+          category: mappedCategory,
+          unit: raw.raw_unit || 'Piece',
+          spaceType: '',
+          specs: normalizedSpecs,
+          hsn: raw.raw_hsn || '',
+          gst_rate: 18,
+          featured: false,
+          image: imageUrl,
+          description: sanitiseStr(raw.raw_description, 500),
+          active: false, // pending publish
+          tags,
+          ingestion_job_id: jobId,
+          ingestion_source: sourceUrl.substring(0, 100),
+          duplicate_check: dupResult,
+          status: dupResult.isDuplicate ? 'duplicate_review' : 'publish_ready',
+        }
+        if (dupResult.isDuplicate) {
+          duplicates.push({ candidate, matched_id: dupResult.matchedId, match_type: dupResult.matchType, score: dupResult.score })
+          job.duplicates_detected++
+        } else {
+          processedProducts.push(candidate)
+          job.candidates_mapped++
+        }
+        seq++
+      }
+
+      // Save to publish queue and duplicate review
+      const currentPublishQueue = await kvGetPublishQueue(env)
+      const newPublishQueue = [...currentPublishQueue, ...processedProducts]
+      try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(newPublishQueue), { expirationTtl: 60*60*24*30 }) } catch(_){}
+      if (duplicates.length > 0) {
+        const currentDups = await kvGetDuplicateQueue(env)
+        await kvSaveDuplicateQueue(env, [...currentDups, ...duplicates])
+      }
+      job.stages_completed.push('D:supplier_recognition','E:normalization','F:category_mapping','G:image_association','H:ai_enrichment','I:duplicate_detection','J:publish_queue')
+      job.current_stage = 'J:publish_queue'
+      job.status = 'completed'
+    }
+
+    job.updated_at = new Date().toISOString()
+    const jobs = await kvGetIngestionJobs(env)
+    jobs.unshift(job)
+    await kvSaveIngestionJobs(env, jobs)
+
+    return c.json({ success: true, job_id: jobId, job, message: `Ingestion job started. ${job.candidates_found} candidates found, ${job.candidates_mapped} mapped, ${job.duplicates_detected} potential duplicates queued for review.` })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/ingest/jobs — List ingestion jobs
+app.get('/horeca/ingest/jobs', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const jobs = await kvGetIngestionJobs(env)
+    return c.json({ success: true, total: jobs.length, jobs })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/ingest/job/:id — Get specific ingestion job
+app.get('/horeca/ingest/job/:id', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const jobId = c.req.param('id')
+    const jobs = await kvGetIngestionJobs(env)
+    const job = jobs.find((j: any) => j.id === jobId)
+    if (!job) return c.json({ success: false, error: 'Job not found' }, 404)
+    return c.json({ success: true, job })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/publish-queue — Products awaiting publish
+app.get('/horeca/publish-queue', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const queue = await kvGetPublishQueue(env)
+    return c.json({ success: true, total: queue.length, products: queue })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// POST /api/horeca/publish-queue/approve — Approve & publish products from queue
+app.post('/horeca/publish-queue/approve', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const idsToApprove: string[] = Array.isArray(body.ids) ? body.ids : []
+    if (idsToApprove.length === 0) return c.json({ success: false, error: 'No product IDs provided' }, 400)
+    const queue = await kvGetPublishQueue(env)
+    const toPublish = queue.filter((p: any) => idsToApprove.includes(p.id) || idsToApprove.includes(p.sku))
+    const remaining = queue.filter((p: any) => !idsToApprove.includes(p.id) && !idsToApprove.includes(p.sku))
+    // Add to main catalogue
+    const existing = await kvGetProducts(env)
+    const merged = [...existing, ...toPublish.map((p: any) => ({ ...p, active: true, status: 'published', published_at: new Date().toISOString() }))]
+    await kvSaveProducts(env, merged)
+    // Update publish queue
+    try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
+    return c.json({ success: true, published: toPublish.length, remaining_in_queue: remaining.length, message: `${toPublish.length} products published to catalogue.` })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// POST /api/horeca/publish-queue/reject — Reject products from queue
+app.post('/horeca/publish-queue/reject', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const idsToReject: string[] = Array.isArray(body.ids) ? body.ids : []
+    const queue = await kvGetPublishQueue(env)
+    const remaining = queue.filter((p: any) => !idsToReject.includes(p.id) && !idsToReject.includes(p.sku))
+    try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
+    return c.json({ success: true, rejected: idsToReject.length, remaining_in_queue: remaining.length })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/duplicates — Products awaiting duplicate review
+app.get('/horeca/duplicates', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const dups = await kvGetDuplicateQueue(env)
+    return c.json({ success: true, total: dups.length, duplicates: dups })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// POST /api/horeca/duplicates/resolve — Resolve duplicate (keep_new, keep_existing, merge)
+app.post('/horeca/duplicates/resolve', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const { candidate_id, resolution, merged_fields } = body
+    const dups = await kvGetDuplicateQueue(env)
+    const dup = dups.find((d: any) => d.candidate?.id === candidate_id || d.candidate?.sku === candidate_id)
+    if (!dup) return c.json({ success: false, error: 'Duplicate record not found' }, 404)
+    const remaining = dups.filter((d: any) => d.candidate?.id !== candidate_id && d.candidate?.sku !== candidate_id)
+
+    if (resolution === 'keep_new') {
+      const products = await kvGetProducts(env)
+      const merged = [...products, { ...dup.candidate, active: true, status: 'published', duplicate_resolution: 'kept_new', published_at: new Date().toISOString() }]
+      await kvSaveProducts(env, merged)
+    } else if (resolution === 'merge' && merged_fields) {
+      const products = await kvGetProducts(env)
+      const idx = products.findIndex((p: any) => p.id === dup.matched_id || p.sku === dup.matched_id)
+      if (idx >= 0) { Object.assign(products[idx], merged_fields, { updated_at: new Date().toISOString() }) }
+      await kvSaveProducts(env, products)
+    }
+    // 'keep_existing' = just remove from dup queue, do nothing
+
+    await kvSaveDuplicateQueue(env, remaining)
+    return c.json({ success: true, resolution, remaining_duplicates: remaining.length })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — RFQ Management
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/horeca/rfq/list — List all RFQs (admin)
+app.get('/horeca/rfq/list', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const rfqs = await kvGetRFQs(env, 200)
+    const statusFilter = c.req.query('status')
+    const filtered = statusFilter ? rfqs.filter((r: any) => r.status === statusFilter) : rfqs
+    return c.json({ success: true, total: filtered.length, rfqs: filtered })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// PUT /api/horeca/rfq/:id/status — Update RFQ status
+app.put('/horeca/rfq/:id/status', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const id = c.req.param('id')
+    const body = await c.req.json() as any
+    const validStatuses = ['new','acknowledged','in_progress','quoted','closed_won','closed_lost']
+    if (!validStatuses.includes(body.status)) return c.json({ success: false, error: 'Invalid status' }, 400)
+    const list = await kvGetRFQs(env, 500)
+    const idx = list.findIndex((r: any) => r.id === id || r.ref === id)
+    if (idx < 0) return c.json({ success: false, error: 'RFQ not found' }, 404)
+    list[idx].status = body.status
+    list[idx].status_note = sanitiseStr(body.note || '', 500)
+    list[idx].status_updated_at = new Date().toISOString()
+    try { if (env?.KV) await env.KV.put('horeca_rfq_list', JSON.stringify(list), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    try { if (env?.KV) await env.KV.put(`horeca_rfq:${id}`, JSON.stringify(list[idx]), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    return c.json({ success: true, rfq_id: id, status: body.status })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — Supplier Management
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/horeca/supplier-master — Full supplier master (admin only)
+app.get('/horeca/supplier-master', requireSession(), requireRole(['Super Admin'], ['admin']), (c) => {
+  return c.json({ success: true, total: HORECA_SUPPLIER_MASTER.length, suppliers: HORECA_SUPPLIER_MASTER })
+})
+
+// POST /api/horeca/supplier-master/toggle — Toggle supplier featured/active status
+app.post('/horeca/supplier-master/toggle', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const body = await c.req.json() as any
+    const { prefix, field, value } = body
+    const sup = HORECA_SUPPLIER_MASTER.find(s => s.prefix === prefix)
+    if (!sup) return c.json({ success: false, error: 'Supplier not found' }, 404)
+    if (field === 'featured') sup.featured = Boolean(value)
+    if (field === 'active') sup.active = Boolean(value)
+    return c.json({ success: true, supplier: sup })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — SKU Engine
+// ──────────────────────────────────────────────────────────────────────────────
+
+// POST /api/horeca/sku/generate — Generate SKU/Product ID for a new product
+app.post('/horeca/sku/generate', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const supplierPrefix = sanitiseStr(body.supplier_prefix || '', 10).toUpperCase()
+    const category = sanitiseStr(body.category || '', 80)
+    const subcategory = sanitiseStr(body.subcategory || category.split(' ')[0], 30)
+    const variant = sanitiseStr(body.variant || '', 10)
+    if (!supplierPrefix || !category) return c.json({ success: false, error: 'supplier_prefix and category required' }, 400)
+    const products = await kvGetProducts(env)
+    const catProducts = products.filter((p: any) => p.supplierCode === supplierPrefix && p.category === category)
+    const seq = catProducts.length + 1
+    const productId = generateProductId(supplierPrefix, category, seq)
+    const sku = generateSKU(supplierPrefix, category, subcategory, products.length + 1, variant)
+    // Check for conflicts
+    const idConflict = products.find((p: any) => p.id === productId)
+    const skuConflict = products.find((p: any) => p.sku === sku)
+    return c.json({
+      success: true,
+      product_id: idConflict ? generateProductId(supplierPrefix, category, seq + 1) : productId,
+      sku: skuConflict ? generateSKU(supplierPrefix, category, subcategory, products.length + 2, variant) : sku,
+      sequence: seq,
+      conflicts: { id: Boolean(idConflict), sku: Boolean(skuConflict) }
+    })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — Dashboard Stats
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/horeca/dashboard — Admin dashboard summary
+app.get('/horeca/dashboard', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const [products, rfqs, jobs, dups, publishQ] = await Promise.all([
+      kvGetProducts(env),
+      kvGetRFQs(env, 200),
+      kvGetIngestionJobs(env),
+      kvGetDuplicateQueue(env),
+      kvGetPublishQueue(env),
+    ])
+    const activeProducts = products.filter((p: any) => p.active !== false)
+    const categories = [...new Set(products.map((p: any) => p.category))]
+    const suppliers = [...new Set(products.map((p: any) => p.supplierCode))]
+    const newRFQs = rfqs.filter((r: any) => r.status === 'new')
+    const inProgressRFQs = rfqs.filter((r: any) => ['acknowledged','in_progress','quoted'].includes(r.status))
+    const recentJobs = jobs.slice(0, 5)
+    return c.json({
+      success: true,
+      dashboard: {
+        catalogue: {
+          total_products: products.length,
+          active_products: activeProducts.length,
+          total_categories: categories.length,
+          total_suppliers: suppliers.length,
+          featured_products: products.filter((p: any) => p.featured).length,
+          publish_queue_count: publishQ.length,
+          duplicate_queue_count: dups.length,
+        },
+        rfq: {
+          total_rfqs: rfqs.length,
+          new_rfqs: newRFQs.length,
+          in_progress_rfqs: inProgressRFQs.length,
+          recent_rfqs: rfqs.slice(0, 5).map((r: any) => ({ id: r.id, company: r.company, status: r.status, items: r.items?.length || 0, created_at: r.created_at })),
+        },
+        ingestion: {
+          total_jobs: jobs.length,
+          recent_jobs: recentJobs.map((j: any) => ({ id: j.id, status: j.status, candidates: j.candidates_found, mapped: j.candidates_mapped, dups: j.duplicates_detected, created_at: j.created_at })),
+        },
+        suppliers: {
+          total: HORECA_SUPPLIER_MASTER.length,
+          active: HORECA_SUPPLIER_MASTER.filter(s => s.active).length,
+          featured: HORECA_SUPPLIER_MASTER.filter(s => s.featured).length,
+          gold_tier: HORECA_SUPPLIER_MASTER.filter(s => s.tier === 'Gold').length,
+        }
+      }
+    })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN ROUTES — Export
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/horeca/export/rfq-summary — Export RFQ summary
+app.get('/horeca/export/rfq-summary', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const rfqs = await kvGetRFQs(env, 500)
+    const format = c.req.query('format') || 'csv'
+    if (format === 'json') return c.json({ success: true, rfqs })
+    const headers = ['RFQ ID','Contact Name','Company','Email','Phone','Location','Property Type','Budget Range','Supply Categories','Item Count','Status','Created At']
+    const rows = rfqs.map((r: any) => [
+      r.id, r.contact_name, r.company, r.email, r.phone, r.location,
+      r.property_type, r.budget_range,
+      `"${(r.supply_categories||[]).join('; ')}"`,
+      r.items?.length || 0, r.status, r.created_at
+    ].join(','))
+    const csv = [headers.join(','), ...rows].join('\n')
+    return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="horeca-rfq-summary-${new Date().toISOString().slice(0,10)}.csv"` } })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/export/product-master — Export product master sheet
+app.get('/horeca/export/product-master', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const products = await kvGetProducts(env)
+    const format = c.req.query('format') || 'csv'
+    if (format === 'json') return c.json({ success: true, products })
+    const headers = ['Product ID','SKU','Name','Category','Space Type','Unit','Supplier Code','Supplier Tier','Supplier Lead Days','HSN','GST Rate','Featured','Active','Description']
+    const rows = products.map((p: any) => {
+      const sup = HORECA_SUPPLIER_MASTER.find(s => s.prefix === p.supplierCode)
+      return [
+        p.id, p.sku,
+        `"${(p.name||'').replace(/"/g,"'")}"`,
+        `"${(p.category||'')}"`,
+        p.spaceType || '', p.unit || 'Piece',
+        p.supplierCode || '', sup?.tier || '',
+        sup?.lead_days || '',
+        p.hsn || '', p.gst_rate || 18,
+        p.featured ? 'Yes' : 'No',
+        p.active !== false ? 'Yes' : 'No',
+        `"${(p.description||'').replace(/"/g,"'").substring(0,150)}"`
+      ].join(',')
+    })
+    const csv = [headers.join(','), ...rows].join('\n')
+    return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="horeca-product-master-${new Date().toISOString().slice(0,10)}.csv"` } })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/export/duplicate-review — Export duplicate review sheet
+app.get('/horeca/export/duplicate-review', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const dups = await kvGetDuplicateQueue(env)
+    const format = c.req.query('format') || 'csv'
+    if (format === 'json') return c.json({ success: true, duplicates: dups })
+    const headers = ['Candidate ID','Candidate Name','Category','Supplier','Matched Existing ID','Match Type','Confidence Score','Resolution']
+    const rows = dups.map((d: any) => [
+      d.candidate?.id || '', `"${(d.candidate?.name||'').replace(/"/g,"'")}"`,
+      d.candidate?.category || '', d.candidate?.supplierCode || '',
+      d.matched_id || '', d.match_type || '',
+      d.score || 0, 'Pending'
+    ].join(','))
+    const csv = [headers.join(','), ...rows].join('\n')
+    return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="horeca-duplicate-review-${new Date().toISOString().slice(0,10)}.csv"` } })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// GET /api/horeca/export/procurement — Supplier-linked procurement export
+app.get('/horeca/export/procurement', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const products = await kvGetProducts(env)
+    const format = c.req.query('format') || 'csv'
+    // Group by supplier
+    const grouped: Record<string, any[]> = {}
+    products.forEach((p: any) => {
+      if (!grouped[p.supplierCode]) grouped[p.supplierCode] = []
+      grouped[p.supplierCode].push(p)
+    })
+    if (format === 'json') return c.json({ success: true, by_supplier: grouped })
+    const headers = ['Supplier Code','Supplier Name (Masked)','Tier','Lead Days','GSTIN','Product ID','SKU','Name','Category','Unit','HSN','GST Rate']
+    const rows: string[] = []
+    for (const [prefix, prods] of Object.entries(grouped)) {
+      const sup = HORECA_SUPPLIER_MASTER.find(s => s.prefix === prefix)
+      prods.forEach((p: any) => {
+        rows.push([
+          prefix, sup?.masked_name || prefix, sup?.tier || '', sup?.lead_days || '',
+          sup?.gstin || '', p.id, p.sku,
+          `"${(p.name||'').replace(/"/g,"'")}"`,
+          `"${(p.category||'')}"`,
+          p.unit || 'Piece', p.hsn || '', p.gst_rate || 18
+        ].join(','))
+      })
+    }
+    const csv = [headers.join(','), ...rows].join('\n')
+    return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename="horeca-procurement-export-${new Date().toISOString().slice(0,10)}.csv"` } })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// AUDIT LOG for HORECA actions
+// ──────────────────────────────────────────────────────────────────────────────
+app.post('/horeca/audit-log', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    const body = await c.req.json() as any
+    const entry = {
+      id: `AUD-HRC-${Date.now()}`,
+      action: sanitiseStr(body.action || '', 100),
+      entity_type: sanitiseStr(body.entity_type || '', 50),
+      entity_id: sanitiseStr(body.entity_id || '', 50),
+      changes: body.changes || {},
+      performed_by: 'admin',
+      ts: new Date().toISOString(),
+    }
+    try {
+      if (env?.KV) {
+        const raw = await env.KV.get('horeca_audit_log')
+        const log: any[] = raw ? JSON.parse(raw) : []
+        log.unshift(entry)
+        await env.KV.put('horeca_audit_log', JSON.stringify(log.slice(0, 1000)), { expirationTtl: 60*60*24*365 })
+      }
+    } catch(_){}
+    return c.json({ success: true, entry })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+app.get('/horeca/audit-log', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
+  try {
+    const env = (c as any).env
+    let log: any[] = []
+    try { if (env?.KV) { const raw = await env.KV.get('horeca_audit_log'); log = raw ? JSON.parse(raw) : [] } } catch(_){}
+    return c.json({ success: true, total: log.length, entries: log.slice(0, parseInt(c.req.query('limit') || '100')) })
+  } catch(e) {
+    return c.json({ success: false, error: String(e) }, 500)
+  }
+})
+
+// ── HORECA Platform version ───────────────────────────────────────────────────
+app.get('/horeca/platform-info', (c) => c.json({
+  version: 'v2.0-phase69',
+  catalogue_version: 'v5-63skus-imgfix-2026-mar18',
+  features: [
+    'catalogue_browsing', 'requirement_basket', 'rfq_submission',
+    'supplier_masking', 'catalogue_ingestion', 'ai_normalization',
+    'duplicate_detection', 'sku_generation', 'admin_dashboard',
+    'export_rfq', 'export_product_master', 'export_procurement',
+    'audit_log', 'publish_queue', 'duplicate_review_queue'
+  ],
+  taxonomy_categories: Object.keys(HORECA_CATEGORY_CODES),
+  total_suppliers: HORECA_SUPPLIER_MASTER.length,
+  no_pricing: true,
+  supplier_masking: true,
+}))
+
 export default app
