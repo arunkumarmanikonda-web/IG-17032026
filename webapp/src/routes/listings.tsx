@@ -36,7 +36,7 @@ app.get('/', (c) => {
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);">Investment Opportunities</span>
       </div>
       <h1 class="h1" style="margin-bottom:1.75rem;">Active<br><em style="font-style:italic;color:var(--gold);">Mandates</em></h1>
-      <p class="lead-lt" style="max-width:620px;margin-bottom:3rem;">Institutional-grade investment mandates across India's premier asset classes. All opportunities are exclusive to India Gully's advisory pipeline and strictly subject to NDA. Information Memoranda available to qualified investors, family offices and institutional buyers upon request.</p>
+      <p class="lead-lt" style="max-width:620px;margin-bottom:3rem;">Curated mandates across real estate, hospitality, retail and entertainment — each opportunity sourced directly through India Gully's advisory network. Detailed information packs are shared under NDA with serious investors, family offices and developers.</p>
       <!-- Filter buttons + Saved bookmarks toggle -->
       <div style="display:flex;flex-wrap:wrap;gap:.625rem;align-items:center;">
         ${['All Mandates','Hospitality','Real Estate','Heritage Hospitality','Mixed-Use'].map((f,i) => `
@@ -242,7 +242,7 @@ app.get('/', (c) => {
     <!-- Footer note -->
     <div style="text-align:center;margin-top:4rem;padding:2rem;border:1px solid var(--border);background:rgba(184,150,12,.02);">
       <div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto .875rem;"></div>
-      <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:1.25rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.8;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.4rem;"></i>All mandates are strictly by NDA · Information Memoranda available to qualified investors · Click any mandate to accept NDA terms and submit your Expression of Interest (EOI)</p>
+      <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:1.25rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.8;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.4rem;"></i>All mandates are handled under NDA · Full details shared with verified investors on request · Click any mandate to sign the NDA and submit your Expression of Interest</p>
       <a href="/contact" class="btn btn-g">Submit a Mandate Enquiry</a>
     </div>
   </div>
@@ -728,7 +728,7 @@ function resetFilters() {
 
 `
   return c.html(layout('Active Mandates — Advisory Pipeline', content, {
-    description: 'India Gully active mandates — ₹1,165 Cr+ institutional-grade investment opportunities across Real Estate, Hospitality, Entertainment and Retail. All opportunities subject to NDA.',
+    description: 'India Gully active mandates — ₹1,165 Cr+ in curated investment opportunities across Real Estate, Hospitality, Entertainment and Retail. Details shared under NDA with verified investors.',
     canonical: 'https://indiagully.com/listings',
     ogImage: 'https://indiagully.com/static/og-listings.jpg',
     jsonLd: {
@@ -737,7 +737,7 @@ function resetFilters() {
         {
           '@type': 'ItemList',
           name: 'Active Investment Mandates — India Gully Advisory Pipeline',
-          description: '₹1,165 Cr+ of active institutional-grade advisory mandates across Real Estate, Hospitality, Entertainment and Retail in India.',
+          description: '₹1,165 Cr+ of active advisory mandates across Real Estate, Hospitality, Entertainment and Retail in India.',
           url: 'https://indiagully.com/listings',
           numberOfItems: 8,
           itemListElement: [
@@ -1306,8 +1306,8 @@ ${l.id === 'prism-tower-gurgaon' ? `
         <span style="color:var(--ink-soft);">${l.title}</span>
       </nav>
       <div style="display:flex;gap:.625rem;align-items:center;">
-        <button onclick="window.print()" class="no-print" style="display:inline-flex;align-items:center;gap:.4rem;padding:.38rem .875rem;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);background:#fff;color:var(--ink-muted);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-muted)'">
-          <i class="fas fa-print" style="font-size:.6rem;"></i>Print / Save PDF
+        <button onclick="igPrintBrochure()" class="no-print" id="print-brochure-btn" style="display:inline-flex;align-items:center;gap:.4rem;padding:.38rem .875rem;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);background:#fff;color:var(--ink-muted);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-muted)'">
+          <i class="fas fa-file-pdf" style="font-size:.6rem;"></i>Save as PDF Brochure
         </button>
         <button onclick="navigator.share ? navigator.share({title:'${l.title}',url:window.location.href}) : navigator.clipboard.writeText(window.location.href).then(()=>igToast('Link copied!','success'))" class="no-print" style="display:inline-flex;align-items:center;gap:.4rem;padding:.38rem .875rem;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);background:#fff;color:var(--ink-muted);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink-muted)'">
           <i class="fas fa-share-alt" style="font-size:.6rem;"></i>Share
@@ -1954,6 +1954,396 @@ ${l.id === 'prism-tower-gurgaon' ? `
     </div>
   </div>
 </div>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PDF BROCHURE — India Gully Confidential Mandate Document
+     Activated by igPrintBrochure(). Renders a full-page print overlay
+     with branding, SPOC, NDA signed-by, images and all specs.
+     User hits Ctrl+P / Save to PDF from the overlay window.
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="ig-brochure-overlay" style="display:none;position:fixed;inset:0;z-index:99000;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:1.5rem;overflow-y:auto;" onclick="if(event.target===this)igCloseBrochure()">
+  <div style="background:#fff;width:100%;max-width:900px;margin:0 auto;position:relative;box-shadow:0 40px 120px rgba(0,0,0,.6);">
+
+    <!-- Close & Print buttons (no-print) -->
+    <div style="position:sticky;top:0;z-index:10;display:flex;gap:.5rem;justify-content:flex-end;padding:.75rem 1rem;background:#f5f5f0;border-bottom:2px solid #B8960C;" class="brochure-controls">
+      <button onclick="igCloseBrochure()" style="padding:.5rem 1.25rem;border:1px solid #ccc;background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;color:#444;">✕ Close</button>
+      <button onclick="window.print()" style="padding:.5rem 1.5rem;border:none;background:#B8960C;color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;">⬇ Print / Save as PDF</button>
+    </div>
+
+    <!-- BROCHURE BODY (what gets printed) -->
+    <div id="ig-brochure-body" style="padding:0;font-family:'Arial',sans-serif;color:#1a1a1a;background:#fff;">
+
+      <!-- PAGE 1: COVER -->
+      <div class="brochure-page" style="page-break-after:always;min-height:297mm;display:flex;flex-direction:column;position:relative;overflow:hidden;">
+
+        <!-- Gold header band -->
+        <div style="background:#111111;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;">
+          <!-- India Gully wordmark -->
+          <div>
+            <div style="font-size:1.4rem;font-weight:900;color:#B8960C;letter-spacing:.04em;font-family:'Arial Black',Arial,sans-serif;">INDIA GULLY</div>
+            <div style="font-size:.55rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:.1rem;">Celebrating Desiness · Advisory · Hospitality · HORECA</div>
+          </div>
+          <!-- Confidential badge -->
+          <div style="text-align:right;">
+            <div style="background:#B8960C;color:#fff;font-size:.55rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.3rem .875rem;display:inline-block;">STRICTLY CONFIDENTIAL</div>
+            <div style="font-size:.58rem;color:rgba(255,255,255,.45);margin-top:.3rem;letter-spacing:.1em;">NOT FOR PUBLIC CIRCULATION</div>
+          </div>
+        </div>
+
+        <!-- Cover image placeholder (populated by JS) -->
+        <div id="brochure-cover-img-wrap" style="flex:1;min-height:260px;background:#1a1a2e;position:relative;overflow:hidden;">
+          <img id="brochure-cover-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15) 0%,rgba(0,0,0,.65) 100%);"></div>
+          <!-- Property title overlay -->
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:2rem 2.5rem;">
+            <div id="brochure-sector-tag" style="display:inline-block;background:rgba(184,150,12,.9);color:#fff;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.28rem .75rem;margin-bottom:.75rem;"></div>
+            <h1 id="brochure-title" style="font-family:'Georgia',serif;font-size:2rem;color:#fff;line-height:1.15;margin-bottom:.5rem;"></h1>
+            <p id="brochure-subtitle" style="font-size:.9rem;color:rgba(255,255,255,.8);margin-bottom:1rem;"></p>
+            <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:.5rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.2rem;">Indicative Value</div>
+                <div id="brochure-value" style="font-family:'Georgia',serif;font-size:1.75rem;color:#B8960C;line-height:1;"></div>
+              </div>
+              <div>
+                <div style="font-size:.5rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.2rem;">Location</div>
+                <div id="brochure-location" style="font-size:.9rem;color:#fff;font-weight:600;margin-top:.3rem;"></div>
+              </div>
+              <div>
+                <div style="font-size:.5rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.2rem;">Transaction Type</div>
+                <div id="brochure-mandate-type" style="font-size:.75rem;color:rgba(255,255,255,.8);margin-top:.35rem;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NDA / Signed-by strip -->
+        <div style="background:#fffbeb;border-top:2px solid #B8960C;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <div style="width:36px;height:36px;background:#B8960C;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="color:#fff;font-size:.85rem;font-weight:900;">🔒</span>
+            </div>
+            <div>
+              <div style="font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#78350f;margin-bottom:.15rem;">NDA EXECUTED &amp; SIGNED BY</div>
+              <div id="brochure-nda-name" style="font-size:.88rem;font-weight:700;color:#1a1a1a;"></div>
+              <div id="brochure-nda-org" style="font-size:.72rem;color:#78350f;"></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:.55rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#78350f;margin-bottom:.15rem;">EXCLUSIVITY</div>
+            <div style="font-size:.72rem;color:#1a1a1a;font-weight:600;">India Gully Exclusive Mandate</div>
+            <div style="font-size:.62rem;color:#78350f;">Vivacious Entertainment &amp; Hospitality Pvt. Ltd.</div>
+          </div>
+        </div>
+
+        <!-- Footer disclaimer -->
+        <div style="background:#111;padding:.625rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+          <div style="font-size:.52rem;color:rgba(255,255,255,.4);letter-spacing:.06em;">indiagully.com · CIN: U74999DL2017PTC323237 · GSTIN: 07AAGCV0867P1ZN</div>
+          <div id="brochure-ts" style="font-size:.52rem;color:rgba(255,255,255,.4);letter-spacing:.06em;"></div>
+        </div>
+      </div>
+
+      <!-- PAGE 2: PROPERTY DETAILS + SPECS -->
+      <div class="brochure-page" style="page-break-after:always;padding:2rem 2.5rem 1.5rem;">
+
+        <!-- Page header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;padding-bottom:.875rem;border-bottom:2px solid #B8960C;">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#B8960C;">MANDATE OVERVIEW &amp; PROPERTY DETAILS</div>
+          <div style="font-size:.55rem;color:#888;letter-spacing:.1em;">INDIA GULLY CONFIDENTIAL · NDA REQUIRED</div>
+        </div>
+
+        <!-- Two-column layout -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+
+          <!-- Left: overview text -->
+          <div>
+            <h2 id="brochure-title-2" style="font-family:'Georgia',serif;font-size:1.35rem;color:#111;line-height:1.2;margin-bottom:1rem;"></h2>
+            <div id="brochure-desc" style="font-size:.82rem;color:#444;line-height:1.85;margin-bottom:1.25rem;white-space:pre-line;"></div>
+
+            <!-- 4 highlights grid -->
+            <div id="brochure-highlights" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem;"></div>
+
+            <!-- Tags -->
+            <div id="brochure-tags" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;"></div>
+          </div>
+
+          <!-- Right: specs table -->
+          <div>
+            <div style="font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#B8960C;margin-bottom:.875rem;">KEY ASSET SPECIFICATIONS</div>
+            <table id="brochure-specs-table" style="width:100%;border-collapse:collapse;font-size:.78rem;">
+            </table>
+
+            <!-- Status badge -->
+            <div id="brochure-status-wrap" style="margin-top:1.25rem;padding:.875rem 1rem;background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #B8960C;">
+              <div style="font-size:.52rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#92400e;margin-bottom:.3rem;">DEAL STATUS</div>
+              <div id="brochure-status" style="font-size:.85rem;font-weight:700;color:#1a1a1a;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE 3: IMAGES GALLERY -->
+      <div class="brochure-page" id="brochure-gallery-page" style="page-break-after:always;padding:2rem 2.5rem 1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:.875rem;border-bottom:2px solid #B8960C;">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#B8960C;">PROPERTY IMAGE GALLERY</div>
+          <div style="font-size:.55rem;color:#888;letter-spacing:.1em;">INDIA GULLY CONFIDENTIAL · NDA REQUIRED</div>
+        </div>
+        <div id="brochure-image-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;"></div>
+      </div>
+
+      <!-- PAGE 4: SPOC + NDA STATEMENT + DISCLAIMER -->
+      <div class="brochure-page" style="padding:2rem 2.5rem 1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;padding-bottom:.875rem;border-bottom:2px solid #B8960C;">
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#B8960C;">INDIA GULLY · SINGLE POINT OF CONTACT</div>
+          <div style="font-size:.55rem;color:#888;letter-spacing:.1em;">INDIA GULLY CONFIDENTIAL</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;">
+
+          <!-- SPOC Card -->
+          <div style="background:#111;padding:1.5rem;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#B8960C,#D4AE2A,#B8960C);"></div>
+            <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem;">
+              <div id="brochure-spoc-avatar" style="width:56px;height:56px;border-radius:50%;background:#B8960C;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:900;color:#fff;flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:.5rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(184,150,12,.65);margin-bottom:.2rem;">Your SPOC at India Gully</div>
+                <div id="brochure-spoc-name" style="font-size:1.1rem;font-weight:700;color:#fff;line-height:1.2;"></div>
+                <div id="brochure-spoc-title" style="font-size:.72rem;color:rgba(255,255,255,.55);margin-top:.2rem;"></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.5rem;">
+              <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
+                <span style="font-size:.65rem;color:#B8960C;">📞</span>
+                <a id="brochure-spoc-phone-link" href="" style="font-size:.82rem;font-weight:600;color:#fff;text-decoration:none;"><span id="brochure-spoc-phone"></span></a>
+              </div>
+              <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
+                <span style="font-size:.65rem;color:#B8960C;">✉️</span>
+                <a id="brochure-spoc-email-link" href="" style="font-size:.82rem;font-weight:600;color:#fff;text-decoration:none;"><span id="brochure-spoc-email"></span></a>
+              </div>
+              <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);">
+                <span style="font-size:.65rem;color:#25D366;">💬</span>
+                <a id="brochure-spoc-wa-link" href="" target="_blank" style="font-size:.78rem;font-weight:600;color:#25D366;text-decoration:none;">WhatsApp: <span id="brochure-spoc-wa-num"></span></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mandate Exclusivity + NDA Card -->
+          <div>
+            <div style="background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #B8960C;padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-size:.55rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#92400e;margin-bottom:.625rem;">NDA EXECUTED — SIGNED BY</div>
+              <div id="brochure-nda-block-name" style="font-size:.95rem;font-weight:700;color:#1a1a1a;margin-bottom:.2rem;"></div>
+              <div id="brochure-nda-block-org" style="font-size:.75rem;color:#78350f;margin-bottom:.4rem;"></div>
+              <div id="brochure-nda-block-ts" style="font-size:.65rem;color:#92400e;"></div>
+            </div>
+            <div style="background:#f9f9f9;border:1px solid #e5e5e5;border-left:3px solid #B8960C;padding:1.25rem;">
+              <div style="font-size:.55rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#B8960C;margin-bottom:.625rem;">MANDATE EXCLUSIVITY STATEMENT</div>
+              <p style="font-size:.72rem;color:#333;line-height:1.75;margin-bottom:.625rem;">This mandate is exclusively advised and managed by <strong>India Gully (Vivacious Entertainment and Hospitality Pvt. Ltd.)</strong>. Any direct approach to the seller, asset owner, or underlying counterparty — bypassing India Gully — constitutes a material breach of the NDA and is subject to claim for full advisory fees and consequential damages.</p>
+              <p style="font-size:.72rem;color:#333;line-height:1.75;margin:0;">India Gully holds exclusive advisory rights over this mandate. All negotiations, due diligence access, and transaction documentation must be routed through India Gully exclusively.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disclaimer box -->
+        <div style="background:#f2f2f2;border-top:3px solid #B8960C;padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+          <div style="font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#B8960C;margin-bottom:.625rem;">DISCLAIMER · NOT FOR PUBLIC CIRCULATION</div>
+          <p style="font-size:.68rem;color:#555;line-height:1.8;margin-bottom:.5rem;">This document has been prepared by India Gully (Vivacious Entertainment and Hospitality Pvt. Ltd.) exclusively for the recipient named above who has executed a Non-Disclosure Agreement. The information contained herein is strictly confidential and is intended solely for use by the intended recipient(s).</p>
+          <p style="font-size:.68rem;color:#555;line-height:1.8;margin-bottom:.5rem;"><strong>Not for public circulation. Not for distribution to any third party.</strong> Any unauthorised copying, disclosure, distribution or use of the contents of this document is strictly prohibited and may be unlawful under applicable laws including but not limited to the Indian Contract Act 1872 and the Information Technology Act 2000.</p>
+          <p style="font-size:.68rem;color:#555;line-height:1.8;margin:0;">All information, projections, valuations and financial figures herein are indicative and based on information provided by the seller/owner and have not been independently verified by India Gully. Prospective investors are advised to conduct their own independent due diligence. India Gully makes no representation or warranty, express or implied, as to the accuracy, completeness or fairness of the information contained herein. India Gully shall have no liability for any loss arising from use of this document.</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#111;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+          <div>
+            <div style="font-size:.85rem;font-weight:900;color:#B8960C;letter-spacing:.04em;font-family:'Arial Black',Arial,sans-serif;">INDIA GULLY</div>
+            <div style="font-size:.52rem;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-top:.1rem;">Vivacious Entertainment &amp; Hospitality Pvt. Ltd.</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:.6rem;color:rgba(255,255,255,.55);">indiagully.com · info@indiagully.com</div>
+            <div style="font-size:.55rem;color:rgba(255,255,255,.35);margin-top:.15rem;">CIN: U74999DL2017PTC323237 · GSTIN: 07AAGCV0867P1ZN</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /brochure-body -->
+  </div><!-- /brochure inner -->
+</div><!-- /brochure overlay -->
+
+<style>
+/* Brochure print styles */
+@media print {
+  /* Hide everything except brochure */
+  body > *:not(#ig-brochure-overlay) { display: none !important; }
+  #ig-brochure-overlay {
+    display: block !important;
+    position: static !important;
+    background: #fff !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  #ig-brochure-overlay > div {
+    box-shadow: none !important;
+    max-width: 100% !important;
+  }
+  .brochure-controls { display: none !important; }
+  .brochure-page { page-break-after: always !important; }
+  .brochure-page:last-child { page-break-after: avoid !important; }
+  @page { size: A4 portrait; margin: 0; }
+}
+
+/* Transition for overlay */
+#ig-brochure-overlay.active { display: flex !important; animation: brochureFadeIn .3s ease both; }
+@keyframes brochureFadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<script>
+(function(){
+  // Build and show the brochure overlay
+  window.igPrintBrochure = function() {
+    // Get NDA data from session
+    var ndaData = {};
+    try { ndaData = JSON.parse(sessionStorage.getItem('ig_nda_${l.id}') || '{}'); } catch(e){}
+
+    // If NDA not accepted, prompt
+    if (!ndaData.accepted) {
+      igScrollToNDA();
+      if (typeof igToast === 'function') igToast('Please sign the NDA first to generate the brochure.', 'warn');
+      return;
+    }
+
+    var overlay = document.getElementById('ig-brochure-overlay');
+    if (!overlay) return;
+
+    // ── Populate cover data ──
+    var coverImg = '${l.coverImage || (l.images && l.images.length > 0 ? l.images[0] : '')}';
+    var ci = document.getElementById('brochure-cover-img');
+    if (ci && coverImg) { ci.src = coverImg; ci.style.display = 'block'; }
+    else if (ci) ci.style.display = 'none';
+
+    var el = function(id, val) { var e = document.getElementById(id); if(e) e.textContent = val; };
+    var eh = function(id, val) { var e = document.getElementById(id); if(e) e.innerHTML = val; };
+
+    el('brochure-sector-tag', '${l.sector}');
+    el('brochure-title', '${l.title}');
+    el('brochure-subtitle', '${l.subtitle || ''}');
+    el('brochure-value', '${l.value}');
+    el('brochure-location', '${l.location}');
+    el('brochure-mandate-type', '${l.mandateType}');
+    el('brochure-title-2', '${l.title}');
+
+    // Long description (use longDesc if NDA accepted, else desc)
+    var desc = ndaData.accepted ? ${JSON.stringify(l.longDesc || l.desc)} : ${JSON.stringify(l.desc)};
+    el('brochure-desc', desc);
+
+    // Highlights grid
+    var hlData = ${JSON.stringify(l.highlights || [])};
+    var hlEl = document.getElementById('brochure-highlights');
+    if (hlEl) {
+      hlEl.innerHTML = hlData.map(function(h) {
+        return '<div style="background:#f9f5eb;border:1px solid #e9d8a0;padding:.875rem;text-align:center;">'
+          + '<div style="font-family:Georgia,serif;font-size:1.15rem;color:#B8960C;font-weight:700;margin-bottom:.2rem;">' + h.value + '</div>'
+          + '<div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#666;">' + h.label + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    // Tags
+    var tagsEl = document.getElementById('brochure-tags');
+    var tags = ${JSON.stringify(l.tags || [])};
+    if (tagsEl) {
+      tagsEl.innerHTML = tags.map(function(t) {
+        return '<span style="background:#f2f2f2;border:1px solid #ddd;color:#555;font-size:.58rem;font-weight:600;padding:.2rem .55rem;letter-spacing:.06em;">' + t + '</span>';
+      }).join('');
+    }
+
+    // Specs table
+    var specs = ${JSON.stringify(l.specs || {})};
+    var specsEl = document.getElementById('brochure-specs-table');
+    if (specsEl) {
+      specsEl.innerHTML = Object.entries(specs).map(function(kv, i) {
+        var bg = i % 2 === 0 ? '#fafafa' : '#fff';
+        return '<tr style="background:' + bg + ';border-bottom:1px solid #eee;">'
+          + '<td style="padding:.5rem .75rem;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;width:42%;vertical-align:top;">' + kv[0] + '</td>'
+          + '<td style="padding:.5rem .75rem;font-size:.78rem;color:#1a1a1a;font-weight:600;">' + kv[1] + '</td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    // Status
+    el('brochure-status', '${l.status}');
+
+    // Image gallery (page 3)
+    var images = ${JSON.stringify(l.images || [])};
+    var gridEl = document.getElementById('brochure-image-grid');
+    if (gridEl) {
+      // Show up to 9 images
+      var showImgs = images.slice(0, 9);
+      gridEl.innerHTML = showImgs.map(function(img, i) {
+        return '<div style="aspect-ratio:4/3;overflow:hidden;background:#111;">'
+          + '<img src="' + img + '" alt="${l.title} image ' + (i+1) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
+          + '</div>';
+      }).join('');
+    }
+
+    // SPOC data
+    var spocName = '${l.contactName || 'Arun Manikonda'}';
+    var spocPhone = '${l.contactPhone || '+91 98108 89134'}';
+    var spocEmail = '${l.contact || 'akm@indiagully.com'}';
+    var spocInitials = spocName.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2);
+
+    // SPOC title lookup
+    var spocTitles = {
+      'Arun Manikonda': 'Managing Director · Transaction Advisory',
+      'Amit Jhingan': 'President, Real Estate · Advisory Head'
+    };
+    var spocTitle = spocTitles[spocName] || 'Transaction Advisory · India Gully';
+
+    el('brochure-spoc-avatar', spocInitials);
+    el('brochure-spoc-name', spocName);
+    el('brochure-spoc-title', spocTitle);
+    el('brochure-spoc-phone', spocPhone);
+    el('brochure-spoc-email', spocEmail);
+    var spocPhoneLink = document.getElementById('brochure-spoc-phone-link');
+    if (spocPhoneLink) spocPhoneLink.href = 'tel:' + spocPhone.replace(/\s/g,'');
+    var spocEmailLink = document.getElementById('brochure-spoc-email-link');
+    if (spocEmailLink) spocEmailLink.href = 'mailto:' + spocEmail;
+    var waNum = spocPhone.replace(/[^\d]/g,'');
+    var waText = encodeURIComponent('Hi ' + spocName.split(' ')[0] + ', I am interested in the ' + '${l.title}' + ' mandate. I have signed the NDA.');
+    var waLinkEl = document.getElementById('brochure-spoc-wa-link');
+    if (waLinkEl) waLinkEl.href = 'https://wa.me/' + waNum + '?text=' + waText;
+    el('brochure-spoc-wa-num', spocPhone);
+
+    // NDA signed-by data
+    var ndaName = ndaData.name || 'NDA Accepted';
+    var ndaOrg  = ndaData.org  || '';
+    var ndaTs   = ndaData.ts   ? 'Signed: ' + new Date(ndaData.ts).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'}) + ' IST' : '';
+    el('brochure-nda-name', ndaName);
+    el('brochure-nda-org', ndaOrg);
+    el('brochure-nda-block-name', ndaName);
+    el('brochure-nda-block-org', ndaOrg);
+    el('brochure-nda-block-ts', ndaTs);
+
+    // Timestamp for cover
+    el('brochure-ts', 'Generated: ' + new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'}) + ' IST');
+
+    // Show overlay
+    overlay.style.display = 'flex';
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    overlay.scrollTop = 0;
+  };
+
+  window.igCloseBrochure = function() {
+    var overlay = document.getElementById('ig-brochure-overlay');
+    if (overlay) { overlay.style.display = 'none'; overlay.classList.remove('active'); }
+    document.body.style.overflow = '';
+  };
+
+  // ESC key closes brochure
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') igCloseBrochure();
+  });
+})();
+</script>
 
 <!-- Carousel JS -->
 <script>
