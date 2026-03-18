@@ -6852,7 +6852,7 @@ app.get('/horeca', (c) => {
 
   <!-- Tab Nav -->
   <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid var(--border);">
-    ${['Catalogue','Inventory Ledger','Vendors','Quote Builder','Purchase Orders','Customer Portal','GRN & Logistics'].map((t,i)=>`<button onclick="igHorecaTab(${i})" id="hrc-tab-${i}" style="padding:.6rem 1.1rem;font-size:.78rem;font-weight:600;cursor:pointer;border:none;background:none;color:${i===0?'var(--gold)':'var(--ink-muted)'};border-bottom:${i===0?'2px solid var(--gold)':'2px solid transparent'};letter-spacing:.04em;text-transform:uppercase;margin-bottom:-2px;white-space:nowrap;">${t}</button>`).join('')}
+    ${['Catalogue','Inventory Ledger','Vendors','Quote Builder','Purchase Orders','Customer Portal','GRN & Logistics','Ingestion & AI'].map((t,i)=>`<button onclick="igHorecaTab(${i})" id="hrc-tab-${i}" style="padding:.6rem 1.1rem;font-size:.78rem;font-weight:600;cursor:pointer;border:none;background:none;color:${i===0?'var(--gold)':'var(--ink-muted)'};border-bottom:${i===0?'2px solid var(--gold)':'2px solid transparent'};letter-spacing:.04em;text-transform:uppercase;margin-bottom:-2px;white-space:nowrap;">${t}</button>`).join('')}
   </div>
 
   <!-- Tab 0: Catalogue — Dynamic (API-backed) -->
@@ -7282,9 +7282,173 @@ app.get('/horeca', (c) => {
     </div>
   </div>
 
+  <!-- hrc-pane-7: Ingestion & AI Pipeline -->
+  <div id="hrc-pane-7" style="display:none;">
+    <!-- Summary Cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;">
+      <div class="am" style="position:relative;"><div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem;">Ingestion Jobs</div><div id="ing-total" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#0d9488;">0</div></div>
+      <div class="am"><div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem;">Publish Queue</div><div id="ing-publish" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#d97706;">0</div></div>
+      <div class="am"><div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem;">Duplicates Flagged</div><div id="ing-dups" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#dc2626;">0</div></div>
+      <div class="am"><div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem;">Products Ingested</div><div id="ing-prods" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;color:#16a34a;">0</div></div>
+    </div>
+
+    <!-- Start New Ingestion Job -->
+    <div style="background:#fff;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+      <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;">
+        <i class="fas fa-upload" style="color:var(--gold);font-size:.85rem;"></i>Start New Ingestion Job
+      </h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.875rem;margin-bottom:1rem;">
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Source Type</label>
+          <select id="ing-source-type" class="ig-input" style="font-size:.82rem;" onchange="igIngSourceTypeChange()">
+            <option value="url">URL / Web Source</option>
+            <option value="drive">AI Drive File</option>
+            <option value="manual">Manual / Paste JSON</option>
+            <option value="pdf">PDF Catalogue</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Supplier Code (Masked)</label>
+          <select id="ing-supplier-code" class="ig-input" style="font-size:.82rem;">
+            <option value="">Select Supplier…</option>
+            <option value="CRI">CRI — Commercial Kitchen Partner</option>
+            <option value="UNX">UNX — Professional Oven Solutions</option>
+            <option value="BST">BST — Cold Chain Specialist</option>
+            <option value="WHL">WHL — Warewash Expert</option>
+            <option value="PCH">PCH — Fry Station Supplier</option>
+            <option value="OCN">OCN — Glassware &amp; Tableware Brand</option>
+            <option value="WEL">WEL — Linen Manufacturer A</option>
+            <option value="TRD">TRD — Linen Manufacturer B</option>
+            <option value="ARI">ARI — Guest Amenity Partner</option>
+            <option value="DLP">DLP — Washroom Solutions Brand</option>
+            <option value="EFB">EFB — Commercial Vacuum Supplier</option>
+            <option value="SMS">SMS — Hotel Tech Brand A</option>
+            <option value="HIK">HIK — Security Systems Supplier</option>
+            <option value="IG">IG — India Gully Procurement</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Default Category</label>
+          <select id="ing-def-category" class="ig-input" style="font-size:.82rem;">
+            <option value="">Auto-detect</option>
+            <option>Kitchen Equipment</option>
+            <option>Glassware &amp; Tableware</option>
+            <option>Hotel Linen &amp; Textiles</option>
+            <option>Guest Amenities</option>
+            <option>Washroom &amp; Hygiene</option>
+            <option>Housekeeping Supplies</option>
+            <option>Furniture &amp; Fixtures</option>
+            <option>Tech &amp; AV Systems</option>
+            <option>Bar &amp; Beverage Equipment</option>
+            <option>Safety &amp; Security</option>
+          </select>
+        </div>
+        <div id="ing-url-wrap">
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Source URL</label>
+          <input id="ing-source-url" type="url" class="ig-input" style="font-size:.82rem;" placeholder="https://supplier-catalogue.com/products.json">
+        </div>
+        <div id="ing-drive-wrap" style="display:none;">
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">AI Drive Path</label>
+          <input id="ing-drive-path" type="text" class="ig-input" style="font-size:.82rem;" placeholder="IG CATALOGUES/supplier-catalogue.pdf">
+        </div>
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Normalisation Mode</label>
+          <select id="ing-norm-mode" class="ig-input" style="font-size:.82rem;">
+            <option value="ai">AI Normalise (recommended)</option>
+            <option value="passthrough">Pass-through (no changes)</option>
+            <option value="rules">Rules-only</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <label style="font-size:.72rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;">
+            <input type="checkbox" id="ing-dedup" checked> Duplicate detection
+          </label>
+          &nbsp;
+          <label style="font-size:.72rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;margin-left:1rem;">
+            <input type="checkbox" id="ing-auto-publish"> Auto-approve &amp; publish
+          </label>
+        </div>
+      </div>
+      <div id="ing-manual-wrap" style="display:none;margin-bottom:.875rem;">
+        <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Paste JSON Array (products)</label>
+        <textarea id="ing-manual-json" rows="6" class="ig-input" style="font-size:.75rem;font-family:monospace;resize:vertical;" placeholder='[{"name":"Product A","category":"Kitchen Equipment","unit":"Piece","specs":{},"hsn":"8516","gst_rate":18}]'></textarea>
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:center;">
+        <button onclick="igIngStart()" style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.5rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;">
+          <i class="fas fa-play" style="font-size:.65rem;"></i>Start Ingestion
+        </button>
+        <button onclick="igIngRefresh()" style="background:none;border:1px solid var(--border);padding:.55rem 1rem;font-size:.75rem;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;">
+          <i class="fas fa-sync-alt" style="font-size:.65rem;"></i>Refresh
+        </button>
+        <span id="ing-status-msg" style="font-size:.78rem;color:var(--ink-muted);"></span>
+      </div>
+    </div>
+
+    <!-- Ingestion Jobs Table -->
+    <div style="background:#fff;border:1px solid var(--border);margin-bottom:1.5rem;">
+      <div style="padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--ink);margin:0;">Ingestion Jobs Monitor</h3>
+        <span id="ing-jobs-count" style="font-size:.72rem;color:var(--ink-muted);"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr style="background:#f8f6f1;border-bottom:1px solid var(--border);">
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Job ID</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Source</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Supplier</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Records</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Published</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Duplicates</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Status</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Started</th>
+            <th style="padding:.5rem .875rem;text-align:left;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Actions</th>
+          </tr></thead>
+          <tbody id="ing-jobs-tbody">
+            <tr><td colspan="9" style="text-align:center;padding:2rem;font-size:.82rem;color:var(--ink-muted);">No ingestion jobs yet. Start a new job above.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Publish Queue -->
+    <div style="background:#fff;border:1px solid var(--border);margin-bottom:1.5rem;">
+      <div style="padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--ink);margin:0;">
+          <i class="fas fa-check-circle" style="color:#d97706;font-size:.85rem;margin-right:.4rem;"></i>Publish Queue (Pending Approval)
+        </h3>
+        <div style="display:flex;gap:.5rem;">
+          <button onclick="igIngApproveAll()" style="background:#16a34a;color:#fff;border:none;padding:.4rem .875rem;font-size:.72rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;">
+            <i class="fas fa-check-double" style="font-size:.62rem;"></i>Approve All
+          </button>
+          <button onclick="igIngRefreshQueues()" style="background:none;border:1px solid var(--border);padding:.35rem .75rem;font-size:.72rem;cursor:pointer;color:var(--ink);">
+            <i class="fas fa-sync-alt" style="font-size:.6rem;"></i>
+          </button>
+        </div>
+      </div>
+      <div id="ing-publish-list" style="padding:1.25rem;">
+        <p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;">Loading publish queue…</p>
+      </div>
+    </div>
+
+    <!-- Duplicate Review Queue -->
+    <div style="background:#fff;border:1px solid var(--border);">
+      <div style="padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--ink);margin:0;">
+          <i class="fas fa-copy" style="color:#dc2626;font-size:.85rem;margin-right:.4rem;"></i>Duplicate Review Queue
+        </h3>
+        <button onclick="igIngExportDups()" style="background:none;border:1px solid var(--border);padding:.35rem .75rem;font-size:.72rem;cursor:pointer;color:var(--gold);display:inline-flex;align-items:center;gap:.35rem;">
+          <i class="fas fa-file-csv" style="font-size:.6rem;"></i>Export CSV
+        </button>
+      </div>
+      <div id="ing-dups-list" style="padding:1.25rem;">
+        <p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;">Loading duplicate queue…</p>
+      </div>
+    </div>
+  </div>
+
   <script>
   window.igHorecaTab = function(idx){
-    for(var i=0;i<7;i++){
+    for(var i=0;i<8;i++){
       var p=document.getElementById('hrc-pane-'+i);
       var t=document.getElementById('hrc-tab-'+i);
       if(p) p.style.display=i===idx?'block':'none';
@@ -7296,6 +7460,7 @@ app.get('/horeca', (c) => {
     else if(idx===2){ igHorecaLoadVendors && igHorecaLoadVendors(); }
     else if(idx===4){ igHorecaLoadPOs && igHorecaLoadPOs(); }
     else if(idx===6){ igHorecaLoadGrn && igHorecaLoadGrn(); }
+    else if(idx===7){ igIngRefresh(); }
   };
   // ── HORECA: Auto-init on page load ───────────────────────────────────────
   (function igHorecaInit(){
@@ -7303,6 +7468,273 @@ app.get('/horeca', (c) => {
     igHorecaLoadCategories();
     igHorecaLoadProducts('','');
   })();
+
+  // ══════════════════════════════════════════════════════════════
+  // HORECA INGESTION & AI PIPELINE — Tab 7
+  // ══════════════════════════════════════════════════════════════
+
+  window.igIngSourceTypeChange = function() {
+    var type = document.getElementById('ing-source-type').value;
+    document.getElementById('ing-url-wrap').style.display = (type==='url' || type==='pdf') ? 'block' : 'none';
+    document.getElementById('ing-drive-wrap').style.display = type==='drive' ? 'block' : 'none';
+    document.getElementById('ing-manual-wrap').style.display = type==='manual' ? 'block' : 'none';
+  };
+
+  window.igIngStart = function() {
+    var sourceType = document.getElementById('ing-source-type').value;
+    var supplierCode = document.getElementById('ing-supplier-code').value;
+    var defCategory = document.getElementById('ing-def-category').value;
+    var normMode = document.getElementById('ing-norm-mode').value;
+    var dedup = document.getElementById('ing-dedup').checked;
+    var autoPublish = document.getElementById('ing-auto-publish').checked;
+    var sourceUrl = document.getElementById('ing-source-url').value.trim();
+    var drivePath = document.getElementById('ing-drive-path').value.trim();
+    var manualJson = document.getElementById('ing-manual-json').value.trim();
+
+    if (!supplierCode) { igToast('Please select a supplier code','warn'); return; }
+    if (sourceType==='url' && !sourceUrl) { igToast('Please enter a source URL','warn'); return; }
+    if (sourceType==='drive' && !drivePath) { igToast('Please enter AI Drive path','warn'); return; }
+    if (sourceType==='manual' && !manualJson) { igToast('Please paste JSON data','warn'); return; }
+
+    var payload = {
+      source_type: sourceType,
+      source_url: sourceType==='url'||sourceType==='pdf' ? sourceUrl : '',
+      drive_path: sourceType==='drive' ? drivePath : '',
+      manual_data: sourceType==='manual' ? manualJson : '',
+      supplier_code: supplierCode,
+      default_category: defCategory,
+      normalisation_mode: normMode,
+      enable_dedup: dedup,
+      auto_publish: autoPublish
+    };
+
+    var statusMsg = document.getElementById('ing-status-msg');
+    statusMsg.textContent = 'Starting ingestion job…';
+
+    igApi.post('/horeca/ingest/start', payload).then(function(r) {
+      igToast('Ingestion job started — Job ID: ' + (r.job_id||''), 'success');
+      statusMsg.textContent = 'Job ' + (r.job_id||'') + ' queued.';
+      setTimeout(function() { igIngRefresh(); }, 1000);
+    }).catch(function(err) {
+      igToast((err&&err.error)||'Failed to start ingestion job','warn');
+      statusMsg.textContent = 'Error starting job.';
+    });
+  };
+
+  window.igIngRefresh = function() {
+    igIngLoadJobs();
+    igIngLoadPublishQueue();
+    igIngLoadDuplicateQueue();
+  };
+
+  window.igIngRefreshQueues = function() {
+    igIngLoadPublishQueue();
+    igIngLoadDuplicateQueue();
+  };
+
+  function igIngLoadJobs() {
+    igApi.get('/horeca/ingest/jobs').then(function(d) {
+      var jobs = (d && d.jobs) || [];
+      var tbody = document.getElementById('ing-jobs-tbody');
+      var countEl = document.getElementById('ing-jobs-count');
+      var totalEl = document.getElementById('ing-total');
+      var prodsEl = document.getElementById('ing-prods');
+      if (countEl) countEl.textContent = jobs.length + ' jobs';
+      if (totalEl) totalEl.textContent = jobs.length;
+      var totalProds = jobs.reduce(function(sum, j) { return sum + (j.published_count||0); }, 0);
+      if (prodsEl) prodsEl.textContent = totalProds;
+      if (!tbody) return;
+      if (!jobs.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;font-size:.82rem;color:var(--ink-muted);">No ingestion jobs yet. Start a new job above.</td></tr>';
+        return;
+      }
+      var statusColors = {running:'#2563eb',completed:'#16a34a',failed:'#dc2626',pending:'#d97706',partial:'#7c3aed'};
+      tbody.innerHTML = jobs.map(function(j) {
+        var sc = statusColors[j.status] || '#475569';
+        return '<tr>'
+          + '<td style="font-size:.72rem;color:var(--gold);font-family:monospace;font-weight:600;">' + (j.id||'') + '</td>'
+          + '<td style="font-size:.75rem;color:var(--ink-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (j.source_url||j.source_type||'') + '">' + (j.source_type==='manual'?'Manual JSON':j.source_url||j.drive_path||j.source_type||'—') + '</td>'
+          + '<td style="font-size:.75rem;font-family:monospace;font-weight:600;color:#0d9488;">' + (j.supplier_code||'—') + '</td>'
+          + '<td style="font-size:.82rem;text-align:center;">' + (j.records_found||0) + '</td>'
+          + '<td style="font-size:.82rem;text-align:center;color:#16a34a;font-weight:600;">' + (j.published_count||0) + '</td>'
+          + '<td style="font-size:.82rem;text-align:center;color:#dc2626;">' + (j.duplicate_count||0) + '</td>'
+          + '<td><span style="background:' + sc + '22;border:1px solid ' + sc + '55;padding:.2rem .5rem;font-size:.62rem;font-weight:700;color:' + sc + ';">' + (j.status||'pending') + '</span></td>'
+          + '<td style="font-size:.7rem;color:var(--ink-muted);">' + (j.started_at ? new Date(j.started_at).toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'}) : '—') + '</td>'
+          + '<td style="display:flex;gap:.25rem;">'
+          +   '<button onclick="igIngViewJob(\\'' + (j.id||'') + '\\')" style="background:none;border:1px solid var(--border);padding:.2rem .45rem;font-size:.62rem;cursor:pointer;color:var(--gold);" title="View details"><i class="fas fa-eye"></i></button>'
+          + '</td></tr>';
+      }).join('');
+    }).catch(function() {});
+  }
+
+  function igIngLoadPublishQueue() {
+    igApi.get('/horeca/publish-queue').then(function(d) {
+      var items = (d && d.items) || [];
+      var publishEl = document.getElementById('ing-publish');
+      if (publishEl) publishEl.textContent = items.length;
+      var listEl = document.getElementById('ing-publish-list');
+      if (!listEl) return;
+      if (!items.length) {
+        listEl.innerHTML = '<p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;"><i class="fas fa-check-circle" style="color:#16a34a;margin-right:.4rem;"></i>Publish queue is empty — all items reviewed.</p>';
+        return;
+      }
+      listEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:.75rem;">'
+        + items.map(function(item) {
+          return '<div style="border:1px solid var(--border);padding:1rem;">'
+            + '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">'
+            + '<div>'
+            +   '<span style="font-size:.72rem;color:var(--gold);font-family:monospace;font-weight:600;">' + (item.sku||item.id||'') + '</span>'
+            +   '<span style="font-size:.85rem;font-weight:600;color:var(--ink);margin-left:.75rem;">' + (item.name||'Unnamed Product') + '</span>'
+            +   '<span class="badge b-dk" style="font-size:.6rem;margin-left:.5rem;">' + (item.category||'—') + '</span>'
+            + '</div>'
+            + '<div style="display:flex;gap:.5rem;">'
+            +   '<button onclick="igIngApproveItem(\\'' + (item.id||item.sku||'') + '\\')" style="background:#16a34a;color:#fff;border:none;padding:.3rem .75rem;font-size:.7rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;"><i class="fas fa-check" style="font-size:.6rem;"></i>Publish</button>'
+            +   '<button onclick="igIngRejectItem(\\'' + (item.id||item.sku||'') + '\\')" style="background:none;border:1px solid #fca5a5;padding:.3rem .7rem;font-size:.7rem;color:#dc2626;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;"><i class="fas fa-times" style="font-size:.6rem;"></i>Reject</button>'
+            + '</div></div>'
+            + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;">'
+            +   '<div><span style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Supplier</span><p style="font-size:.72rem;color:var(--ink);margin:.15rem 0 0;">' + (item.supplierCode||'—') + '</p></div>'
+            +   '<div><span style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Unit</span><p style="font-size:.72rem;color:var(--ink);margin:.15rem 0 0;">' + (item.unit||'Piece') + '</p></div>'
+            +   '<div><span style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">HSN</span><p style="font-size:.72rem;color:var(--ink);margin:.15rem 0 0;">' + (item.hsn||'—') + '</p></div>'
+            +   '<div><span style="font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">GST</span><p style="font-size:.72rem;color:var(--ink);margin:.15rem 0 0;">' + (item.gst_rate||18) + '%</p></div>'
+            + '</div>'
+            + (item.description ? '<p style="font-size:.72rem;color:var(--ink-muted);margin:.5rem 0 0;line-height:1.5;">' + item.description.substring(0,150) + (item.description.length>150?'…':'') + '</p>' : '')
+            + '</div>';
+        }).join('') + '</div>';
+    }).catch(function() {
+      var listEl = document.getElementById('ing-publish-list');
+      if (listEl) listEl.innerHTML = '<p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;">Could not load publish queue.</p>';
+    });
+  }
+
+  function igIngLoadDuplicateQueue() {
+    igApi.get('/horeca/duplicates').then(function(d) {
+      var items = (d && d.items) || [];
+      var dupsEl = document.getElementById('ing-dups');
+      if (dupsEl) dupsEl.textContent = items.length;
+      var listEl = document.getElementById('ing-dups-list');
+      if (!listEl) return;
+      if (!items.length) {
+        listEl.innerHTML = '<p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;"><i class="fas fa-check-circle" style="color:#16a34a;margin-right:.4rem;"></i>No duplicates flagged — catalogue is clean.</p>';
+        return;
+      }
+      listEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:.75rem;">'
+        + items.map(function(item) {
+          var matchColor = item.score >= 80 ? '#dc2626' : item.score >= 60 ? '#d97706' : '#16a34a';
+          return '<div style="border:1px solid #fca5a5;padding:1rem;background:#fef9f9;">'
+            + '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">'
+            + '<div>'
+            +   '<span style="font-size:.72rem;font-family:monospace;color:#dc2626;font-weight:600;">DUPLICATE</span>'
+            +   '<span style="font-size:.85rem;font-weight:600;color:var(--ink);margin-left:.75rem;">' + (item.name||'Unnamed') + '</span>'
+            +   '<span style="background:' + matchColor + '22;border:1px solid ' + matchColor + '55;color:' + matchColor + ';padding:.15rem .4rem;font-size:.62rem;font-weight:700;margin-left:.5rem;">Score: ' + (item.score||0) + '%</span>'
+            + '</div>'
+            + '<div style="display:flex;gap:.5rem;">'
+            +   '<button onclick="igIngResolveDup(\\'' + (item.id||'') + '\\',\\'' + (item.matched_id||'') + '\\',\\'keep_new\\')" style="background:#d97706;color:#fff;border:none;padding:.3rem .7rem;font-size:.7rem;font-weight:600;cursor:pointer;">Use New</button>'
+            +   '<button onclick="igIngResolveDup(\\'' + (item.id||'') + '\\',\\'' + (item.matched_id||'') + '\\',\\'keep_existing\\')" style="background:#2563eb;color:#fff;border:none;padding:.3rem .7rem;font-size:.7rem;font-weight:600;cursor:pointer;">Keep Existing</button>'
+            +   '<button onclick="igIngResolveDup(\\'' + (item.id||'') + '\\',\\'' + (item.matched_id||'') + '\\',\\'merge\\')" style="background:#7c3aed;color:#fff;border:none;padding:.3rem .7rem;font-size:.7rem;font-weight:600;cursor:pointer;">Merge</button>'
+            + '</div></div>'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+            +   '<div style="padding:.75rem;background:#fff;border:1px solid var(--border);">'
+            +     '<p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dc2626;margin-bottom:.5rem;">NEW (Incoming)</p>'
+            +     '<p style="font-size:.78rem;font-weight:600;">' + (item.name||'—') + '</p>'
+            +     '<p style="font-size:.7rem;color:var(--ink-muted);">' + (item.category||'—') + ' · ' + (item.supplierCode||'—') + '</p>'
+            +   '</div>'
+            +   '<div style="padding:.75rem;background:#fff;border:1px solid var(--border);">'
+            +     '<p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2563eb;margin-bottom:.5rem;">EXISTING (In Catalogue)</p>'
+            +     '<p style="font-size:.78rem;font-weight:600;">' + (item.matched_name||'—') + '</p>'
+            +     '<p style="font-size:.7rem;color:var(--ink-muted);">' + (item.matched_category||'—') + ' · ' + (item.matched_sku||'—') + '</p>'
+            +   '</div>'
+            + '</div>'
+            + '<p style="font-size:.68rem;color:var(--ink-muted);margin-top:.5rem;">Match type: <strong>' + (item.match_type||'—') + '</strong></p>'
+            + '</div>';
+        }).join('') + '</div>';
+    }).catch(function() {
+      var listEl = document.getElementById('ing-dups-list');
+      if (listEl) listEl.innerHTML = '<p style="font-size:.82rem;color:var(--ink-muted);text-align:center;padding:1rem 0;">Could not load duplicate queue.</p>';
+    });
+  }
+
+  window.igIngViewJob = function(jobId) {
+    igApi.get('/horeca/ingest/job/' + encodeURIComponent(jobId)).then(function(r) {
+      var j = r.job || {};
+      igModal('Ingestion Job — ' + jobId,
+        '<div style="display:flex;flex-direction:column;gap:.75rem;">'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Job ID</p><p style="font-size:.82rem;font-family:monospace;color:var(--gold);">' + (j.id||'') + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Status</p><p style="font-size:.82rem;font-weight:600;">' + (j.status||'—') + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Supplier</p><p style="font-size:.82rem;">' + (j.supplier_code||'—') + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Records Found</p><p style="font-size:.82rem;">' + (j.records_found||0) + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Published</p><p style="font-size:.82rem;color:#16a34a;font-weight:600;">' + (j.published_count||0) + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Duplicates</p><p style="font-size:.82rem;color:#dc2626;">' + (j.duplicate_count||0) + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Started</p><p style="font-size:.75rem;">' + (j.started_at ? new Date(j.started_at).toLocaleString('en-IN') : '—') + '</p></div>'
+        + '<div><p style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem;">Completed</p><p style="font-size:.75rem;">' + (j.completed_at ? new Date(j.completed_at).toLocaleString('en-IN') : '—') + '</p></div>'
+        + '</div>'
+        + (j.error_log && j.error_log.length ? '<div style="background:#fef2f2;border:1px solid #fecaca;padding:.75rem;"><p style="font-size:.68rem;font-weight:700;color:#dc2626;margin-bottom:.35rem;">Errors (' + j.error_log.length + ')</p>' + j.error_log.slice(0,5).map(function(e){ return '<p style="font-size:.7rem;color:#dc2626;">' + e + '</p>'; }).join('') + '</div>' : '')
+        + (j.stats ? '<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:.75rem;"><p style="font-size:.68rem;font-weight:700;color:#16a34a;margin-bottom:.35rem;">AI Normalisation Stats</p>'
+          + '<p style="font-size:.72rem;color:#16a34a;">Titles normalised: ' + (j.stats.normalised||0) + ' · Tags generated: ' + (j.stats.tagged||0) + ' · Specs cleaned: ' + (j.stats.specs_cleaned||0) + '</p></div>' : '')
+        + '</div>'
+      );
+    }).catch(function() { igToast('Could not load job details','warn'); });
+  };
+
+  window.igIngApproveItem = function(id) {
+    igApi.post('/horeca/publish-queue/approve', { item_id: id }).then(function(r) {
+      igToast('Product published: ' + id, 'success');
+      igIngLoadPublishQueue();
+      igIngLoadJobs();
+      igHorecaLoadProducts('','');
+    }).catch(function(err) { igToast((err&&err.error)||'Publish failed','warn'); });
+  };
+
+  window.igIngApproveAll = function() {
+    igConfirm('Approve and publish all items in the queue?', function() {
+      igApi.get('/horeca/publish-queue').then(function(d) {
+        var items = (d && d.items) || [];
+        if (!items.length) { igToast('Queue is empty','info'); return; }
+        var promises = items.map(function(item) {
+          return igApi.post('/horeca/publish-queue/approve', { item_id: item.id||item.sku });
+        });
+        Promise.allSettled(promises).then(function(results) {
+          var approved = results.filter(function(r){ return r.status==='fulfilled'; }).length;
+          igToast('Published ' + approved + ' / ' + items.length + ' items','success');
+          igIngRefresh();
+          igHorecaLoadProducts('','');
+        });
+      }).catch(function() { igToast('Approve-all failed','warn'); });
+    });
+  };
+
+  window.igIngRejectItem = function(id) {
+    igConfirm('Reject this item? It will not be added to the catalogue.', function() {
+      igApi.post('/horeca/publish-queue/reject', { item_id: id, reason: 'Rejected by admin' }).then(function() {
+        igToast('Item rejected', 'info');
+        igIngLoadPublishQueue();
+      }).catch(function() { igToast('Reject failed','warn'); });
+    });
+  };
+
+  window.igIngResolveDup = function(newId, existingId, resolution) {
+    igApi.post('/horeca/duplicates/resolve', { new_id: newId, existing_id: existingId, resolution: resolution }).then(function(r) {
+      var msg = resolution==='merge' ? 'Products merged' : resolution==='keep_new' ? 'New version kept' : 'Existing version kept';
+      igToast(msg + ' — duplicate resolved', 'success');
+      igIngLoadDuplicateQueue();
+      if (resolution !== 'keep_existing') igHorecaLoadProducts('','');
+    }).catch(function(err) { igToast((err&&err.error)||'Resolution failed','warn'); });
+  };
+
+  window.igIngExportDups = function() {
+    igToast('Downloading duplicate review CSV…','info');
+    fetch('/api/horeca/export/duplicate-review', { credentials: 'include' }).then(function(res) {
+      return res.blob();
+    }).then(function(blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'horeca-duplicates-' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      igToast('Duplicate review CSV downloaded','success');
+    }).catch(function() { igToast('Export failed — please retry','warn'); });
+  };
+
+
   function igHorecaCalcQuote(){
     var rooms = parseInt(document.getElementById('qt-rooms').value) || 0;
     var star  = parseInt(document.getElementById('qt-star').value) || 5;
