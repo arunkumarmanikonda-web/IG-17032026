@@ -444,18 +444,29 @@ function filterInvest(sector) {
     ogImage: 'https://indiagully.com/static/og-invest.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'WebPage',
-      name: 'Investor Relations — India Gully',
-      url: 'https://indiagully.com/invest',
-      description: 'Active investment mandates and advisory pipeline for qualified institutional investors and family offices.',
-      publisher: {
-        '@type': 'Organization',
-        name: 'India Gully',
-        legalName: 'Vivacious Entertainment and Hospitality Pvt. Ltd.',
-        url: 'https://indiagully.com',
-        telephone: '+918988988988',
-        email: 'info@indiagully.com'
-      }
+      '@graph': [
+        {
+          '@type': 'WebPage',
+          name: 'Investor Relations — India Gully',
+          url: 'https://indiagully.com/invest',
+          description: 'Active investment mandates and advisory pipeline for qualified institutional investors and family offices.',
+          publisher: {
+            '@type': 'Organization',
+            name: 'India Gully',
+            legalName: 'Vivacious Entertainment and Hospitality Pvt. Ltd.',
+            url: 'https://indiagully.com',
+            telephone: '+918988988988',
+            email: 'info@indiagully.com'
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Investor Relations', item: 'https://indiagully.com/invest' },
+          ]
+        }
+      ]
     }
   }))
 })

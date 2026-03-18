@@ -666,13 +666,24 @@ function sortCity(by) {
     canonical: 'https://indiagully.com/market-data',
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Dataset",
-      "name": "India Real Estate & Hospitality Market Data",
-      "description": "City-wise office, hotel and retail rates for 8 Indian cities, hotel segment benchmarks, macro indicators and deal activity as of March 2026.",
-      "url": "https://indiagully.com/market-data",
-      "creator": { "@type": "Organization", "name": "India Gully Advisory" },
-      "dateModified": "2026-03",
-      "keywords": ["India real estate", "hotel rates", "commercial rates", "RevPAR", "ADR", "cap rates", "market data"]
+      "@graph": [
+        {
+          "@type": "Dataset",
+          "name": "India Real Estate & Hospitality Market Data",
+          "description": "City-wise office, hotel and retail rates for 8 Indian cities, hotel segment benchmarks, macro indicators and deal activity as of March 2026.",
+          "url": "https://indiagully.com/market-data",
+          "creator": { "@type": "Organization", "name": "India Gully Advisory" },
+          "dateModified": "2026-03",
+          "keywords": ["India real estate", "hotel rates", "commercial rates", "RevPAR", "ADR", "cap rates", "market data"]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://indiagully.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Market Data", "item": "https://indiagully.com/market-data" }
+          ]
+        }
+      ]
     }
   }))
 })

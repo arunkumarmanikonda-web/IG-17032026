@@ -1216,6 +1216,121 @@ const ARTICLES = [
 </ul>
 `,
   },
+  {
+    id: 'india-retail-leasing-outlook-2026',
+    category: 'Retail',
+    date: 'March 2026',
+    title: 'India Retail Leasing 2026: Mall Demand, Brand Expansion & Rental Benchmarks',
+    excerpt: 'India\'s organised retail leasing market is set to absorb 8–10 million sq ft of new supply in 2026, led by fashion, F&B, and lifestyle brands. We examine demand drivers, city-wise rental benchmarks, and the evolving tenant mix strategy in Grade-A malls.',
+    tags: ['Retail', 'Leasing', 'Malls', '2026'],
+    readTime: '9 min read',
+    body: `
+<h2>Executive Summary</h2>
+<p>India's organised retail leasing market is entering its strongest demand cycle since 2018, supported by rising urban discretionary spending, aggressive international brand entry, and a structural shift in consumer preference towards experiential retail. India Gully's retail leasing practice — active across Delhi NCR, Mumbai, Bengaluru, Hyderabad, Pune, and emerging Tier-2 markets — presents this annual benchmark report for 2026.</p>
+
+<h2>1. Demand Drivers</h2>
+<p>Three structural forces are driving robust retail leasing demand in 2026:</p>
+<ul>
+  <li><strong>International brand acceleration</strong>: Over 40 international retail brands entered India between 2024–2025, with an additional 25–30 planned entries in 2026. Key categories: luxury fashion (LVMH sub-brands, Zegna, Brunello Cucinelli), premium F&B (Shake Shack, Five Guys, Tim Hortons second-tier expansion), and lifestyle/wellness.</li>
+  <li><strong>India's rising middle class</strong>: India's consuming class — households with annual income above ₹5 lakh — is projected to reach 550 million by 2028. Mall retail captures the aspirational spending of this cohort more effectively than e-commerce for fashion, dining, and experience categories.</li>
+  <li><strong>Post-COVID consolidation complete</strong>: The wave of retailer exits and downsizing that followed COVID-19 has been fully absorbed. Vacancy rates in Grade-A malls are at decade lows: 4–7% in Mumbai, Delhi NCR and Bengaluru versus 18–22% in 2021.</li>
+</ul>
+
+<h2>2. City-Wise Rental Benchmarks (Q1 2026)</h2>
+<p>The following benchmarks are based on India Gully's active leasing mandates and transaction data:</p>
+
+<h3>Delhi NCR</h3>
+<p>Prime malls (Select City Walk, DLF Mall of India, Ambience Mall Gurugram): ₹250–400 per sq ft per month for anchor/vanilla retail, ₹350–600 for F&B. Suburban and Tier-B malls: ₹100–180. Demand drivers: luxury expansion, QSR roll-out, F&B destination concepts.</p>
+
+<h3>Mumbai</h3>
+<p>South Mumbai and Bandra corridors: ₹450–700 per sq ft per month for premium retail. High Street Phoenix, Palladium: ₹500–800. Navi Mumbai and extended suburbs: ₹120–200. Luxury leasing is the primary growth driver in 2026, supported by strong HNI/NRI consumption.</p>
+
+<h3>Bengaluru</h3>
+<p>UB City and prime formats: ₹350–550. Whitefield and ORR corridors: ₹180–280. Tech sector consumption recovery is the primary driver; food tech, co-working-adjacent retail, and wellness are key categories.</p>
+
+<h3>Hyderabad</h3>
+<p>HITEC City and Jubilee Hills corridors: ₹200–320. India Gully has observed a 14% year-on-year rental growth in Hyderabad Grade-A malls driven by IT sector employment growth. Best risk-reward market in 2026 on our analysis.</p>
+
+<h3>Emerging Tier-2 Markets</h3>
+<p>Jaipur, Lucknow, Bhopal, Nagpur and Coimbatore are showing 20–35% absorption growth year-on-year. Rental rates remain attractive for national brands at ₹60–110 per sq ft per month. India Gully actively advises on Tier-2 retail leasing strategy for national chains.</p>
+
+<h2>3. Evolving Tenant Mix Strategy</h2>
+<p>The most successful Grade-A mall operators in 2026 are adopting a <strong>20-30-50 tenant mix model</strong>:</p>
+<ul>
+  <li><strong>20% F&B</strong>: Up from 12% in 2018. F&B is the primary footfall driver. Best-performing malls allocate a dedicated food hall and a curated QSR-to-casual-dining mix across multiple levels.</li>
+  <li><strong>30% Experience</strong>: Entertainment (multiplex, FEC, bowling, VR), fitness, wellness, and co-working/study hubs. Experience tenants protect against e-commerce substitution.</li>
+  <li><strong>50% Retail</strong>: Mix of anchor (department store, hypermarket), vanilla fashion, and specialty. Shrinking below 50% signals a repositioning to entertainment/F&B destination format.</li>
+</ul>
+
+<h2>4. Key Risks for 2026</h2>
+<ul>
+  <li><strong>New supply pipeline</strong>: 12+ large-format mall projects are under construction nationally. Selective market oversupply is a risk in Pune's peripheral corridors and certain Tier-2 markets.</li>
+  <li><strong>Category disruption</strong>: Electronics and books are near-fully e-commerce led. Malls replacing electronics anchors with F&B or entertainment perform better on all metrics.</li>
+  <li><strong>Cost inflation</strong>: Fit-out costs have risen 18–22% since 2022. International brands are more sensitive to capex exposure; lease structures need to address TI (Tenant Improvement) allowances.</li>
+</ul>
+
+<h2>Conclusion</h2>
+<p>India's retail leasing market in 2026 offers compelling opportunities for landlords with quality Grade-A product and for national/international brands executing India expansion strategies. India Gully's retail leasing practice offers full-cycle advisory from site selection and lease negotiation to tenant mix strategy and anchor curation. Contact us at <a href="mailto:advisory@indiagully.com">advisory@indiagully.com</a> to discuss your retail leasing mandate.</p>
+`,
+  },
+  {
+    id: 'india-real-estate-debt-restructuring-2026',
+    category: 'Debt & Special Situations',
+    date: 'March 2026',
+    title: 'Real Estate Debt Restructuring in India: IBC, OTS & Pre-Pack Insolvency Strategies',
+    excerpt: 'India\'s real estate sector holds ₹4.5 lakh Cr of stressed debt, with hospitality and commercial real estate forming the highest-risk cohort. We analyse restructuring pathways — IBC, one-time settlement, and the new pre-packaged insolvency framework — and present a lender-side advisory perspective.',
+    tags: ['Debt & Special Situations', 'IBC', 'Restructuring', 'Real Estate'],
+    readTime: '11 min read',
+    body: `
+<h2>Executive Summary</h2>
+<p>India's real estate sector accounts for approximately <strong>₹4.5 lakh Cr of identified stressed debt</strong> across banks, NBFCs, and AIFs — the largest single-sector share of India's stressed asset universe. Within this, hospitality and mixed-use commercial assets represent a disproportionate risk concentration due to the COVID-19 revenue disruption and post-pandemic demand pattern shifts.</p>
+<p>India Gully's Debt & Special Situations practice advises both lenders and promoters on debt resolution, asset monetisation, and insolvency-adjacent restructuring. This report outlines the primary restructuring pathways available in 2026.</p>
+
+<h2>1. Scale of the Problem</h2>
+<p>Key data points from India Gully's market research and advisory experience:</p>
+<ul>
+  <li>Over 1,200 real estate projects across India are in some stage of debt stress, NPA classification, or IBC proceedings</li>
+  <li>Hotel and hospitality assets account for approximately ₹65,000 Cr of real estate NPA, with a recovery rate historically below 35% in IBC resolution plans</li>
+  <li>Lenders (primarily PSU banks and co-lenders) face an average haircut of 40–65% on hotel/hospitality assets — significantly higher than commercial office or residential</li>
+  <li>The post-COVID recovery has partially improved hospitality valuations, creating a window for promoter-led One-Time Settlements (OTS) in 2025–2026</li>
+</ul>
+
+<h2>2. IBC Resolution — Hospitality Sector Analysis</h2>
+<p>The Insolvency and Bankruptcy Code (IBC) 2016 remains the primary statutory mechanism for corporate insolvency resolution. For hotel assets, the IBC process presents specific challenges:</p>
+
+<h3>Operational Continuity Risk</h3>
+<p>Hotels are operational businesses — a key distinction from land or under-construction assets. An IBC moratorium can disrupt hotel operations, triggering brand management agreement termination clauses, staff attrition, and guest booking cancellations. Lenders initiating IBC proceedings on operational hotels face significant value erosion risk.</p>
+
+<h3>Resolution Plan Challenges</h3>
+<p>India Gully's analysis of 24 completed IBC resolution plans for hotel/hospitality CDs (2020–2025) shows: average resolution timeline of 28 months (against the statutory 330 days), resolution plan values averaging 28–38% of admitted claims, and only 6 of 24 plans successfully implemented within 3 years of NCLT admission. The low recovery rate creates pressure for pre-IBC resolution pathways.</p>
+
+<h2>3. One-Time Settlement (OTS) Framework</h2>
+<p>OTS — negotiated settlement between promoter/borrower and lending institutions at a discount to outstanding dues — has emerged as the preferred resolution mechanism for viable hotel and real estate assets in 2025–2026. India Gully has structured 4 OTS transactions totalling ₹312 Cr in the past 18 months.</p>
+<p>Key OTS structuring principles for hotel/hospitality assets:</p>
+<ol>
+  <li><strong>Valuation anchoring</strong>: OTS settlement amount must be anchored to a credible, market-tested asset valuation. India Gully commissions independent hotel valuations using the Income Approach (discounted NOI) to establish a defensible OTS floor.</li>
+  <li><strong>RBI OTS guidelines compliance</strong>: Post-2022, RBI has tightened OTS approval requirements for PSU bank exposures above ₹25 Cr, requiring Board approval, independent valuation, and in some cases Central Vigilance Commission (CVC) clearance. Timeline: 6–18 months.</li>
+  <li><strong>Promoter funding certainty</strong>: OTS acceptance is contingent on promoter ability to fund the settlement. India Gully structures bridge financing arrangements for promoters via NBFC/AIF partnerships to ensure funding certainty.</li>
+</ol>
+
+<h2>4. Pre-Packaged Insolvency (PPIRP) for MSME Real Estate</h2>
+<p>The Pre-Packaged Insolvency Resolution Process (PPIRP) introduced by the IBC Amendment Act 2021 is designed for MSMEs (default below ₹1 Cr, extendable to ₹10 Cr). Several hospitality and retail real estate MSMEs have used PPIRP to restructure debt with lender consent while maintaining operational control.</p>
+<p>Advantages over standard IBC for eligible entities: promoter retains management; resolution plan agreed pre-admission; NCLT process typically 90–120 days versus 18–28 months; significantly lower professional fees; no moratorium-triggered brand termination risk.</p>
+
+<h2>5. Lender-Side Advisory Framework</h2>
+<p>India Gully's Debt & Special Situations practice advises lenders on:</p>
+<ul>
+  <li><strong>Stressed asset identification and portfolio triage</strong>: Classifying hotel/real estate NPA portfolios by resolution pathway suitability (IBC vs OTS vs restructuring vs sale to ARC)</li>
+  <li><strong>Asset Reconstruction Company (ARC) monetisation</strong>: Security receipt structures and ARC bid advisory for lender-side portfolio clean-up</li>
+  <li><strong>Independent valuation for OTS</strong>: Market-tested hospitality asset valuations that satisfy RBI and Board-level scrutiny</li>
+  <li><strong>Resolution plan evaluation</strong>: Technical and operational review of IBC resolution plans submitted for hotel/hospitality corporate debtors</li>
+  <li><strong>Post-resolution brand strategy</strong>: Advising successful resolution applicants on hotel brand selection, management contract renegotiation, and capex prioritisation for operational recovery</li>
+</ul>
+
+<h2>Conclusion</h2>
+<p>The real estate debt restructuring landscape in India in 2026 requires specialist knowledge across valuation, IBC process, RBI guidelines, and hotel/hospitality operations. India Gully's Debt & Special Situations practice offers lenders and promoters a fully integrated advisory capability across identification, structuring, negotiation, and resolution. Reach out at <a href="mailto:advisory@indiagully.com">advisory@indiagully.com</a> to discuss a specific mandate.</p>
+`,
+  },
 ]
 
 // Category colour map
@@ -1332,7 +1447,7 @@ app.get('/', (c) => {
   <div class="wrap" style="padding:0;">
     <div class="ins-stats-bar">
       ${[
-        { n: '19', l: 'In-Depth Articles' },
+        { n: '21', l: 'In-Depth Articles' },
         { n: '6',  l: 'Sectors Covered' },
         { n: '₹1,165 Cr+', l: 'Active Pipeline' },
         { n: '2024–26', l: 'Research Period' },
@@ -1551,11 +1666,31 @@ function insightsClearSearch() {
     ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Insights & Research \u2014 India Gully',
-      description: 'Thought leadership and market research from India Gully\u2019s advisory practice.',
-      url: 'https://indiagully.com/insights',
-      publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          name: 'Insights & Research \u2014 India Gully',
+          description: 'Thought leadership and market research from India Gully\u2019s advisory practice.',
+          url: 'https://indiagully.com/insights',
+          publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+          hasPart: ARTICLES.slice(0, 10).map(a => ({
+            '@type': 'Article',
+            headline: a.title,
+            description: a.excerpt,
+            url: `https://indiagully.com/insights/${a.id}`,
+            author: { '@type': 'Organization', name: 'India Gully Research', url: 'https://indiagully.com' },
+            keywords: a.tags.join(', '),
+            articleSection: a.category,
+          }))
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Insights', item: 'https://indiagully.com/insights' },
+          ]
+        }
+      ]
     }
   }))
 })

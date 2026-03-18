@@ -262,22 +262,58 @@ ${SERVICES.map((s, i) => `
     ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'Service',
-      serviceType: 'Advisory Services',
-      provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
-      areaServed: { '@type': 'Country', name: 'India' },
-      hasOfferCatalog: {
-        '@type': 'OfferCatalog',
-        name: 'India Gully Advisory Services',
-        itemListElement: [
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Real Estate Advisory' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Retail & Leasing' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Hospitality Management' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Entertainment Advisory' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Debt & Special Situations' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'HORECA Solutions' } }
-        ]
-      }
+      '@graph': [
+        {
+          '@type': 'Service',
+          serviceType: 'Advisory Services',
+          provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+          areaServed: { '@type': 'Country', name: 'India' },
+          hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'India Gully Advisory Services',
+            itemListElement: [
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Real Estate Advisory' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Retail & Leasing' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Hospitality Management' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Entertainment Advisory' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Debt & Special Situations' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'HORECA Solutions' } }
+            ]
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Advisory Services', item: 'https://indiagully.com/services' },
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What advisory services does India Gully offer?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully offers six core advisory services: Real Estate Advisory (acquisitions, disposals, due diligence), Retail & Leasing (brand placements, mall advisory), Hospitality Management (hotel operations, brand onboarding), Entertainment Advisory (FEC/EDC feasibility, operator selection), Debt & Special Situations (IBC, OTS, pre-pack), and HORECA Solutions (procurement for hotel pre-openings and F&B operators).' }
+            },
+            {
+              '@type': 'Question',
+              name: 'Which sectors does India Gully specialise in?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully specialises in Real Estate, Retail & Leasing, Hospitality, Entertainment, Debt & Special Situations, and HORECA. The firm has advised on over ₹2,000 Cr of transactions since 2017.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'Where does India Gully operate?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully operates pan-India with primary focus on Delhi NCR, Chandigarh, Himachal Pradesh, Rajasthan, and emerging Tier-2 markets.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'How do I engage India Gully for an advisory mandate?',
+              acceptedAnswer: { '@type': 'Answer', text: 'You can submit a mandate enquiry via the Contact page at https://indiagully.com/contact, or call +91 89889 88988. All mandates are handled under strict NDA and confidentiality protocols.' }
+            }
+          ]
+        }
+      ]
     }
   }))
 })

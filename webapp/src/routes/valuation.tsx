@@ -493,8 +493,29 @@ calcCap();
 `
   return c.html(layout('Property Valuation Calculator', html, {
     description: 'Free interactive property valuation calculator using Income Capitalisation, DCF, and Revenue methods. Built on India Gully\'s active ₹1,165 Cr+ advisory intelligence across hotels, commercial, and retail real estate.',
-    canonical: '/valuation',
-    ogImage: 'https://hotelrajshreechandigarh.com/wp-content/uploads/2025/12/Hotel-Rajshree-5-scaled-e1765525431558.webp',
+    canonical: 'https://indiagully.com/valuation',
+    ogImage: 'https://indiagully.com/static/og.jpg',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebApplication',
+          name: 'India Gully Property Valuation Calculator',
+          description: 'Free interactive property valuation tool using Income Capitalisation, DCF, and Revenue methods for hotels, commercial and retail real estate in India.',
+          url: 'https://indiagully.com/valuation',
+          applicationCategory: 'FinanceApplication',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+          provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Valuation Calculator', item: 'https://indiagully.com/valuation' },
+          ]
+        }
+      ]
+    }
   }))
 })
 

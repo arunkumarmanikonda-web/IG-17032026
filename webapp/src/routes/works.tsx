@@ -310,11 +310,22 @@ function filterVertical(id) {
     ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Track Record — Completed Works',
-      url: 'https://indiagully.com/works',
-      description: 'India Gully completed works: ₹2,000+ Cr transactions advised, 15+ hotel projects, 30+ retail brands, 1,40,000+ sq ft leased.',
-      publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          name: 'Track Record — Completed Works',
+          url: 'https://indiagully.com/works',
+          description: 'India Gully completed works: ₹2,000+ Cr transactions advised, 15+ hotel projects, 30+ retail brands, 1,40,000+ sq ft leased.',
+          publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Track Record & Completed Works', item: 'https://indiagully.com/works' },
+          ]
+        }
+      ]
     }
   }))
 })

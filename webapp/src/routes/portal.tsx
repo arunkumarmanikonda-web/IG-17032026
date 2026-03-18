@@ -454,7 +454,7 @@ try {
 } catch(e) {}
 </script>
 `
-  return c.html(layout('Investor Registration — India Gully', content, { noNav: true, noFooter: true }))
+  return c.html(layout('Investor Registration', content, { noNav: true, noFooter: true }))
 })
 
 app.get('/employee', (c) => {

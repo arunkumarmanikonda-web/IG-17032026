@@ -333,7 +333,65 @@ app.get('/', (c) => {
 `
   return c.html(layout('HORECA Solutions', content, {
     description: 'India Gully HORECA Solutions — kitchen equipment, FF&E, OS&E, linens, uniforms and guest amenities for hotels and F&B operators across India.',
-    canonical: 'https://indiagully.com/horeca'
+    canonical: 'https://indiagully.com/horeca',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Service',
+          name: 'HORECA Procurement & Supply Solutions',
+          description: 'End-to-end HORECA procurement for hotel pre-openings and F&B operators — kitchen equipment, FF&E, OS&E, linens, uniforms, and guest amenities across 500+ SKUs.',
+          provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+          serviceType: 'HORECA Procurement',
+          areaServed: { '@type': 'Country', name: 'India' },
+          url: 'https://indiagully.com/horeca',
+          hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'HORECA Product & Service Catalogue',
+            itemListElement: [
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Kitchen Equipment Procurement' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'FF&E Supply (Furniture, Fixtures & Equipment)' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'OS&E Supply (Operating Supplies & Equipment)' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Hotel Linen & Uniform Supply' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Guest Amenities Procurement' } },
+              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Hotel Pre-Opening Procurement Management' } },
+            ]
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'HORECA Solutions', item: 'https://indiagully.com/horeca' },
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What does India Gully HORECA Solutions cover?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully HORECA Solutions covers end-to-end procurement for hotel pre-openings and F&B operators, including kitchen equipment, FF&E (furniture, fixtures & equipment), OS&E (operating supplies & equipment), hotel linens, uniforms, guest amenities, and crockery — across 500+ SKUs sourced from 50+ verified vendors.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'How does India Gully manage hotel pre-opening procurement?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully manages hotel pre-opening procurement end-to-end: needs assessment, vendor selection, purchase order management, quality inspection, logistics coordination and delivery scheduling — all with 98% on-time delivery and up to 14% cost saving vs. owner-managed procurement.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'Which hotel brands has India Gully procured for?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully has supported procurement for properties affiliated with IHG, WelcomHeritage, CGH Earth, and independent boutique hotels across Delhi NCR, Chandigarh, Himachal Pradesh, and Rajasthan.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'How do I request a HORECA procurement quote?',
+              acceptedAnswer: { '@type': 'Answer', text: 'Submit a requirements brief via https://indiagully.com/contact or WhatsApp +91 89889 88988. The team will revert within 24 hours with a preliminary scope and pricing framework.' }
+            }
+          ]
+        }
+      ]
+    }
   }))
 })
 

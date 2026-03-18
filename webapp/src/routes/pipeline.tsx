@@ -432,11 +432,32 @@ app.get('/', (c) => {
     ogImage: 'https://indiagully.com/static/og-listings.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'WebPage',
-      name: 'Investor Pipeline Dashboard — India Gully',
-      description: 'Live advisory pipeline of ₹1,165 Cr+ across Real Estate, Hospitality, and Debt verticals.',
-      url: 'https://indiagully.com/pipeline',
-      publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
+      '@graph': [
+        {
+          '@type': 'ItemList',
+          name: 'Investor Pipeline Dashboard — India Gully Active Mandates',
+          description: 'Live advisory pipeline of ₹1,165 Cr+ across Real Estate, Hospitality, Retail, Entertainment and Debt verticals. NDA-protected investor access.',
+          url: 'https://indiagully.com/pipeline',
+          numberOfItems: 8,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Prism Tower Gurgaon — ₹400 Cr', url: 'https://indiagully.com/listings/prism-tower-gurgaon' },
+            { '@type': 'ListItem', position: 2, name: 'Heritage Hotel Jaipur — ₹165 Cr', url: 'https://indiagully.com/listings/heritage-hotel-jaipur' },
+            { '@type': 'ListItem', position: 3, name: 'Sawasdee JLG Galleria Noida — ₹150 Cr', url: 'https://indiagully.com/listings/sawasdee-jlg-noida' },
+            { '@type': 'ListItem', position: 4, name: 'Belcibo F&B Platform — ₹100 Cr', url: 'https://indiagully.com/listings/belcibo-hospitality-platform' },
+            { '@type': 'ListItem', position: 5, name: 'Hotel Rajshree Chandigarh', url: 'https://indiagully.com/listings/hotel-rajshree-chandigarh' },
+            { '@type': 'ListItem', position: 6, name: 'WelcomHeritage Santa Roza Kasauli', url: 'https://indiagully.com/listings/welcomheritage-santa-roza-kasauli' },
+            { '@type': 'ListItem', position: 7, name: 'Ambience Tower North Delhi', url: 'https://indiagully.com/listings/ambience-tower-north-delhi' },
+            { '@type': 'ListItem', position: 8, name: 'Maple Resort Chail', url: 'https://indiagully.com/listings/maple-resort-chail' },
+          ]
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Investor Pipeline', item: 'https://indiagully.com/pipeline' },
+          ]
+        }
+      ]
     }
   }))
 })
