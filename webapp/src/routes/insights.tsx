@@ -7,17 +7,17 @@ const app = new Hono()
 // All images sourced from active India Gully mandate properties only.
 // No generic stock / Unsplash images used.
 const CAT_IMAGES: Record<string, string> = {
-  // Hotel Rajshree & Spa, Chandigarh — Real Estate / Commercial article header
-  'Real Estate':              '/static/mandates/chandigarh/chandigarh-img2.webp',
-  // WelcomHeritage Kasauli — Heritage & Entertainment context (local asset)
-  'Entertainment':            '/static/mandates/kasauli/kasauli-img1.jpg',
-  // Hotel Rajshree interior — HORECA / F&B procurement context
-  'HORECA':                   '/static/mandates/chandigarh/chandigarh-img1.webp',
-  // Maple Resort Chail — mountain asset, suitable for Debt / Special Situations
-  'Debt & Special Situations':'/static/mandates/chail/chail-slider1.jpg',
-  // Maple Resort exterior — Retail / leasing context
-  'Retail':                   '/static/mandates/jaipur/jaipur-exterior-front.jpg',
-  // Jaipur heritage hotel — Hospitality article header (local asset)
+  // DLF Cyber City / Gurgaon skyline — Real Estate / Commercial articles
+  'Real Estate':              '/static/mandates/hero/hero-dlf-gurgaon.jpg',
+  // Jaipur heritage hotel — Entertainment & experiential real estate
+  'Entertainment':            '/static/mandates/jaipur/jaipur-hero-shot.jpg',
+  // Hotel F&B products / kitchen advisory — HORECA procurement context
+  'HORECA':                   '/static/mandates/hero/hero-hotel-products.jpg',
+  // Chail mountain resort — Debt & Special Situations (distressed/mountain assets)
+  'Debt & Special Situations':'/static/mandates/chail/chail-cover.jpg',
+  // Jaipur heritage courtyard — Retail & leasing (destination retail context)
+  'Retail':                   '/static/mandates/jaipur/jaipur-courtyard2.jpg',
+  // WelcomHeritage Kasauli — Hospitality article header (active hotel mandate)
   'Hospitality':              '/static/mandates/kasauli/kasauli-cover.jpg',
 }
 
