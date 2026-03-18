@@ -2980,7 +2980,8 @@ app.post('/compare', async (c) => {
 
     try {
       const env = (c as any).env
-      if (env?.KV) await env.KV.put(`compare:${ref}`, JSON.stringify({ ref, ids, ts }),
+      const _kv3 = _igKV(env)
+      if (_kv3) await _kv3.put(`compare:${ref}`, JSON.stringify({ ref, ids, ts }),
         { expirationTtl: 60 * 60 * 24 * 7 }) // 7 days
     } catch(_) { /* silent */ }
 
@@ -17829,65 +17830,69 @@ const HORECA_CATEGORY_CODES: Record<string, string> = {
 }
 
 // ── KV helpers for baskets/RFQs ───────────────────────────────────────────────
+// Uses IG_SESSION_KV (the only KV binding in wrangler.jsonc)
+function _igKV(env: any): KVNamespace | undefined {
+  return env?.IG_SESSION_KV || env?.KV || undefined
+}
 async function kvGetBasket(env: any, basketId: string): Promise<any> {
   try {
-    if (!env?.KV) return null
-    const raw = await env.KV.get(`horeca_basket:${basketId}`)
+    const kv = _igKV(env); if (!kv) return null
+    const raw = await kv.get(`horeca_basket:${basketId}`)
     return raw ? JSON.parse(raw) : null
   } catch { return null }
 }
 async function kvSaveBasket(env: any, basketId: string, basket: any): Promise<void> {
   try {
-    if (!env?.KV) return
-    await env.KV.put(`horeca_basket:${basketId}`, JSON.stringify(basket), { expirationTtl: 60 * 60 * 24 * 90 }) // 90 days
+    const kv = _igKV(env); if (!kv) return
+    await kv.put(`horeca_basket:${basketId}`, JSON.stringify(basket), { expirationTtl: 60 * 60 * 24 * 90 }) // 90 days
   } catch { /* KV unavail in dev */ }
 }
 async function kvGetRFQs(env: any, limit = 100): Promise<any[]> {
   try {
-    if (!env?.KV) return []
-    const raw = await env.KV.get('horeca_rfq_list')
+    const kv = _igKV(env); if (!kv) return []
+    const raw = await kv.get('horeca_rfq_list')
     const list: any[] = raw ? JSON.parse(raw) : []
     return list.slice(0, limit)
   } catch { return [] }
 }
 async function kvAppendRFQ(env: any, rfq: any): Promise<void> {
   try {
-    if (!env?.KV) return
+    const kv = _igKV(env); if (!kv) return
     const list = await kvGetRFQs(env, 500)
     list.unshift(rfq)
-    await env.KV.put('horeca_rfq_list', JSON.stringify(list.slice(0, 500)), { expirationTtl: 60 * 60 * 24 * 365 })
+    await kv.put('horeca_rfq_list', JSON.stringify(list.slice(0, 500)), { expirationTtl: 60 * 60 * 24 * 365 })
   } catch { /* KV unavail */ }
 }
 async function kvGetIngestionJobs(env: any): Promise<any[]> {
   try {
-    if (!env?.KV) return []
-    const raw = await env.KV.get('horeca_ingestion_jobs')
+    const kv = _igKV(env); if (!kv) return []
+    const raw = await kv.get('horeca_ingestion_jobs')
     return raw ? JSON.parse(raw) : []
   } catch { return [] }
 }
 async function kvSaveIngestionJobs(env: any, jobs: any[]): Promise<void> {
   try {
-    if (!env?.KV) return
-    await env.KV.put('horeca_ingestion_jobs', JSON.stringify(jobs.slice(0, 200)), { expirationTtl: 60 * 60 * 24 * 90 })
+    const kv = _igKV(env); if (!kv) return
+    await kv.put('horeca_ingestion_jobs', JSON.stringify(jobs.slice(0, 200)), { expirationTtl: 60 * 60 * 24 * 90 })
   } catch { /* KV unavail */ }
 }
 async function kvGetDuplicateQueue(env: any): Promise<any[]> {
   try {
-    if (!env?.KV) return []
-    const raw = await env.KV.get('horeca_duplicate_queue')
+    const kv = _igKV(env); if (!kv) return []
+    const raw = await kv.get('horeca_duplicate_queue')
     return raw ? JSON.parse(raw) : []
   } catch { return [] }
 }
 async function kvSaveDuplicateQueue(env: any, items: any[]): Promise<void> {
   try {
-    if (!env?.KV) return
-    await env.KV.put('horeca_duplicate_queue', JSON.stringify(items), { expirationTtl: 60 * 60 * 24 * 60 })
+    const kv = _igKV(env); if (!kv) return
+    await kv.put('horeca_duplicate_queue', JSON.stringify(items), { expirationTtl: 60 * 60 * 24 * 60 })
   } catch { /* KV unavail */ }
 }
 async function kvGetPublishQueue(env: any): Promise<any[]> {
   try {
-    if (!env?.KV) return []
-    const raw = await env.KV.get('horeca_publish_queue')
+    const kv = _igKV(env); if (!kv) return []
+    const raw = await kv.get('horeca_publish_queue')
     return raw ? JSON.parse(raw) : []
   } catch { return [] }
 }
@@ -18083,7 +18088,7 @@ app.post('/horeca/basket/:id/add', async (c) => {
     const basket = await kvGetBasket(env, id)
     if (!basket) return c.json({ success: false, error: 'Basket not found' }, 404)
     // Validate product exists
-    const products = await kvGetProducts(env)
+    const products = await kvGetProducts(env?.IG_SESSION_KV)
     const product = products.find((p: any) => p.id === body.product_id || p.sku === body.sku)
     if (!product) return c.json({ success: false, error: 'Product not found in catalogue' }, 404)
     // Check if already in basket
@@ -18244,7 +18249,7 @@ app.post('/horeca/rfq/submit', async (c) => {
     }
     await kvAppendRFQ(env, rfq)
     // Also store per-ID for lookup
-    try { if (env?.KV) await env.KV.put(`horeca_rfq:${rfqId}`, JSON.stringify(rfq), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    try { if (_igKV(env)) await _igKV(env)!.put(`horeca_rfq:${rfqId}`, JSON.stringify(rfq), { expirationTtl: 60*60*24*365 }) } catch(_){}
     // Persist to D1 if available
     try {
       if (env?.DB) {
@@ -18269,7 +18274,7 @@ app.get('/horeca/rfq/:id', async (c) => {
     const id = c.req.param('id')
     if (!id.startsWith('RFQ-')) return c.json({ success: false, error: 'Invalid RFQ ID format' }, 400)
     let rfq = null
-    try { if (env?.KV) { const raw = await env.KV.get(`horeca_rfq:${id}`); rfq = raw ? JSON.parse(raw) : null } } catch(_){}
+    try { if (_igKV(env)) { const raw = await _igKV(env)!.get(`horeca_rfq:${id}`); rfq = raw ? JSON.parse(raw) : null } } catch(_){}
     if (!rfq) {
       // Search in list
       const list = await kvGetRFQs(env, 200)
@@ -18306,7 +18311,7 @@ app.get('/horeca/product/:id/detail', async (c) => {
   try {
     const env = (c as any).env
     const id = c.req.param('id')
-    const products = await kvGetProducts(env)
+    const products = await kvGetProducts(env?.IG_SESSION_KV)
     const product = products.find((p: any) => p.id === id || p.sku === id)
     if (!product) return c.json({ success: false, error: 'Product not found' }, 404)
     const masked = maskProductForPublic(product, false)
@@ -18330,12 +18335,14 @@ app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], 
   try {
     const env = (c as any).env
     const body = await c.req.json() as any
-    const sourceUrl = sanitiseStr(body.source_url || '', 2000)
-    const sourceType = sanitiseStr(body.source_type || 'pdf', 20) // pdf | xlsx | csv | web
-    const supplierPrefix = sanitiseStr(body.supplier_prefix || '', 10).toUpperCase()
-    const category = sanitiseStr(body.category || '', 80)
-    if (!sourceUrl) return c.json({ success: false, error: 'source_url is required' }, 400)
-    if (!supplierPrefix) return c.json({ success: false, error: 'supplier_prefix is required' }, 400)
+    const sourceUrl = sanitiseStr(body.source_url || (body.source_type==='drive' ? body.drive_path||'' : body.source_type==='manual' ? '__manual__' : ''), 2000)
+    const sourceType = sanitiseStr(body.source_type || 'pdf', 20) // pdf | xlsx | csv | web | url | manual | drive
+    const supplierPrefix = sanitiseStr(body.supplier_prefix || body.supplier_code || '', 10).toUpperCase()
+    const category = sanitiseStr(body.category || body.default_category || '', 80)
+    // manual JSON inline
+    const manualData = sanitiseStr(body.manual_data || '', 50000)
+    if (!sourceUrl && sourceType !== 'manual') return c.json({ success: false, error: 'source_url or drive_path is required' }, 400)
+    if (!supplierPrefix) return c.json({ success: false, error: 'supplier_prefix (or supplier_code) is required' }, 400)
 
     const jobId = `JOB-${Date.now()}-${Math.random().toString(36).slice(2,5).toUpperCase()}`
     const ts = new Date().toISOString()
@@ -18363,9 +18370,34 @@ app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], 
     job.current_stage = 'B:page_extraction'
 
     // For PDF/XLSX: mark as processing (real impl would use a worker)
-    // For CSV: can parse inline if small
+    // For CSV and manual JSON: parse inline
     let inlineProducts: any[] = []
-    if (sourceType === 'csv' && body.csv_data) {
+    if (sourceType === 'manual' && manualData) {
+      // Parse manual JSON array
+      try {
+        const parsed = JSON.parse(manualData)
+        const arr = Array.isArray(parsed) ? parsed : (parsed.products || parsed.items || [parsed])
+        for (const item of arr.slice(0, 200)) {
+          if (item.name || item.product_name) {
+            inlineProducts.push({
+              raw_name: String(item.name || item.product_name || ''),
+              raw_description: String(item.description || item.desc || ''),
+              raw_specs: typeof item.specs === 'object' ? item.specs : {},
+              raw_category: String(item.category || category || 'Custom'),
+              raw_unit: String(item.unit || 'Piece'),
+              raw_hsn: String(item.hsn || item.hsn_code || ''),
+              raw_gst_rate: parseInt(item.gst_rate) || 18,
+            })
+          }
+        }
+        job.stages_completed.push('B:page_extraction', 'C:candidate_extraction')
+        job.candidates_found = inlineProducts.length
+        job.current_stage = 'D:supplier_recognition'
+      } catch(parseErr) {
+        job.errors.push(`Manual JSON parse error: ${String(parseErr)}`)
+        job.status = 'failed'
+      }
+    } else if (sourceType === 'csv' && body.csv_data) {
       // Parse inline CSV data
       const lines = String(body.csv_data).split('\n').filter(Boolean)
       const headers = lines[0]?.split(',').map((h: string) => h.trim().toLowerCase()) || []
@@ -18377,10 +18409,11 @@ app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], 
           inlineProducts.push({
             raw_name: row.name || row.product_name || '',
             raw_description: row.description || row.desc || '',
-            raw_specs: row.specs || '',
+            raw_specs: row.specs || {},
             raw_category: row.category || category,
             raw_unit: row.unit || 'Piece',
             raw_hsn: row.hsn || row.hsn_code || '',
+            raw_gst_rate: parseInt(row.gst_rate) || 18,
           })
         }
       }
@@ -18388,14 +18421,14 @@ app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], 
       job.candidates_found = inlineProducts.length
       job.current_stage = 'D:supplier_recognition'
     } else {
-      // Non-CSV: mark for async processing
+      // Non-CSV/manual: mark for async processing (url/pdf/drive)
       job.candidates_found = 0
       job.status = 'processing'
     }
 
     // Simulate remaining stages for inline CSV
     if (inlineProducts.length > 0) {
-      const existingProducts = await kvGetProducts(env)
+      const existingProducts = await kvGetProducts(env?.IG_SESSION_KV)
       const nextSeq = existingProducts.length + 1
       const processedProducts: any[] = []
       const duplicates: any[] = []
@@ -18453,7 +18486,7 @@ app.post('/horeca/ingest/start', requireSession(), requireRole(['Super Admin'], 
       // Save to publish queue and duplicate review
       const currentPublishQueue = await kvGetPublishQueue(env)
       const newPublishQueue = [...currentPublishQueue, ...processedProducts]
-      try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(newPublishQueue), { expirationTtl: 60*60*24*30 }) } catch(_){}
+      try { if (_igKV(env)) await _igKV(env)!.put('horeca_publish_queue', JSON.stringify(newPublishQueue), { expirationTtl: 60*60*24*30 }) } catch(_){}
       if (duplicates.length > 0) {
         const currentDups = await kvGetDuplicateQueue(env)
         await kvSaveDuplicateQueue(env, [...currentDups, ...duplicates])
@@ -18504,7 +18537,7 @@ app.get('/horeca/publish-queue', requireSession(), requireRole(['Super Admin'], 
   try {
     const env = (c as any).env
     const queue = await kvGetPublishQueue(env)
-    return c.json({ success: true, total: queue.length, products: queue })
+    return c.json({ success: true, total: queue.length, items: queue, products: queue })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
   }
@@ -18515,17 +18548,17 @@ app.post('/horeca/publish-queue/approve', requireSession(), requireRole(['Super 
   try {
     const env = (c as any).env
     const body = await c.req.json() as any
-    const idsToApprove: string[] = Array.isArray(body.ids) ? body.ids : []
-    if (idsToApprove.length === 0) return c.json({ success: false, error: 'No product IDs provided' }, 400)
+    const idsToApprove: string[] = Array.isArray(body.ids) ? body.ids : (body.item_id ? [body.item_id] : [])
+    if (idsToApprove.length === 0) return c.json({ success: false, error: 'No product IDs provided (pass ids[] or item_id)' }, 400)
     const queue = await kvGetPublishQueue(env)
     const toPublish = queue.filter((p: any) => idsToApprove.includes(p.id) || idsToApprove.includes(p.sku))
     const remaining = queue.filter((p: any) => !idsToApprove.includes(p.id) && !idsToApprove.includes(p.sku))
     // Add to main catalogue
-    const existing = await kvGetProducts(env)
+    const existing = await kvGetProducts(env?.IG_SESSION_KV)
     const merged = [...existing, ...toPublish.map((p: any) => ({ ...p, active: true, status: 'published', published_at: new Date().toISOString() }))]
-    await kvSaveProducts(env, merged)
+    await kvSaveProducts(env?.IG_SESSION_KV, merged)
     // Update publish queue
-    try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
+    try { if (_igKV(env)) await _igKV(env)!.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
     return c.json({ success: true, published: toPublish.length, remaining_in_queue: remaining.length, message: `${toPublish.length} products published to catalogue.` })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
@@ -18537,10 +18570,10 @@ app.post('/horeca/publish-queue/reject', requireSession(), requireRole(['Super A
   try {
     const env = (c as any).env
     const body = await c.req.json() as any
-    const idsToReject: string[] = Array.isArray(body.ids) ? body.ids : []
+    const idsToReject: string[] = Array.isArray(body.ids) ? body.ids : (body.item_id ? [body.item_id] : [])
     const queue = await kvGetPublishQueue(env)
     const remaining = queue.filter((p: any) => !idsToReject.includes(p.id) && !idsToReject.includes(p.sku))
-    try { if (env?.KV) await env.KV.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
+    try { if (_igKV(env)) await _igKV(env)!.put('horeca_publish_queue', JSON.stringify(remaining), { expirationTtl: 60*60*24*30 }) } catch(_){}
     return c.json({ success: true, rejected: idsToReject.length, remaining_in_queue: remaining.length })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
@@ -18552,7 +18585,7 @@ app.get('/horeca/duplicates', requireSession(), requireRole(['Super Admin'], ['a
   try {
     const env = (c as any).env
     const dups = await kvGetDuplicateQueue(env)
-    return c.json({ success: true, total: dups.length, duplicates: dups })
+    return c.json({ success: true, total: dups.length, items: dups, duplicates: dups })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
   }
@@ -18563,21 +18596,23 @@ app.post('/horeca/duplicates/resolve', requireSession(), requireRole(['Super Adm
   try {
     const env = (c as any).env
     const body = await c.req.json() as any
-    const { candidate_id, resolution, merged_fields } = body
+    const candidate_id = body.candidate_id || body.new_id
+    const resolution = body.resolution
+    const merged_fields = body.merged_fields
     const dups = await kvGetDuplicateQueue(env)
-    const dup = dups.find((d: any) => d.candidate?.id === candidate_id || d.candidate?.sku === candidate_id)
+    const dup = dups.find((d: any) => d.candidate?.id === candidate_id || d.candidate?.sku === candidate_id || d.id === candidate_id)
     if (!dup) return c.json({ success: false, error: 'Duplicate record not found' }, 404)
-    const remaining = dups.filter((d: any) => d.candidate?.id !== candidate_id && d.candidate?.sku !== candidate_id)
+    const remaining = dups.filter((d: any) => d.candidate?.id !== candidate_id && d.candidate?.sku !== candidate_id && d.id !== candidate_id)
 
     if (resolution === 'keep_new') {
-      const products = await kvGetProducts(env)
+      const products = await kvGetProducts(env?.IG_SESSION_KV)
       const merged = [...products, { ...dup.candidate, active: true, status: 'published', duplicate_resolution: 'kept_new', published_at: new Date().toISOString() }]
-      await kvSaveProducts(env, merged)
+      await kvSaveProducts(env?.IG_SESSION_KV, merged)
     } else if (resolution === 'merge' && merged_fields) {
-      const products = await kvGetProducts(env)
+      const products = await kvGetProducts(env?.IG_SESSION_KV)
       const idx = products.findIndex((p: any) => p.id === dup.matched_id || p.sku === dup.matched_id)
       if (idx >= 0) { Object.assign(products[idx], merged_fields, { updated_at: new Date().toISOString() }) }
-      await kvSaveProducts(env, products)
+      await kvSaveProducts(env?.IG_SESSION_KV, products)
     }
     // 'keep_existing' = just remove from dup queue, do nothing
 
@@ -18619,8 +18654,8 @@ app.put('/horeca/rfq/:id/status', requireSession(), requireRole(['Super Admin'],
     list[idx].status = body.status
     list[idx].status_note = sanitiseStr(body.note || '', 500)
     list[idx].status_updated_at = new Date().toISOString()
-    try { if (env?.KV) await env.KV.put('horeca_rfq_list', JSON.stringify(list), { expirationTtl: 60*60*24*365 }) } catch(_){}
-    try { if (env?.KV) await env.KV.put(`horeca_rfq:${id}`, JSON.stringify(list[idx]), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    try { if (_igKV(env)) await _igKV(env)!.put('horeca_rfq_list', JSON.stringify(list), { expirationTtl: 60*60*24*365 }) } catch(_){}
+    try { if (_igKV(env)) await _igKV(env)!.put(`horeca_rfq:${id}`, JSON.stringify(list[idx]), { expirationTtl: 60*60*24*365 }) } catch(_){}
     return c.json({ success: true, rfq_id: id, status: body.status })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
@@ -18665,7 +18700,7 @@ app.post('/horeca/sku/generate', requireSession(), requireRole(['Super Admin'], 
     const subcategory = sanitiseStr(body.subcategory || category.split(' ')[0], 30)
     const variant = sanitiseStr(body.variant || '', 10)
     if (!supplierPrefix || !category) return c.json({ success: false, error: 'supplier_prefix and category required' }, 400)
-    const products = await kvGetProducts(env)
+    const products = await kvGetProducts(env?.IG_SESSION_KV)
     const catProducts = products.filter((p: any) => p.supplierCode === supplierPrefix && p.category === category)
     const seq = catProducts.length + 1
     const productId = generateProductId(supplierPrefix, category, seq)
@@ -18694,7 +18729,7 @@ app.get('/horeca/dashboard', requireSession(), requireRole(['Super Admin'], ['ad
   try {
     const env = (c as any).env
     const [products, rfqs, jobs, dups, publishQ] = await Promise.all([
-      kvGetProducts(env),
+      kvGetProducts(env?.IG_SESSION_KV),
       kvGetRFQs(env, 200),
       kvGetIngestionJobs(env),
       kvGetDuplicateQueue(env),
@@ -18770,7 +18805,7 @@ app.get('/horeca/export/rfq-summary', requireSession(), requireRole(['Super Admi
 app.get('/horeca/export/product-master', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
   try {
     const env = (c as any).env
-    const products = await kvGetProducts(env)
+    const products = await kvGetProducts(env?.IG_SESSION_KV)
     const format = c.req.query('format') || 'csv'
     if (format === 'json') return c.json({ success: true, products })
     const headers = ['Product ID','SKU','Name','Category','Space Type','Unit','Supplier Code','Supplier Tier','Supplier Lead Days','HSN','GST Rate','Featured','Active','Description']
@@ -18821,7 +18856,7 @@ app.get('/horeca/export/duplicate-review', requireSession(), requireRole(['Super
 app.get('/horeca/export/procurement', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
   try {
     const env = (c as any).env
-    const products = await kvGetProducts(env)
+    const products = await kvGetProducts(env?.IG_SESSION_KV)
     const format = c.req.query('format') || 'csv'
     // Group by supplier
     const grouped: Record<string, any[]> = {}
@@ -18868,11 +18903,11 @@ app.post('/horeca/audit-log', requireSession(), requireRole(['Super Admin'], ['a
       ts: new Date().toISOString(),
     }
     try {
-      if (env?.KV) {
-        const raw = await env.KV.get('horeca_audit_log')
+      if (_igKV(env)) {
+        const raw = await _igKV(env)!.get('horeca_audit_log')
         const log: any[] = raw ? JSON.parse(raw) : []
         log.unshift(entry)
-        await env.KV.put('horeca_audit_log', JSON.stringify(log.slice(0, 1000)), { expirationTtl: 60*60*24*365 })
+        await _igKV(env)!.put('horeca_audit_log', JSON.stringify(log.slice(0, 1000)), { expirationTtl: 60*60*24*365 })
       }
     } catch(_){}
     return c.json({ success: true, entry })
@@ -18885,7 +18920,7 @@ app.get('/horeca/audit-log', requireSession(), requireRole(['Super Admin'], ['ad
   try {
     const env = (c as any).env
     let log: any[] = []
-    try { if (env?.KV) { const raw = await env.KV.get('horeca_audit_log'); log = raw ? JSON.parse(raw) : [] } } catch(_){}
+    try { if (_igKV(env)) { const raw = await _igKV(env)!.get('horeca_audit_log'); log = raw ? JSON.parse(raw) : [] } } catch(_){}
     return c.json({ success: true, total: log.length, entries: log.slice(0, parseInt(c.req.query('limit') || '100')) })
   } catch(e) {
     return c.json({ success: false, error: String(e) }, 500)
