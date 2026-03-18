@@ -6821,7 +6821,7 @@ app.get('/governance', (c) => {
 // ── HORECA (Phase 6 — inventory ledger, quote-to-order, vendor mgmt, procurement) ─
 app.get('/horeca', (c) => {
   const cats = [
-    {cat:'Kitchen Equipment', skus:24, icon:'utensils',       color:'#0d9488'},
+    {cat:'Tableware',     skus:30, icon:'utensils',        color:'#2563eb'},
     {cat:'Crockery & Cutlery',skus:56, icon:'concierge-bell', color:'#2563eb'},
     {cat:'Linen & Fabrics',   skus:18, icon:'bed',            color:'#7c3aed'},
     {cat:'Front Office',      skus:12, icon:'bell',           color:'#d97706'},
@@ -7312,27 +7312,30 @@ app.get('/horeca', (c) => {
           <select id="ing-supplier-code" class="ig-input" style="font-size:.82rem;">
             <option value="">Select Supplier…</option>
             <option value="CRI">CRI — Commercial Kitchen Partner</option>
-            <option value="UNX">UNX — Professional Oven Solutions</option>
-            <option value="BST">BST — Cold Chain Specialist</option>
-            <option value="WHL">WHL — Warewash Expert</option>
-            <option value="PCH">PCH — Fry Station Supplier</option>
-            <option value="OCN">OCN — Glassware &amp; Tableware Brand</option>
-            <option value="WEL">WEL — Linen Manufacturer A</option>
-            <option value="TRD">TRD — Linen Manufacturer B</option>
-            <option value="ARI">ARI — Guest Amenity Partner</option>
-            <option value="DLP">DLP — Washroom Solutions Brand</option>
-            <option value="EFB">EFB — Commercial Vacuum Supplier</option>
-            <option value="SMS">SMS — Hotel Tech Brand A</option>
-            <option value="HIK">HIK — Security Systems Supplier</option>
-            <option value="IG">IG — India Gully Procurement</option>
+            <option value="AR">AR — Premium Amenity Partner</option>
+            <option value="OC">OC — Glassware &amp; Tableware Specialist</option>
+            <option value="DP">DP — Washroom &amp; Dispensing Solutions</option>
+            <option value="JS">JS — Kitchenware &amp; Buffetware Partner</option>
+            <option value="VN">VN — SS Flatware &amp; Hotelware Brand</option>
+            <option value="WL">WL — Linen &amp; Textile Manufacturer A</option>
+            <option value="TR">TR — Linen &amp; Textile Manufacturer B</option>
+            <option value="EF">EF — Commercial Cleaning Solutions</option>
+            <option value="FL">FL — Housekeeping System Supplier</option>
+            <option value="GD">GD — In-Room Safety Equipment</option>
+            <option value="IG">IG — India Gully Procurement Platform</option>
           </select>
         </div>
         <div>
           <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Default Category</label>
           <select id="ing-def-category" class="ig-input" style="font-size:.82rem;">
             <option value="">Auto-detect</option>
-            <option>Kitchen Equipment</option>
-            <option>Glassware &amp; Tableware</option>
+            <option>Tableware</option>
+            <option>Kitchenware</option>
+            <option>Barware</option>
+            <option>Buffet &amp; Banquet</option>
+            <option>Serviceware</option>
+            <option>Housekeeping</option>
+            <option>Small Appliances (OS&amp;E)</option>
             <option>Hotel Linen &amp; Textiles</option>
             <option>Guest Amenities</option>
             <option>Washroom &amp; Hygiene</option>
@@ -7371,7 +7374,7 @@ app.get('/horeca', (c) => {
       </div>
       <div id="ing-manual-wrap" style="display:none;margin-bottom:.875rem;">
         <label style="display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem;">Paste JSON Array (products)</label>
-        <textarea id="ing-manual-json" rows="6" class="ig-input" style="font-size:.75rem;font-family:monospace;resize:vertical;" placeholder='[{"name":"Product A","category":"Kitchen Equipment","unit":"Piece","specs":{},"hsn":"8516","gst_rate":18}]'></textarea>
+        <textarea id="ing-manual-json" rows="6" class="ig-input" style="font-size:.75rem;font-family:monospace;resize:vertical;" placeholder='[{"name":"Product A","category":"Tableware","subcategory":"Crockery","unit":"Piece","specs":{},"hsn":"69111090","gst_rate":12}]'></textarea>
       </div>
       <div style="display:flex;gap:.75rem;align-items:center;">
         <button onclick="igIngStart()" style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.5rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;">

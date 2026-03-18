@@ -70,20 +70,19 @@ app.get('/', (c) => {
   <div class="wrap">
     <div style="text-align:center;max-width:600px;margin:0 auto 3.5rem;">
       <div class="gr-c"></div>
-      <p class="eyebrow" style="margin-bottom:.75rem;">8 Supply Categories</p>
+      <p class="eyebrow" style="margin-bottom:.75rem;">7 Supply Categories</p>
       <h2 class="h2">Complete HORECA<br>Procurement Coverage</h2>
       <p class="lead" style="margin-top:1rem;">From kitchen equipment to guest amenities — India Gully sources, specifies and delivers across every supply category for hotel pre-openings and renovations.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);">
       ${[
-        { icon:'fire-alt',       name:'Kitchen Equipment',     catKey:'Kitchen Equipment',         desc:'Commercial ranges, ovens, refrigeration, warewashing. 8 SKUs from Crispo, Unox, Blue Star.',  color:'rgba(220,38,38,.07)',  skus:8 },
-        { icon:'glass-cheers',   name:'Glassware & Tableware', catKey:'Glassware & Tableware',     desc:'Crystal glassware, fine porcelain, 18/10 cutlery from Ocean. 8 SKUs.',                        color:'rgba(37,99,235,.07)',  skus:8 },
-        { icon:'bed',            name:'Hotel Linen',           catKey:'Hotel Linen & Textiles',    desc:'500TC Egyptian cotton, 600GSM towels, pool towels, robes. 7 SKUs from Welspun & Trident.',    color:'rgba(124,58,237,.07)', skus:7 },
-        { icon:'spa',            name:'Guest Amenities',       catKey:'Guest Amenities',           desc:'Wall dispensers, amenity kits, bamboo toothbrushes, slippers. 7 SKUs from Ariane.',           color:'rgba(219,39,119,.07)', skus:7 },
-        { icon:'soap',           name:'Washroom & Hygiene',    catKey:'Washroom & Hygiene',        desc:'Hand dryers, soap dispensers, bins, tissue dispensers. 8 SKUs from Dolphy.',                   color:'rgba(5,150,105,.07)',  skus:8 },
-        { icon:'broom',          name:'Housekeeping',          catKey:'Housekeeping Supplies',     desc:'Cleaning trolleys, vacuums, mops and housekeeping equipment. 5 SKUs.',                         color:'rgba(22,163,74,.07)',  skus:5 },
-        { icon:'couch',          name:'Furniture & Fixtures',  catKey:'Furniture & Fixtures',      desc:'Restaurant tables, lobby chairs, lounge furniture, pool deck. 5 SKUs.',                        color:'rgba(146,64,14,.07)',  skus:5 },
-        { icon:'tv',             name:'Tech & AV Systems',     catKey:'Tech & AV Systems',         desc:'Hotel TVs, Wi-Fi, POS terminals, CCTV, room safes. 5 SKUs from Samsung, HIK, Godrej.',        color:'rgba(29,78,216,.07)',  skus:5 },
+        { icon:'utensils',        name:'Tableware',              catKey:'Tableware',                  desc:'Fine porcelain crockery, 18/10 SS cutlery and lead-free crystal glassware for all dining operations.',  color:'rgba(37,99,235,.07)',   skus:30 },
+        { icon:'fire',            name:'Kitchenware',            catKey:'Kitchenware',                desc:'GN pans, cookware, utensils and kitchen storage for professional hotel and restaurant kitchens.',        color:'rgba(13,148,136,.07)',  skus:17 },
+        { icon:'wine-glass-alt',  name:'Barware',                catKey:'Barware',                   desc:'Boston shakers, bar strainers, jiggers, ice buckets, crystal decanters and cocktail accessories.',      color:'rgba(220,38,38,.07)',   skus:8  },
+        { icon:'layer-group',     name:'Buffet & Banquet',       catKey:'Buffet & Banquet',           desc:'Chafing dishes (gel + induction), buffet risers, serving bowls, tureens, tongs and ladles.',           color:'rgba(124,58,237,.07)',  skus:14 },
+        { icon:'concierge-bell',  name:'Serviceware',            catKey:'Serviceware',                desc:'Hotel trays, tea and coffee service, plate cloches, room service trolleys and accessories.',             color:'rgba(219,39,119,.07)', skus:10  },
+        { icon:'broom',           name:'Housekeeping',           catKey:'Housekeeping',              desc:'Trolleys, vacuums, mops, linen bags, pedal bins, ashtrays and hotel-grade cleaning equipment.',          color:'rgba(22,163,74,.07)',   skus:15 },
+        { icon:'blender',         name:'Small Appliances (OS&E)',catKey:'Small Appliances (OS&E)',    desc:'In-room kettles, hair dryers, electronic safes, minibars, dispensers and guest amenity kits.',          color:'rgba(146,64,14,.07)',   skus:14 },
       ].map(cat =>
       '<a href="/horeca/catalogue" class="horeca-cat-card" data-catkey="' + cat.catKey + '" style="text-decoration:none;display:block;background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:pointer;">'
       + '<div class="cat-top" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;"></div>'
@@ -1182,11 +1181,10 @@ function igCatFilter() {
 function igCatRenderGrid(products) {
   // Category icon map (updated for new categories)
   var catIconMap = {
-    'Kitchen Equipment': 'fire', 'Glassware & Tableware': 'glass-cheers',
-    'Hotel Linen & Textiles': 'bed', 'Guest Amenities': 'spa',
-    'Washroom & Hygiene': 'soap', 'Housekeeping Supplies': 'broom',
-    'Furniture & Fixtures': 'couch', 'Tech & AV Systems': 'tv',
-    'Bar & Beverage Equipment': 'wine-glass-alt', 'Safety & Security': 'shield-alt',
+    'Tableware': 'utensils', 'Kitchenware': 'fire',
+    'Barware': 'wine-glass-alt', 'Buffet & Banquet': 'layer-group',
+    'Serviceware': 'concierge-bell', 'Housekeeping': 'broom',
+    'Small Appliances (OS&E)': 'blender', 'Custom': 'question-circle',
     // Legacy categories
     'Crockery & Cutlery': 'concierge-bell', 'Linen & Soft Furnishing': 'bed',
     'Bar & Beverages': 'wine-glass-alt', 'Tech & POS Systems': 'desktop',
@@ -1539,16 +1537,14 @@ window.igCatEnquire = function(e, sku, name, category) {
   // Pre-tick the matching supply category checkbox
   if (category) {
     var catMap = {
-      'Kitchen Equipment': 'Kitchen Equipment',
-      'Glassware & Tableware': 'OS&E',
-      'Hotel Linen & Textiles': 'Linen & Towelling',
-      'Guest Amenities': 'Guest Amenities',
-      'Washroom & Hygiene': 'OS&E',
-      'Housekeeping Supplies': 'OS&E',
-      'Furniture & Fixtures': 'FF&E',
-      'Tech & AV Systems': 'FF&E',
-      'Bar & Beverage Equipment': 'Kitchen Equipment',
-      'Safety & Security': 'OS&E'
+      'Tableware': 'OS&E (Tableware)',
+      'Kitchenware': 'OS&E (Kitchenware)',
+      'Barware': 'OS&E (Barware)',
+      'Buffet & Banquet': 'OS&E (Buffet & Banquet)',
+      'Serviceware': 'OS&E (Serviceware)',
+      'Housekeeping': 'Housekeeping & Linen',
+      'Small Appliances (OS&E)': 'OS&E (Small Appliances)',
+      'Custom': 'Custom Requirement'
     };
     var rfqCat = catMap[category] || 'OS&E';
     var checkbox = document.querySelector('input[name="rfq-cat"][value="' + rfqCat + '"]');
