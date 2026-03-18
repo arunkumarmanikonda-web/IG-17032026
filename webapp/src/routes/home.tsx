@@ -137,6 +137,8 @@ app.get('/', (c) => {
   const content = `
 
 <!-- ══ HERO CAROUSEL ════════════════════════════════════════════════════ -->
+<!-- Visually-hidden semantic h1 for SEO — carousel slides use h2 -->
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">India Gully Advisory — Real Estate, Hospitality &amp; HORECA Advisory in India</h1>
 <div class="car">
   <div class="car-track">
     ${SLIDES.map((s, i) => `
@@ -161,13 +163,13 @@ app.get('/', (c) => {
               <span style="font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);">${s.tag}</span>
             </div>
 
-            <!-- Display headline -->
+            <!-- Display headline — h2 for carousel slides; one true h1 is injected below for SEO -->
             <div class="s-txt">
-              <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(3.4rem,7.5vw,7rem);line-height:1.01;color:#fff;letter-spacing:-.025em;font-weight:400;margin-bottom:1.75rem;">
+              <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(3.4rem,7.5vw,7rem);line-height:1.01;color:#fff;letter-spacing:-.025em;font-weight:400;margin-bottom:1.75rem;">
                 ${s.h1a}<br>
                 <em style="font-style:italic;color:var(--gold);display:inline-block;position:relative;">${s.h1b}<span style="position:absolute;bottom:-.15em;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-lt),transparent);opacity:.5;"></span></em><br>
                 <span style="font-size:.48em;font-weight:300;color:rgba(255,255,255,.42);letter-spacing:-.01em;">${s.h1c}</span>
-              </h1>
+              </h2>
               <p style="font-size:1.05rem;line-height:1.9;color:rgba(255,255,255,.62);max-width:560px;margin-bottom:2.5rem;font-weight:400;">${s.sub}</p>
             </div>
 
@@ -1527,11 +1529,11 @@ function filterRB(cat){
       "@graph": [
         {
           "@type": "Organization",
-          "@id": "https://india-gully.pages.dev/#organization",
+          "@id": "https://indiagully.com/#organization",
           "name": "India Gully",
           "legalName": "Vivacious Entertainment and Hospitality Pvt. Ltd.",
-          "url": "https://india-gully.pages.dev",
-          "logo": "https://india-gully.pages.dev/assets/logo-white.png",
+          "url": "https://indiagully.com",
+          "logo": "https://indiagully.com/assets/logo-white.png",
           "description": "India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt & HORECA Solutions.",
           "address": { "@type": "PostalAddress", "addressLocality": "New Delhi", "addressCountry": "IN" },
           "telephone": "+918988988988",
@@ -1542,10 +1544,10 @@ function filterRB(cat){
         },
         {
           "@type": "WebSite",
-          "@id": "https://india-gully.pages.dev/#website",
-          "url": "https://india-gully.pages.dev",
+          "@id": "https://indiagully.com/#website",
+          "url": "https://indiagully.com",
           "name": "India Gully",
-          "publisher": { "@id": "https://india-gully.pages.dev/#organization" }
+          "publisher": { "@id": "https://indiagully.com/#organization" }
         }
       ]
     })

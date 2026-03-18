@@ -306,15 +306,15 @@ function filterVertical(id) {
 
   return c.html(layout('Track Record — Completed Works', content, {
     description: "India Gully's completed works and track record — landmark transactions, PMC projects, retail leasing and HORECA supply mandates across Real Estate, Hospitality, Entertainment, Retail and HORECA verticals.",
-    canonical: 'https://india-gully.pages.dev/works',
-    ogImage: 'https://india-gully.pages.dev/static/og.jpg',
+    canonical: 'https://indiagully.com/works',
+    ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
       name: 'Track Record — Completed Works',
-      url: 'https://india-gully.pages.dev/works',
+      url: 'https://indiagully.com/works',
       description: 'India Gully completed works: ₹2,000+ Cr transactions advised, 15+ hotel projects, 30+ retail brands, 1,40,000+ sq ft leased.',
-      publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://india-gully.pages.dev' }
+      publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
     }
   }))
 })

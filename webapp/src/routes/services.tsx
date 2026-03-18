@@ -258,13 +258,13 @@ ${SERVICES.map((s, i) => `
 `
   return c.html(layout('Advisory Services', content, {
     description: 'India Gully advisory services. Real Estate, Retail & Leasing, Hospitality Management, Entertainment Advisory, Debt & Special Situations, HORECA Solutions. Pan-India presence.',
-    canonical: 'https://india-gully.pages.dev/services',
-    ogImage: 'https://india-gully.pages.dev/static/og.jpg',
+    canonical: 'https://indiagully.com/services',
+    ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'Service',
       serviceType: 'Advisory Services',
-      provider: { '@type': 'Organization', name: 'India Gully', url: 'https://india-gully.pages.dev' },
+      provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
       areaServed: { '@type': 'Country', name: 'India' },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
