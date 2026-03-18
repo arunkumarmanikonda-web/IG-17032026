@@ -36,7 +36,7 @@ app.get('/', (c) => {
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);">Investment Opportunities</span>
       </div>
       <h1 class="h1" style="margin-bottom:1.75rem;">Active<br><em style="font-style:italic;color:var(--gold);">Mandates</em></h1>
-      <p class="lead-lt" style="max-width:620px;margin-bottom:3rem;">Institutional-grade investment mandates across India's premier asset classes. All opportunities are exclusive to India Gully's advisory pipeline and strictly subject to NDA. Information Memoranda available to qualified investors, family offices and institutional buyers upon request.</p>
+      <p class="lead-lt" style="max-width:620px;margin-bottom:3rem;">Curated mandates across real estate, hospitality, retail and entertainment — each opportunity sourced directly through India Gully's advisory network. Detailed information packs are shared under NDA with serious investors, family offices and developers.</p>
       <!-- Filter buttons + Saved bookmarks toggle -->
       <div style="display:flex;flex-wrap:wrap;gap:.625rem;align-items:center;">
         ${['All Mandates','Hospitality','Real Estate','Heritage Hospitality','Mixed-Use'].map((f,i) => `
@@ -242,7 +242,7 @@ app.get('/', (c) => {
     <!-- Footer note -->
     <div style="text-align:center;margin-top:4rem;padding:2rem;border:1px solid var(--border);background:rgba(184,150,12,.02);">
       <div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto .875rem;"></div>
-      <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:1.25rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.8;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.4rem;"></i>All mandates are strictly by NDA · Information Memoranda available to qualified investors · Click any mandate to accept NDA terms and submit your Expression of Interest (EOI)</p>
+      <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:1.25rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.8;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.4rem;"></i>All mandates are handled under NDA · Full details shared with verified investors on request · Click any mandate to sign the NDA and submit your Expression of Interest</p>
       <a href="/contact" class="btn btn-g">Submit a Mandate Enquiry</a>
     </div>
   </div>
@@ -728,7 +728,7 @@ function resetFilters() {
 
 `
   return c.html(layout('Active Mandates — Advisory Pipeline', content, {
-    description: 'India Gully active mandates — ₹1,165 Cr+ institutional-grade investment opportunities across Real Estate, Hospitality, Entertainment and Retail. All opportunities subject to NDA.',
+    description: 'India Gully active mandates — ₹1,165 Cr+ in curated investment opportunities across Real Estate, Hospitality, Entertainment and Retail. Details shared under NDA with verified investors.',
     canonical: 'https://indiagully.com/listings',
     ogImage: 'https://indiagully.com/static/og-listings.jpg',
     jsonLd: {
@@ -737,7 +737,7 @@ function resetFilters() {
         {
           '@type': 'ItemList',
           name: 'Active Investment Mandates — India Gully Advisory Pipeline',
-          description: '₹1,165 Cr+ of active institutional-grade advisory mandates across Real Estate, Hospitality, Entertainment and Retail in India.',
+          description: '₹1,165 Cr+ of active advisory mandates across Real Estate, Hospitality, Entertainment and Retail in India.',
           url: 'https://indiagully.com/listings',
           numberOfItems: 8,
           itemListElement: [
