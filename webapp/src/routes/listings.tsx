@@ -223,6 +223,14 @@ app.get('/', (c) => {
               <i class="fas fa-file-signature" style="font-size:.6rem;"></i>View &amp; Sign NDA
             </span>
             <div style="display:flex;align-items:center;gap:.5rem;">
+              <!-- Add to Compare button -->
+              <button class="ig-compare-btn" data-id="${l.id}" onclick="event.preventDefault();event.stopPropagation();igAddToCompare('${l.id}')"
+                title="Add to Compare"
+                style="width:28px;height:28px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);color:rgba(37,99,235,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;"
+                onmouseover="this.style.background='rgba(37,99,235,.14)';this.style.color='#2563eb';this.style.borderColor='rgba(37,99,235,.4)'"
+                onmouseout="this.style.background='rgba(37,99,235,.07)';this.style.color='rgba(37,99,235,.55)';this.style.borderColor='rgba(37,99,235,.2)'">
+                <i class="fas fa-balance-scale" style="font-size:.52rem;"></i>
+              </button>
               <!-- Bookmark / Save button -->
               <button class="ig-save-btn" data-id="${l.id}" data-title="${l.title.replace(/"/g,'&quot;')}" onclick="event.preventDefault();event.stopPropagation();igSaveToggle(this)"
                 title="Save this mandate"
@@ -245,6 +253,24 @@ app.get('/', (c) => {
       <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:1.25rem;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.8;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.4rem;"></i>All mandates are handled under NDA · Full details shared with verified investors on request · Click any mandate to sign the NDA and submit your Expression of Interest</p>
       <a href="/contact" class="btn btn-g">Submit a Mandate Enquiry</a>
     </div>
+  </div>
+</div>
+
+<!-- ── COMPARE TRAY (fixed bottom bar) ───────────────────────────────────── -->
+<div id="ig-compare-tray" style="position:fixed;bottom:0;left:0;right:0;z-index:590;background:var(--ink);border-top:2px solid rgba(37,99,235,.5);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 24px rgba(0,0,0,.3);">
+  <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
+    <i class="fas fa-balance-scale" style="color:#93c5fd;font-size:.85rem;"></i>
+    <span style="font-size:.72rem;font-weight:700;color:#93c5fd;letter-spacing:.06em;text-transform:uppercase;">Compare</span>
+    <span id="ig-compare-count" style="font-size:.68rem;color:rgba(255,255,255,.4);font-weight:600;"></span>
+  </div>
+  <div id="ig-compare-chips" style="display:flex;flex-wrap:wrap;gap:.4rem;flex:1;"></div>
+  <div style="display:flex;gap:.5rem;flex-shrink:0;">
+    <button onclick="igGoCompare()" style="background:#2563eb;color:#fff;border:none;padding:.45rem 1.25rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:background .2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+      <i class="fas fa-balance-scale" style="font-size:.65rem;"></i>Compare Now
+    </button>
+    <button onclick="igClearCompareTray()" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12);padding:.45rem .75rem;font-size:.72rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.06)'" title="Clear all">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
 </div>
 
@@ -675,6 +701,76 @@ function applyFilters(){
 /* initialise badge on page load */
 document.addEventListener('DOMContentLoaded', igUpdateSavedBadge);
 if(document.readyState !== 'loading') igUpdateSavedBadge();
+
+/* ── ADD TO COMPARE ─────────────────────────────────────────────────── */
+var _igCompareList = [];
+
+function igAddToCompare(id) {
+  if (_igCompareList.indexOf(id) !== -1) {
+    /* already added — remove it */
+    _igCompareList = _igCompareList.filter(function(x){ return x !== id; });
+    igUpdateCompareTray();
+    igToast && igToast('Removed from compare', 'info');
+    return;
+  }
+  if (_igCompareList.length >= 3) {
+    igToast && igToast('You can compare up to 3 mandates at a time', 'warn');
+    return;
+  }
+  _igCompareList.push(id);
+  igUpdateCompareTray();
+  igToast && igToast('Added to compare (\u2696 ' + _igCompareList.length + '/3)', 'success');
+}
+
+function igUpdateCompareTray() {
+  var tray = document.getElementById('ig-compare-tray');
+  if (!tray) return;
+  /* update card button states */
+  document.querySelectorAll('.ig-compare-btn').forEach(function(btn) {
+    var bid = btn.getAttribute('data-id');
+    var inList = _igCompareList.indexOf(bid) !== -1;
+    btn.style.background   = inList ? '#2563eb'              : 'rgba(37,99,235,.07)';
+    btn.style.borderColor  = inList ? '#2563eb'              : 'rgba(37,99,235,.2)';
+    btn.style.color        = inList ? '#fff'                 : 'rgba(37,99,235,.55)';
+    btn.title              = inList ? 'Remove from compare'  : 'Add to compare';
+  });
+  if (_igCompareList.length === 0) {
+    tray.style.transform = 'translateY(100%)';
+    return;
+  }
+  /* build tray chips */
+  var chips = document.getElementById('ig-compare-chips');
+  if (chips) {
+    chips.innerHTML = _igCompareList.map(function(cid) {
+      var card = document.querySelector('.ig-compare-btn[data-id="' + cid + '"]');
+      var cardEl = card ? card.closest('.mandate-card') : null;
+      var titleEl = cardEl ? cardEl.querySelector('h3') : null;
+      var title = titleEl ? titleEl.textContent.trim() : cid;
+      var short = title.length > 22 ? title.slice(0,20) + '\u2026' : title;
+      return '<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);color:#93c5fd;padding:.22rem .6rem;font-size:.65rem;font-weight:600;">'
+        + short
+        + '<button onclick="igAddToCompare(\'' + cid + '\')" style="background:none;border:none;color:#93c5fd;cursor:pointer;font-size:.7rem;padding:0 0 0 .15rem;line-height:1;" title="Remove">\u00d7</button>'
+        + '</span>';
+    }).join('');
+  }
+  var countEl = document.getElementById('ig-compare-count');
+  if (countEl) countEl.textContent = _igCompareList.length + '/3';
+  tray.style.transform = 'translateY(0)';
+}
+
+function igGoCompare() {
+  if (_igCompareList.length < 2) {
+    igToast && igToast('Select at least 2 mandates to compare', 'warn');
+    return;
+  }
+  var params = ['a','b','c'].map(function(p,i){ return _igCompareList[i] ? p + '=' + _igCompareList[i] : null; }).filter(Boolean).join('&');
+  window.location.href = '/compare?' + params;
+}
+
+function igClearCompareTray() {
+  _igCompareList = [];
+  igUpdateCompareTray();
+}
 
 function filterMandates(sector) {
   _currentSector = sector;
