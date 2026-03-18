@@ -727,10 +727,39 @@ function resetFilters() {
 </script>
 
 `
-  return c.html(layout('Active Mandates — India Gully Advisory Pipeline', content, {
+  return c.html(layout('Active Mandates — Advisory Pipeline', content, {
     description: 'India Gully active mandates — ₹1,165 Cr+ institutional-grade investment opportunities across Real Estate, Hospitality, Entertainment and Retail. All opportunities subject to NDA.',
     canonical: 'https://indiagully.com/listings',
-    ogImage: 'https://indiagully.com/static/og-listings.jpg'
+    ogImage: 'https://indiagully.com/static/og-listings.jpg',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ItemList',
+          name: 'Active Investment Mandates — India Gully Advisory Pipeline',
+          description: '₹1,165 Cr+ of active institutional-grade advisory mandates across Real Estate, Hospitality, Entertainment and Retail in India.',
+          url: 'https://indiagully.com/listings',
+          numberOfItems: 8,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Prism Tower Gurgaon — ₹400 Cr Mixed-Use REIT', url: 'https://indiagully.com/listings/prism-tower-gurgaon' },
+            { '@type': 'ListItem', position: 2, name: 'Belcibo F&B Platform — ₹100 Cr Growth Equity', url: 'https://indiagully.com/listings/belcibo-hospitality-platform' },
+            { '@type': 'ListItem', position: 3, name: 'Hotel Rajshree Chandigarh — Boutique Hotel Sale', url: 'https://indiagully.com/listings/hotel-rajshree-chandigarh' },
+            { '@type': 'ListItem', position: 4, name: 'WelcomHeritage Santa Roza Kasauli — Heritage Resort', url: 'https://indiagully.com/listings/welcomheritage-santa-roza-kasauli' },
+            { '@type': 'ListItem', position: 5, name: 'Heritage Hotel Jaipur — ₹165 Cr Heritage Asset', url: 'https://indiagully.com/listings/heritage-hotel-jaipur' },
+            { '@type': 'ListItem', position: 6, name: 'Maple Resort Chail — Mountain Boutique Resort', url: 'https://indiagully.com/listings/maple-resort-chail' },
+            { '@type': 'ListItem', position: 7, name: 'Ambience Tower North Delhi — Commercial Tower', url: 'https://indiagully.com/listings/ambience-tower-north-delhi' },
+            { '@type': 'ListItem', position: 8, name: 'Sawasdee JLG Galleria Noida — ₹150 Cr Hotel+Retail', url: 'https://indiagully.com/listings/sawasdee-jlg-noida' },
+          ]
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Active Mandates', item: 'https://indiagully.com/listings' },
+          ]
+        }
+      ]
+    }
   }))
 })
 
@@ -1113,7 +1142,7 @@ ${l.id === 'prism-tower-gurgaon' ? `
         <i class="fas fa-building" style="color:#93c5fd;font-size:.65rem;"></i>
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#93c5fd;">Reference Transaction · Due Diligence Stage</span>
       </div>
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Prism Tower<br><em style="color:var(--gold);font-style:italic;">Mixed-Use Hospitality & Commercial</em></h1>
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Prism Tower<br><em style="color:var(--gold);font-style:italic;">Mixed-Use Hospitality & Commercial</em></h2>
       <div style="display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1.25rem;">
         <div><div style="font-size:.55rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Asset Value</div><div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;color:var(--gold);">₹400 Cr</div></div>
         <div><div style="font-size:.55rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Room Inventory</div><div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;color:#fff;">312 Keys</div></div>
@@ -1135,7 +1164,7 @@ ${l.id === 'prism-tower-gurgaon' ? `
         <i class="fas fa-utensils" style="color:var(--gold);font-size:.65rem;"></i>
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);">Growth Equity · Active Fundraise</span>
       </div>
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Belcibo<br><em style="color:var(--gold);font-style:italic;">Multi-Brand F&B Platform</em></h1>
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Belcibo<br><em style="color:var(--gold);font-style:italic;">Multi-Brand F&B Platform</em></h2>
       <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;">
         ${['Imperfecto', 'Imperfecto Shor', 'Informal', 'Khubani', 'Begum', 'Noor', 'Habibi', 'RuinPub', 'Patio', 'Boutique'].map(b => `<span style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:.58rem;font-weight:600;padding:.2rem .55rem;">${b}</span>`).join('')}
       </div>
@@ -1160,7 +1189,7 @@ ${l.id === 'prism-tower-gurgaon' ? `
         <i class="fas fa-store" style="color:#c4b5fd;font-size:.65rem;"></i>
         <span style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#c4b5fd;">Outright Sale · Negotiation Ready</span>
       </div>
-      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Sawasdee JLG Galleria<br><em style="color:var(--gold);font-style:italic;">Hotel & Mall — Noida</em></h1>
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.5rem,4vw,2.75rem);color:#fff;line-height:1.15;margin-bottom:.875rem;">Sawasdee JLG Galleria<br><em style="color:var(--gold);font-style:italic;">Hotel & Mall — Noida</em></h2>
       <div style="display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1.25rem;">
         <div><div style="font-size:.55rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Asset Value</div><div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;color:var(--gold);">₹150 Cr</div></div>
         <div><div style="font-size:.55rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Hotel Inventory</div><div style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;color:#fff;">114 Keys</div></div>

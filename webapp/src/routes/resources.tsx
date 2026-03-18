@@ -248,6 +248,7 @@ app.get('/', (c) => {
 <!-- ══ RESOURCES GRID ════════════════════════════════════════════════════ -->\n
 <div class="sec-pd" style="padding-top:4rem;">
   <div class="wrap">
+    <h2 class="h2" style="color:var(--ink);margin-bottom:2.5rem;">Research Library &amp; Downloads</h2>
     <div id="resGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;">
       ${RESOURCES.map(r => `
       <!-- Resource card: ${r.id} -->
@@ -486,7 +487,35 @@ document.getElementById('res-modal').addEventListener('click', function(e){
 
   return c.html(layout('Resources & Downloads', content, {
     description: 'India Gully Knowledge Hub — free guides, checklists, templates and research covering HORECA procurement, hotel feasibility, real estate valuation and hospitality advisory. Download practical tools built from 8+ years of advisory experience.',
-    canonical: 'https://indiagully.com/resources'
+    canonical: 'https://indiagully.com/resources',
+    ogImage: 'https://indiagully.com/static/og.jpg',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          name: 'Resources & Downloads — India Gully Knowledge Hub',
+          description: 'Free guides, checklists, templates and research from India Gully covering HORECA procurement, hotel feasibility, real estate valuation and hospitality advisory.',
+          url: 'https://indiagully.com/resources',
+          publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+          hasPart: RESOURCES.slice(0, 6).map(r => ({
+            '@type': 'CreativeWork',
+            name: r.title,
+            description: r.desc,
+            url: `https://indiagully.com/resources#${r.id}`,
+            genre: r.type,
+            keywords: r.tags.join(', '),
+          }))
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Resources & Downloads', item: 'https://indiagully.com/resources' },
+          ]
+        }
+      ]
+    }
   }))
 })
 

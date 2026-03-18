@@ -315,7 +315,29 @@ updateCompare();
 `
   return c.html(layout('Mandate Comparison Tool', html, {
     description: 'Compare up to 3 India Gully active mandates side-by-side. Analyse location, sector, value, highlights and specifications in one view.',
-    canonical: '/compare',
+    canonical: 'https://indiagully.com/compare',
+    ogImage: 'https://indiagully.com/static/og-listings.jpg',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebApplication',
+          name: 'India Gully Mandate Comparison Tool',
+          description: 'Interactive tool to compare up to 3 India Gully active investment mandates side-by-side across location, sector, deal value, highlights and specifications.',
+          url: 'https://indiagully.com/compare',
+          applicationCategory: 'FinanceApplication',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+          provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Compare Mandates', item: 'https://indiagully.com/compare' },
+          ]
+        }
+      ]
+    }
   }))
 })
 

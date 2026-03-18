@@ -417,17 +417,28 @@ function igContactAjax() {
     ogImage: 'https://indiagully.com/static/og.jpg',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'ContactPage',
-      name: 'Contact India Gully',
-      url: 'https://indiagully.com/contact',
-      description: 'Submit a mandate enquiry or HORECA RFQ. 24h response guaranteed.',
-      mainEntity: {
-        '@type': 'Organization',
-        name: 'India Gully',
-        telephone: '+918988988988',
-        email: 'info@indiagully.com',
-        address: { '@type': 'PostalAddress', addressLocality: 'New Delhi', addressCountry: 'IN' }
-      }
+      '@graph': [
+        {
+          '@type': 'ContactPage',
+          name: 'Contact India Gully',
+          url: 'https://indiagully.com/contact',
+          description: 'Submit a mandate enquiry or HORECA RFQ. 24h response guaranteed.',
+          mainEntity: {
+            '@type': 'Organization',
+            name: 'India Gully',
+            telephone: '+918988988988',
+            email: 'info@indiagully.com',
+            address: { '@type': 'PostalAddress', addressLocality: 'New Delhi', addressCountry: 'IN' }
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Contact & Enquiry', item: 'https://indiagully.com/contact' },
+          ]
+        }
+      ]
     }
   }))
 })

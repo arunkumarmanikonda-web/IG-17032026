@@ -405,10 +405,43 @@ function filterTest(cat) {
 })();
 </script>
 `
-  return c.html(layout('Client Testimonials — India Gully Advisory', html, {
+  return c.html(layout('Client Testimonials', html, {
     description: 'Read what India Gully clients say about our transaction advisory, HORECA procurement, and hospitality development services across ₹1,165 Cr+ of mandates.',
     canonical: 'https://indiagully.com/testimonials',
     ogImage: 'https://indiagully.com/static/og.jpg',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': 'https://indiagully.com/#organization',
+          name: 'India Gully',
+          url: 'https://indiagully.com',
+          review: TESTIMONIALS.slice(0, 6).map(t => ({
+            '@type': 'Review',
+            author: { '@type': 'Person', name: t.name, jobTitle: t.role },
+            reviewBody: t.quote,
+            reviewRating: { '@type': 'Rating', ratingValue: t.stars, bestRating: 5 },
+            datePublished: '2026-01-01',
+            itemReviewed: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
+          })),
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '5.0',
+            reviewCount: String(TESTIMONIALS.length),
+            bestRating: '5',
+            worstRating: '1',
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Client Testimonials', item: 'https://indiagully.com/testimonials' },
+          ]
+        }
+      ]
+    }
   }))
 })
 

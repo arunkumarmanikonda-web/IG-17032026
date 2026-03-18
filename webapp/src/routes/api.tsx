@@ -262,7 +262,7 @@ async function kvAuditLog(
     const k = `audit:${Date.now()}:${Math.random().toString(36).slice(2)}`
     await kv.put(k, entry, { expirationTtl: 90 * 24 * 60 * 60 }) // 90-day retention
   } else {
-    console.log(`[AUDIT] ${entry}`)
+    // [AUDIT] fallback when KV unavailable — suppressed in production
   }
 }
 
@@ -860,7 +860,7 @@ app.post('/auth/reset/request', async (c) => {
         }),
       }).catch(() => { /* log only */ })
     } else {
-      console.log(`[PASSWORD_RESET] OTP for ${email}: ${otp} (demo — set SENDGRID_API_KEY for live email)`)
+      // [PASSWORD_RESET] demo mode — configure SENDGRID_API_KEY for live email delivery
     }
 
     return c.html(successRedirect(`/portal/${safePortal}/reset-confirm?email=${encodeURIComponent(email)}`,
@@ -4568,7 +4568,7 @@ app.post('/notifications/send-email', async (c) => {
     }
 
     // Demo mode — log but don't send
-    console.log(`[EMAIL STUB] To: ${to} | Subject: ${subject} | Configure SENDGRID_API_KEY for live delivery`)
+    // [EMAIL STUB] demo mode — configure SENDGRID_API_KEY for live email delivery
     return c.json({
       success: true,
       message_id: `demo_${Date.now()}`,
@@ -4633,7 +4633,7 @@ app.post('/notifications/send-sms', requireSession(), requireRole(['Super Admin'
     }
 
     // Demo mode
-    console.log(`[SMS STUB] To: ${to} | Channel: ${whatsapp ? 'WhatsApp' : 'SMS'} | Body: ${msgBody}`)
+    // [SMS STUB] demo mode — configure TWILIO_ACCOUNT_SID for live SMS delivery
     return c.json({
       success:    true,
       message_id: `demo_${Date.now()}`,
@@ -5433,7 +5433,7 @@ app.post('/auth/otp/send', async (c) => {
         } catch { /* fall through to stub */ }
       }
       if (!delivered) {
-        console.log(`[EMAIL OTP STUB] To: ${identifier} | OTP: ${otp} | Purpose: ${purpose}`)
+        // [EMAIL OTP STUB] demo mode — configure SENDGRID_API_KEY for live delivery
       }
     } else {
       // I5: Twilio SMS delivery
@@ -5464,7 +5464,7 @@ app.post('/auth/otp/send', async (c) => {
         } catch { /* fall through to stub */ }
       }
       if (!delivered) {
-        console.log(`[SMS OTP STUB] To: ${identifier} | OTP: ${otp} | Purpose: ${purpose}`)
+        // [SMS OTP STUB] demo mode — configure TWILIO_ACCOUNT_SID for live delivery
       }
     }
 
@@ -5910,7 +5910,7 @@ app.post('/payments/webhook', async (c) => {
         processed = true
         break
       default:
-        console.log('[WEBHOOK] Unhandled event:', event)
+        // [WEBHOOK] unhandled event type — no action required
     }
 
     // Mark as processed in D1

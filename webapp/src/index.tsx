@@ -224,11 +224,13 @@ app.get('/sitemap.xml', (c) => {
 
   const insightIds = [
     'india-realty-2026-outlook','entertainment-zone-regulatory-india','horeca-tier2-supply-chain',
-    'horeca-tier2-supply-chain-deep-dive','mall-hotel-office-trinity','ibc-distressed-hospitality-2025',
-    'mall-mixed-use-integration','retail-leasing-trends-india-2026','debt-special-situations-india-hospitality-2026',
-    'greenfield-midscale-hotels','india-hospitality-2024','entertainment-destinations-india',
-    'horeca-procurement-strategy','debt-special-situations-hospitality','retail-leasing-malls-india',
-    'greenfield-hotel-development',
+    'ibc-distressed-hospitality-2025','mall-mixed-use-integration','greenfield-midscale-hotels',
+    'india-hospitality-2024','entertainment-destinations-india','horeca-procurement-strategy',
+    'debt-special-situations-hospitality','retail-leasing-malls-india','greenfield-hotel-development',
+    'mall-hotel-office-trinity','horeca-tier2-supply-chain-deep-dive','retail-leasing-trends-india-2026',
+    'debt-special-situations-india-hospitality-2026','horeca-cloud-kitchen-india-2026',
+    'india-hospitality-brand-strategy-2026','entertainment-destination-development-india-2026',
+    'india-retail-leasing-outlook-2026','india-real-estate-debt-restructuring-2026',
   ]
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -426,8 +428,9 @@ app.notFound((c) => {
         <span class="ig-logo-txt">India Gully</span>
       </a>
       <div class="badge-404"><i class="fas fa-exclamation-triangle" style="font-size:.55rem;"></i>Page Not Found</div>
-      <div class="num-404">404</div>
-      <h2>This page has gone off the map.</h2>
+      <div class="num-404" aria-hidden="true">404</div>
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.4rem,3vw,2rem);color:#f1f5f9;font-weight:400;margin:0 0 .75rem;">Page Not Found</h1>
+      <h2 style="font-size:1rem;font-weight:400;color:#94a3b8;margin:0 0 1.25rem;">This page has gone off the map.</h2>
       <div class="path-box"><i class="fas fa-map-marker-alt" style="color:var(--gold);font-size:.65rem;"></i>${path}</div>
       <p>The page you're looking for doesn't exist, has been moved, or requires authentication. Check the URL and try again, or navigate to one of our key pages below.</p>
       <div class="links">

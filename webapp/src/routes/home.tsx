@@ -25,14 +25,14 @@ const RECENT_INSIGHTS = [
     color: '#1A3A6B',
   },
   {
-    id: 'entertainment-destination-development-india-2026',
-    category: 'Entertainment',
+    id: 'india-retail-leasing-outlook-2026',
+    category: 'Retail',
     date: 'March 2026',
-    readTime: '10 min read',
-    title: 'Building India\'s Next Entertainment Destination: Development Economics & Operational Model',
-    excerpt: '₹15,000+ Cr of entertainment real estate is in planning across India. We analyse format typology, capex benchmarks, revenue model and the operational structure required to deliver sustainable returns.',
-    img: '/static/mandates/kasauli/kasauli-img1.jpg',
-    color: '#7C3AED',
+    readTime: '9 min read',
+    title: 'India Retail Leasing 2026: Mall Demand, Brand Expansion & Rental Benchmarks',
+    excerpt: 'India\'s organised retail leasing market is set to absorb 8–10 million sq ft of new supply in 2026. We examine demand drivers, city-wise rental benchmarks, and the evolving tenant mix strategy in Grade-A malls.',
+    img: '/static/mandates/jaipur/jaipur-exterior-front.jpg',
+    color: '#B8960C',
   },
 ]
 
@@ -1547,7 +1547,15 @@ function filterRB(cat){
           "@id": "https://indiagully.com/#website",
           "url": "https://indiagully.com",
           "name": "India Gully",
-          "publisher": { "@id": "https://indiagully.com/#organization" }
+          "publisher": { "@id": "https://indiagully.com/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://indiagully.com/insights?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         }
       ]
     })
