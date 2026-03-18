@@ -342,16 +342,15 @@ app.get('/', (c) => {
     </div>
 
     <!-- Map + Panel layout -->
-    <div style="display:grid;grid-template-columns:45% 1fr;gap:2.5rem;align-items:start;" class="mob-stack">
+    <div style="display:grid;grid-template-columns:46% 1fr;gap:2.5rem;align-items:start;" class="mob-stack">
 
       <!-- ── India SVG Map ── -->
       <div style="position:relative;">
         <!-- Map frame -->
-        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.25rem;overflow:hidden;position:relative;">
+        <div id="indiaMap-wrap">
           <!-- Subtle bg glow -->
           <div style="position:absolute;top:10%;left:10%;width:80%;height:80%;background:radial-gradient(ellipse,rgba(106,170,100,.06) 0%,transparent 70%);pointer-events:none;"></div>
-          <svg id="indiaMap" viewBox="60 -20 740 760" xmlns="http://www.w3.org/2000/svg"
-               style="width:100%;display:block;overflow:visible;position:relative;z-index:1;">
+          <svg id="indiaMap" viewBox="60 -20 700 780" xmlns="http://www.w3.org/2000/svg">
             ${INDIA_STATES_SVG}
             <!-- City pins with labels -->
             ${cityPins}
@@ -588,7 +587,7 @@ app.get('/', (c) => {
 }
 .mkt-macro-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
   gap:1px;
   background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.07);
@@ -630,6 +629,23 @@ app.get('/', (c) => {
 }
 .mkt-deal-card:hover { border-color:rgba(212,174,42,.25);transform:translateY(-2px); }
 
+/* ── India Map Container ── */
+#indiaMap-wrap {
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:16px;
+  padding:1rem;
+  overflow:hidden;
+  position:relative;
+}
+#indiaMap {
+  width:100%;
+  display:block;
+  overflow:hidden;
+  position:relative;
+  z-index:1;
+}
+
 /* Map state hover */
 #indiaMap path:not(.map-pin *) { transition:fill .18s; }
 #indiaMap path:not(.map-pin *):hover { fill:#7dc077; cursor:pointer; }
@@ -664,6 +680,15 @@ app.get('/', (c) => {
   background:rgba(255,255,255,.07) !important;
   border-color:rgba(255,255,255,.18) !important;
   color:rgba(255,255,255,.85) !important;
+}
+/* Responsive map: on small screens show map full width */
+@media(max-width:768px){
+  #indiaMap { max-height: 420px; }
+  .mkt-macro-grid { grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); }
+}
+@media(max-width:480px){
+  .mkt-table th, .mkt-table td { padding:.5rem .6rem; font-size:.78rem; }
+  .mkt-macro-grid { grid-template-columns: repeat(2,1fr); }
 }
 </style>
 
