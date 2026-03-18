@@ -483,13 +483,21 @@ app.get('/catalogue', (c) => {
   </div>
 </div>
 
+<!-- Mobile filter toggle bar (hidden on desktop) -->
+<div id="cat-mob-bar" style="display:none;background:#fff;border-bottom:1px solid var(--border);padding:.625rem 1rem;position:sticky;top:60px;z-index:200;">
+  <button onclick="igCatMobToggle()" id="cat-mob-toggle" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--gold);color:#fff;border:none;padding:.45rem 1rem;font-size:.78rem;font-weight:700;cursor:pointer;">
+    <i class="fas fa-sliders-h" style="font-size:.7rem;"></i><span id="cat-mob-label">Filters &amp; Categories</span>
+  </button>
+  <span id="cat-mob-result" style="font-size:.75rem;color:var(--ink-muted);margin-left:.75rem;"></span>
+</div>
+
 <!-- FILTERS + CATALOGUE BODY -->
 <div style="background:#f8f6f1;min-height:60vh;padding:2rem 0;">
   <div class="wrap">
-    <div style="display:grid;grid-template-columns:220px 1fr;gap:2rem;align-items:start;">
+    <div class="cat-grid-wrap" style="display:grid;grid-template-columns:220px 1fr;gap:2rem;align-items:start;">
 
       <!-- SIDEBAR -->
-      <div style="position:sticky;top:1.5rem;">
+      <div id="cat-sidebar-col" style="position:sticky;top:1.5rem;">
         <!-- Search -->
         <div style="background:#fff;border:1px solid var(--border);padding:1rem;margin-bottom:1rem;">
           <label style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:.5rem;">Search Products</label>
@@ -970,6 +978,29 @@ window.igQuickRFQSubmit = function(){
   .cat-sidebar-btn { padding:.5rem 1rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer; border-left:3px solid transparent; transition:background .15s; }
   .cat-sidebar-btn:hover { background:#fffbeb; }
   .cat-sidebar-btn.active { background:#fffbeb; border-left-color:var(--gold); }
+  /* Mobile: collapse sidebar, show toggle bar */
+  @media(max-width:768px) {
+    #cat-mob-bar { display:block !important; }
+    .cat-grid-wrap { grid-template-columns:1fr !important; }
+    #cat-sidebar-col { position:relative !important; top:0 !important; display:none; }
+    #cat-sidebar-col.mob-open { display:block; }
+    #cat-grid-view { grid-template-columns:repeat(2,1fr) !important; }
+  }
+  @media(max-width:480px) {
+    #cat-grid-view { grid-template-columns:1fr !important; }
+  }
+  /* Back-to-top button — above the Quick RFQ FAB (bottom:6rem) */
+  #cat-btt {
+    position:fixed; bottom:10.5rem; right:1.5rem; z-index:598;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,.9); color:var(--gold); border:1.5px solid var(--gold);
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 2px 12px rgba(184,150,12,.25);
+    cursor:pointer; transition:all .2s;
+    backdrop-filter:blur(4px);
+  }
+  #cat-btt:hover { background:var(--gold); color:#fff; transform:translateY(-2px); }
+  #cat-btt.show { display:flex; }
 </style>
 
 <script>
@@ -1121,6 +1152,9 @@ function igCatFilter() {
   var label = _igCatActiveCategory ? (' in <strong>' + _igCatActiveCategory + '</strong>') : '';
   document.getElementById('cat-result-count').innerHTML = '<strong>' + filtered.length + '</strong> product' + (filtered.length !== 1 ? 's' : '') + label;
   document.getElementById('cat-active-filter').textContent = search ? '— search: "' + search + '"' : '';
+  // Sync mobile result counter
+  var mobRes = document.getElementById('cat-mob-result');
+  if (mobRes) mobRes.innerHTML = '<strong>' + filtered.length + '</strong> product' + (filtered.length !== 1 ? 's' : '') + label;
 
   // Show/hide download filtered button
   var btnFiltered = document.getElementById('btn-dl-filtered');
@@ -1535,6 +1569,32 @@ function igShowToast(msg, type) {
   document.body.appendChild(t);
   setTimeout(function(){ t.style.opacity = '0'; t.style.transition = 'opacity .4s'; setTimeout(function(){ t.remove(); }, 400); }, 3500);
 }
+
+// ── Mobile sidebar toggle ────────────────────────────────────────────────────
+function igCatMobToggle() {
+  var col = document.getElementById('cat-sidebar-col');
+  var lbl = document.getElementById('cat-mob-label');
+  if (!col) return;
+  var open = col.classList.toggle('mob-open');
+  if (lbl) lbl.textContent = open ? 'Hide Filters' : 'Filters & Categories';
+}
+
+// ── Back-to-top button ────────────────────────────────────────────────────────
+(function() {
+  var btt = document.createElement('button');
+  btt.id = 'cat-btt';
+  btt.title = 'Back to top';
+  var ico = document.createElement('i');
+  ico.className = 'fas fa-chevron-up';
+  ico.style.fontSize = '.7rem';
+  btt.appendChild(ico);
+  btt.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  document.body.appendChild(btt);
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 400) btt.classList.add('show');
+    else btt.classList.remove('show');
+  }, { passive: true });
+})();
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', igCatLoad);

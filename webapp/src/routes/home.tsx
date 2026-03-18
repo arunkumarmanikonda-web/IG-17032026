@@ -126,7 +126,7 @@ const SLIDES = [
     h1c: '500+ SKUs · 15+ Hotel Properties',
     sub: "India Gully's HORECA division is the complete hospitality supply partner — FF&E, OS&E, kitchen equipment, linen, uniforms and guest amenities delivered on spec and on schedule across India.",
     cta1: { text: 'Explore HORECA Services', href: '/horeca' },
-    cta2: { text: 'Request a Quote', href: '/horeca#enquiry' },
+    cta2: { text: 'Browse Product Catalogue', href: '/horeca/catalogue' },
     img: '/static/mandates/hero/hero-hotel-products.jpg',
     label: 'HORECA Procurement',
     type: 'advisory',
@@ -1491,6 +1491,7 @@ function filterRB(cat){
       <a href="/contact"  class="btn btn-g" style="min-width:230px;justify-content:center;padding:.9rem 2.25rem;">Submit a Mandate Enquiry</a>
       <a href="/listings" class="btn btn-ghost-g" style="min-width:200px;justify-content:center;">View Active Mandates</a>
       <a href="/horeca"   class="btn btn-ghost" style="min-width:200px;justify-content:center;">HORECA Supply Enquiry</a>
+      <a href="/horeca/catalogue" class="btn btn-ghost" style="min-width:200px;justify-content:center;"><i class="fas fa-book-open" style="font-size:.65rem;margin-right:.45rem;"></i>Browse HORECA Catalogue</a>
     </div>
 
     <!-- Quick contact strip -->
