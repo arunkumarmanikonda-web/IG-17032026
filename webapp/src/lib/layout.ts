@@ -120,6 +120,15 @@ html[data-theme="dark"]{
 [data-theme="dark"] .home-stat-cell,[data-theme="dark"] .ig-metric-box{background:#141420!important;border-color:rgba(255,255,255,.06)!important;}
 [data-theme="dark"] .feature-card{background:#141420!important;border-color:rgba(255,255,255,.06)!important;}
 [data-theme="dark"] .service-item{background:#141420!important;}
+/* Dark mode: insights cards */
+[data-theme="dark"] .ins-card{background:#141420!important;border-color:rgba(255,255,255,.07)!important;}
+[data-theme="dark"] .ins-card__body{background:#141420!important;}
+[data-theme="dark"] .ins-card__title{color:#f1f5f9!important;}
+[data-theme="dark"] .ins-card__excerpt{color:#94a3b8!important;}
+[data-theme="dark"] .ins-card__tag{background:rgba(255,255,255,.05)!important;color:#cbd5e1!important;border-color:rgba(255,255,255,.1)!important;}
+[data-theme="dark"] .ins-card:hover{border-color:rgba(184,150,12,.35)!important;box-shadow:0 16px 52px rgba(0,0,0,.4)!important;}
+/* Dark mode: featured article content pane */
+[data-theme="dark"] .feat-card [style*="background:var(--surface)"]{background:#141420!important;}
 [data-theme="dark"] .ticker{background:rgba(184,150,12,.85)!important;}
 /* Dark mode: leader-card & partner-card backgrounds */
 [data-theme="dark"] .leader-card,[data-theme="dark"] .partner-card{background:#141420!important;border-color:rgba(255,255,255,.06)!important;}

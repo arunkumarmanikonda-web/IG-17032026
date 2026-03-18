@@ -3,10 +3,21 @@
 **Celebrating Desiness** | Multi-Vertical Advisory Firm  
 Vivacious Entertainment and Hospitality Pvt. Ltd.
 
-## 🚀 Phase 40–43 — Search UX, Listings Filter, Pipeline Animation & Home Velocity Section (v41–v44)
+## 🔴 Phase 44 — J&K Map Fix (CRITICAL) + Phase 40–43 UX Upgrades (v45)
 
-**Version: v41–v44 | Build: 4.1 MB | Deploy: Pending**
+**Version: v45 | Build: 4.1 MB | Deploy: https://48975619.india-gully.pages.dev**  
 **Date: March 2026**
+
+### ✅ Phase 44 — J&K India Map STRICT FIX
+
+| Area | What Changed |
+|------|-------------|
+| **J&K Shape (home.tsx)** | Completely redrawn to Survey of India 2020 correct shape: lon 72.5-80.5°E, lat 32.2-37.5°N covering POK + Gilgit-Baltistan + Indian J&K + Ladakh + Aksai Chin |
+| **SVG viewBox (home.tsx)** | `0 0 440 510` → `0 -15 440 525` — 15px top padding added so J&K is FULLY VISIBLE above clipping boundary |
+| **J&K Shape (market-data.tsx)** | Three old separate paths (J&K + PoK + Ladakh) consolidated into single correct unified boundary |
+| **SVG viewBox (market-data.tsx)** | `60 90 740 640` → `60 -20 740 760` to show full J&K territory |
+| **Border Style** | Dashed stroke per Survey of India disputed territory convention |
+| **Comments** | "DO NOT SHRINK" markers added to prevent regression |
 
 ### ✅ Phase 40 — Insights Full-Text Search
 
