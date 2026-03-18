@@ -380,7 +380,7 @@ app.get('/', (c) => {
 <div class="partner-marquee-section" style="background:var(--parch-dk);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.1rem 0;overflow:hidden;">
   <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0;">
     <div class="partner-marquee-label" style="flex-shrink:0;padding:0 1.5rem;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted);white-space:nowrap;">
-      Advisory Partners
+      Partners
     </div>
     <div class="marquee-outer" style="flex:1;">
       <div class="marquee-track">
@@ -451,13 +451,13 @@ app.get('/', (c) => {
         <div class="gr"></div>
         <p class="eyebrow" style="margin-bottom:1rem;">Pan-India Presence</p>
         <h2 class="h2" style="margin-bottom:1.25rem;">Active Mandates<br>Across India</h2>
-        <p class="body-lg" style="margin-bottom:2rem;color:var(--ink-soft);">India Gully operates across Tier 1, 2 and 3 markets — from Delhi NCR and Mumbai to Kasauli, Chail, Chandigarh and Jaipur. Our active mandates span 8+ cities with ₹1,165 Cr+ in combined advisory value.</p>
+        <p class="body-lg" style="margin-bottom:2rem;color:var(--ink-soft);">India Gully has active mandates across six cities — Delhi NCR, Chandigarh, Kasauli, Chail, Jaipur and Bengaluru — with Mumbai and Hyderabad in the pipeline. Combined advisory value exceeds ₹1,165 Cr+ across Tier 1, 2 and 3 markets.</p>
         <!-- City list -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:2rem;">
           ${[
             { city:'Delhi NCR',       sub:'Gurugram · Noida · Shalimar Bagh', pin:'#B8960C' },
-            { city:'Chandigarh',      sub:'Hotel Rajshree & Spa', pin:'#065F46' },
-            { city:'Himachal Pradesh',sub:'Kasauli · Chail · Shimla', pin:'#1A3A6B' },
+            { city:'Chandigarh',      sub:'Hotel Rajshree & Spa · 41 Keys', pin:'#065F46' },
+            { city:'Kasauli & Chail',  sub:'WelcomHeritage · Maple Resort', pin:'#1A3A6B' },
             { city:'Jaipur',          sub:'Heritage Hotel Corridor', pin:'#7C3AED' },
             { city:'Mumbai',          sub:'BKC · Lower Parel', pin:'#B8960C' },
             { city:'Bengaluru',       sub:'Whitefield · MG Road', pin:'#065F46' },
@@ -626,7 +626,7 @@ app.get('/', (c) => {
             <circle cx="110" cy="490" r="4" fill="#065F46"/>
             <text x="118" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Chandigarh ₹70Cr</text>
             <circle cx="210" cy="490" r="4" fill="#1A3A6B"/>
-            <text x="218" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Himachal ₹75Cr</text>
+            <text x="218" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Kasauli/Chail ₹75Cr</text>
             <circle cx="300" cy="490" r="4" fill="#7C3AED"/>
             <text x="308" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Jaipur ₹20Cr</text>
             <circle cx="14" cy="505" r="4" fill="#dc2626"/>
@@ -647,7 +647,7 @@ app.get('/', (c) => {
           var tooltips = {
             delhi:      { title:'Delhi NCR', sub:'Prism Tower · Ambience Tower · Sawasdee JLG', val:'₹900 Cr combined', color:'#B8960C' },
             chandigarh: { title:'Chandigarh', sub:'Hotel Rajshree & Spa · 41 Keys', val:'₹70 Cr', color:'#065F46' },
-            himachal:   { title:'Himachal Pradesh', sub:'WelcomHeritage Kasauli · Maple Resort Chail', val:'₹75 Cr combined', color:'#1A3A6B' },
+            himachal:   { title:'Kasauli & Chail',  sub:'WelcomHeritage Kasauli · Maple Resort Chail', val:'₹75 Cr combined', color:'#1A3A6B' },
             jaipur:     { title:'Jaipur', sub:'Heritage Hotel · 43 Keys', val:'₹20 Cr', color:'#7C3AED' },
             mumbai:     { title:'Mumbai', sub:'BKC · Lower Parel · Advisory pipeline', val:'In discussion', color:'#dc2626' },
             bengaluru:  { title:'Bengaluru', sub:'Whitefield · MG Road · Active pipeline', val:'In discussion', color:'#065F46' },
@@ -812,9 +812,9 @@ app.get('/', (c) => {
         { icon:'trophy',         color:'#B8960C', bg:'rgba(184,150,12,.08)', border:'rgba(184,150,12,.18)', title:'₹2,000+ Cr Transacted',       desc:'Landmark transactions including joint advisory with EY for the ₹1,350 Cr+ 100% shareholder-consented divestment of Entertainment City Limited, Noida.' },
         { icon:'hotel',          color:'#065F46', bg:'rgba(6,95,70,.08)',    border:'rgba(6,95,70,.18)',    title:'15+ Hotels On-Boarded',        desc:'Hotel brand selection, pre-opening management and PMC across Marriott, Radisson, Cygnett, Regenta and more — from site selection to first check-in.' },
         { icon:'store',          color:'#1A3A6B', bg:'rgba(26,58,107,.08)', border:'rgba(26,58,107,.18)',  title:'1,40,000+ Sq Ft Leased',       desc:'Premium F&B and retail leasing at Gardens Galleria, Hyatt Andaz, AIPL Joy Street and Entertainment City — India\'s top retail destinations.' },
-        { icon:'utensils',       color:'#B8960C', bg:'rgba(184,150,12,.08)', border:'rgba(184,150,12,.18)', title:'HORECA to 15+ Properties',     desc:'End-to-end supply of FF&E, OS&E, kitchen equipment and amenities for Mahindra Holidays, Accor, CGH Earth and more across India.' },
+        { icon:'utensils',       color:'#B8960C', bg:'rgba(184,150,12,.08)', border:'rgba(184,150,12,.18)', title:'HORECA — 15+ Properties',      desc:'End-to-end supply of FF&amp;E, OS&amp;E, kitchen equipment and guest amenities for Mahindra Holidays, Accor, CGH Earth and more across India.' },
         { icon:'handshake',      color:'#7C3AED', bg:'rgba(124,58,237,.08)', border:'rgba(124,58,237,.18)', title:'Co-Advisory with EY & CBRE',   desc:'Trusted by India\'s top professional service firms as co-advisor on complex, multi-party institutional transactions requiring deep sector expertise.' },
-        { icon:'map-marked-alt', color:'#B8960C', bg:'rgba(184,150,12,.08)', border:'rgba(184,150,12,.18)', title:'Pan-India Presence',           desc:'Active mandates in Delhi NCR, Chandigarh, Kasauli, Chail, Jaipur, Noida, Gurugram, Bengaluru, Mumbai and Kerala — Tier 1 to 3 markets.' },
+        { icon:'map-marked-alt', color:'#B8960C', bg:'rgba(184,150,12,.08)', border:'rgba(184,150,12,.18)', title:'Pan-India Presence',           desc:'Active mandates across Delhi NCR, Chandigarh, Kasauli, Chail, Jaipur, Gurugram, Bengaluru and Mumbai — spanning Tier 1, 2 and 3 markets.' },
       ].map((w, wi) => `
       <div class="why-card reveal" style="transition-delay:${wi*0.07}s;">
         <div class="why-icon" style="background:${w.bg};border:1px solid ${w.border};">
