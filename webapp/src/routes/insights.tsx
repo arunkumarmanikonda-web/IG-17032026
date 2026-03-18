@@ -132,58 +132,6 @@ const ARTICLES = [
 `,
   },
   {
-    id: 'horeca-tier2-supply-chain',
-    category: 'HORECA',
-    date: 'December 2025',
-    title: 'Building Resilient HORECA Supply Chains in Tier 2 India',
-    excerpt: 'The rapid expansion of branded hospitality into Tier 2 and Tier 3 cities is exposing critical gaps in HORECA supply chains. We analyse the challenges, from vendor fragmentation to cold-chain infrastructure, and present a framework for building resilient, scalable procurement operations.',
-    tags: ['HORECA', 'Supply Chain', 'Tier 2', 'Operations'],
-    readTime: '7 min read',
-    body: `
-<h2>The Tier 2 Hospitality Expansion Wave</h2>
-<p>India's branded hospitality sector is in the midst of its most aggressive geographic expansion since the mid-2000s. Every major hotel brand — Marriott, Radisson, IHG, Lemon Tree, Cygnett, Regenta — has active development pipelines extending into Tier 2 and Tier 3 cities. India Gully, with active hotel management and HORECA supply mandates across Chandigarh, Kasauli, Chail, Jaipur, Jodhpur, Coimbatore, and Kochi, is uniquely positioned to observe the supply chain challenges this expansion creates.</p>
-
-<h2>The Problem: Vendor Fragmentation</h2>
-<p>The core challenge in Tier 2 HORECA procurement is <strong>vendor fragmentation</strong>. Unlike metro markets where multiple specialist suppliers compete for hotel contracts, Tier 2 cities typically have:</p>
-<ul>
-  <li>1–3 FF&E suppliers with limited hospitality-grade inventory</li>
-  <li>No specialist OS&E (Operating Supplies and Equipment) distributors</li>
-  <li>Limited kitchen equipment service networks</li>
-  <li>Fragmented linen and uniform supply, often requiring metro-based procurement</li>
-  <li>Cold chain infrastructure gaps for perishable F&B supplies</li>
-</ul>
-<p>The result: pre-opening procurement costs in Tier 2 run 18–25% higher than equivalent metro specifications, largely driven by logistics, handling, and the absence of local competitive pricing.</p>
-
-<h2>India Gully's Procurement Framework</h2>
-<p>Based on 15+ hotel supply mandates, India Gully has developed a <strong>Hub-and-Spoke Procurement Model</strong> for Tier 2 hotel pre-openings:</p>
-
-<h3>Phase 1: Specification and Vendor Identification (Months 1–3)</h3>
-<p>Working from brand standards, we develop a <strong>master SKU list</strong> covering all FF&E, OS&E, kitchen, linen, and amenities categories. For each SKU, we identify three supplier tiers: metro-based specialists, regional distributors, and local alternatives. This three-tier approach ensures resilience against single-vendor failure.</p>
-
-<h3>Phase 2: Consolidated Procurement and Logistics (Months 4–8)</h3>
-<p>India Gully aggregates orders across multiple hotel pre-openings to achieve <strong>volume-based pricing</strong>. Our vendor network of 50+ qualified suppliers means we can negotiate consolidated pricing even for a single 80-key hotel. Logistics coordination — critical in hilly or remotely-located properties — is handled through our logistics partners with experience in last-mile delivery to difficult locations.</p>
-
-<h3>Phase 3: Delivery, Snagging, and Handover (Months 8–11)</h3>
-<p>On-site receiving, inspection against specification, snagging resolution, and completion certificate issuance. India Gully's site teams are present at all major deliveries to ensure brand standard compliance before handover.</p>
-
-<h2>Cold Chain: The Critical Gap</h2>
-<p>F&B supply chain in Tier 2 hotels is particularly challenging. Fresh produce, proteins, and specialty ingredients required by branded hotel restaurants often cannot be sourced locally to brand standards. India Gully's F&B procurement advisory service establishes <strong>regular delivery schedules</strong> from approved metro-based suppliers, reducing over-ordering and waste while maintaining brand standards.</p>
-<p>For hotels in hill stations (Kasauli, Chail, Mussoorie), India Gully has developed specialised cold chain protocols including all-weather vehicle requirements, alternative route planning, and emergency buffer stock specifications.</p>
-
-<h2>Key Metrics: India Gully HORECA Performance</h2>
-<ul>
-  <li><strong>500+ SKUs</strong> in our verified product catalogue</li>
-  <li><strong>₹50 Cr+</strong> procurement managed across 15+ hotel properties</li>
-  <li><strong>50+ vendors</strong> in our qualified supply network</li>
-  <li><strong>98.2% on-time delivery rate</strong> across 2024–25 mandates</li>
-  <li><strong>Average 14% cost saving</strong> versus promoter self-procurement</li>
-</ul>
-
-<h2>Conclusion</h2>
-<p>The Tier 2 hospitality expansion wave will continue. Developers who anticipate supply chain complexity and partner with experienced HORECA procurement advisors from project inception will achieve faster pre-opening timelines, lower procurement costs, and higher brand standards compliance. India Gully's HORECA practice is designed precisely for this challenge.</p>
-`,
-  },
-  {
     id: 'ibc-distressed-hospitality-2025',
     category: 'Debt & Special Situations',
     date: 'November 2025',
@@ -242,59 +190,6 @@ const ARTICLES = [
 
 <h2>Conclusion</h2>
 <p>The IBC 2025 amendments, combined with the compressed resolution timelines now being achieved at NCLT, make this an exceptionally favourable period for strategic acquirers of distressed hospitality assets. India Gully's integrated advisory — transaction advisory, brand on-boarding, and HORECA supply — provides the end-to-end capability required to execute a distressed acquisition and create post-resolution value efficiently.</p>
-`,
-  },
-  {
-    id: 'mall-mixed-use-integration',
-    category: 'Retail',
-    date: 'October 2025',
-    title: 'The Mall-Hotel-Office Trinity: Mixed-Use Integration in Indian Retail Real Estate',
-    excerpt: 'India\'s leading mall developers are pivoting from pure retail to mixed-use destinations. We study five live projects across NCR, Mumbai and Bengaluru, examining lease structure innovations, anchor tenant strategies, and financial models that make mixed-use work.',
-    tags: ['Retail', 'Mixed-Use', 'Real Estate', 'Mall', 'Office'],
-    readTime: '9 min read',
-    body: `
-<h2>The Pivot from Retail to Destination</h2>
-<p>India's top-tier mall developers — DLF, Nexus, Phoenix, Brigade — are executing a fundamental strategic pivot. The pure-retail mall, designed exclusively for shopping, is giving way to the <strong>integrated mixed-use destination</strong>: a combination of retail, hospitality, office, entertainment, and civic amenities designed to capture multiple day-parts and visitor motivations.</p>
-<p>India Gully's retail leasing and hospitality advisory practice has been directly involved in three of the five projects studied in this analysis. Our observations are grounded in live mandate experience, not secondary research.</p>
-
-<h2>Why the Trinity Works: Economic Logic</h2>
-<p>The financial case for the Mall-Hotel-Office trinity rests on three interlocking value drivers:</p>
-<h3>1. Rental Uplift from Density</h3>
-<p>Hotels and premium offices create a captive, high-spending population. Hotel guests with dining spend average 2.8× the retail spend of regular mall visitors. Office workers within integrated developments spend ₹1,200–1,800 per week on food and convenience retail — a highly predictable revenue stream for mall operators and their tenants.</p>
-<h3>2. Land Efficiency</h3>
-<p>Mixed-use developments achieve 30–40% higher Floor Space Index (FSI) utilisation versus single-use, enabled by vertical stacking of different uses. Premium mixed-use developments in Delhi NCR and Mumbai are achieving FSI of 2.5–4.0 versus 1.8–2.2 for pure retail.</p>
-<h3>3. Risk Diversification</h3>
-<p>Mixed-use income streams provide resilience against retail cyclicality. During COVID, integrated developments with hotels and offices recovered rental income 14 months faster than pure retail assets.</p>
-
-<h2>Case Study: AIPL Joy Street, Gurugram</h2>
-<p>India Gully provided retail leasing advisory for AIPL Joy Street, one of NCR's most successful mixed-use destination launches of 2023. Key observations:</p>
-<ul>
-  <li>F&B anchor (30% of GLA) outperformed projections by 22% in Year 1</li>
-  <li>Office component (3 floors, 180,000 sq ft) achieved full occupancy 9 months before retail completion</li>
-  <li>Hotel pre-opening enquiry volume was 4× that of standalone hotel comparable</li>
-  <li>Retail rental premium over comparable pure malls: 17–22%</li>
-</ul>
-
-<h2>Lease Structure Innovations</h2>
-<p>Mixed-use development requires lease structure innovation that pure retail does not. India Gully has advised on and negotiated the following approaches:</p>
-<h3>Cross-Amenity Leases</h3>
-<p>Tenants in integrated developments are increasingly seeking <strong>cross-asset access rights</strong> — office tenants negotiating parking rights in the mall structure, hotel guests receiving preferential retail rates, loyalty programme integration across all components. These require multi-party lease agreements that most retail lease professionals are not structured to handle.</p>
-<h3>Revenue Participation</h3>
-<p>Mixed-use developers are moving from pure fixed rent to <strong>base rent + revenue share</strong> models — particularly for F&B anchors and entertainment components. India Gully structures these as: Base = 65% of market rent + 4–7% of net revenue above a turnover threshold.</p>
-<h3>Green Lease Provisions</h3>
-<p>New integrated developments in India's top 5 cities are incorporating green lease provisions covering energy consumption sharing, waste management obligations, and sustainability reporting — a requirement emerging from ESG-mandated institutional investors.</p>
-
-<h2>The Anchor Strategy</h2>
-<p>In mixed-use destination retail, the anchor tenant strategy must account for all three components. India Gully's recommended anchor configuration for a 500,000 sq ft mixed-use development:</p>
-<ul>
-  <li><strong>Hotel anchor</strong> (150–200 keys, mid-upscale brand): Provides footfall catalyst, event venue, and F&B magnets. Best position: above or adjacent to premium retail zone.</li>
-  <li><strong>F&B destination floor</strong> (15,000–25,000 sq ft, 6–10 operators): Drive-to destination. Include one fine-dining, two casual, two QSR, one pan-Asian, one bar/lounge.</li>
-  <li><strong>Entertainment anchor</strong> (multiplex or FEC, 20,000–40,000 sq ft): Evening and weekend traffic generator. Critical for family demographics.</li>
-  <li><strong>Office anchor</strong> (50,000–80,000 sq ft, single corporate tenant): Provides daytime food and convenience footfall reliability.</li>
-</ul>
-
-<h2>Conclusion</h2>
-<p>The Mall-Hotel-Office trinity is not a concept — it is the new standard for Grade-A retail destination development in India. Developers who attempt to build pure retail in Tier-1 cities from 2026 onwards will face financing, leasing, and valuation headwinds. India Gully's integrated retail leasing and hospitality advisory capability is uniquely positioned to support mixed-use destination development from concept through occupancy.</p>
 `,
   },
   {
@@ -1447,7 +1342,7 @@ app.get('/', (c) => {
   <div class="wrap" style="padding:0;">
     <div class="ins-stats-bar">
       ${[
-        { n: '21', l: 'In-Depth Articles' },
+        { n: '19', l: 'In-Depth Articles' },
         { n: '6',  l: 'Sectors Covered' },
         { n: '₹1,165 Cr+', l: 'Active Pipeline' },
         { n: '2024–26', l: 'Research Period' },
