@@ -59,7 +59,7 @@ const app = new Hono<Env>()
 
 // ── CORS: Restricted to known origins ────────────────────────────────────────
 app.use('*', cors({
-  origin: ['https://india-gully.pages.dev', 'http://localhost:3000'],
+  origin: ['https://indiagully.com', 'http://localhost:3000'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
   credentials: true,
@@ -2286,7 +2286,7 @@ function buildOwnerNotificationEmail(opts: {
 <body style="${emailBaseStyle()}">
 <div style="max-width:600px;margin:32px auto;background:#fff;border:1px solid #e4dece;">
   <div style="background:${bgColor};padding:24px 32px;display:flex;align-items:center;gap:16px;">
-    <img src="https://india-gully.pages.dev/static/ig-logo-white.png" alt="India Gully" style="height:36px;" onerror="this.style.display='none'">
+    <img src="https://indiagully.com/static/ig-logo-white.png" alt="India Gully" style="height:36px;" onerror="this.style.display='none'">
     <div>
       <div style="font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:2px;">India Gully Advisory Platform</div>
       <div style="font-size:20px;font-family:Georgia,serif;color:#fff;">${typeLabel} — Action Required</div>
@@ -2321,7 +2321,7 @@ function buildOwnerNotificationEmail(opts: {
 
     <div style="display:flex;gap:12px;margin-bottom:24px;">
       <a href="mailto:${opts.email}?subject=Re: ${encodeURIComponent(opts.mandateTitle)} — ${typeLabel} ${opts.ref}" style="display:inline-block;background:#B8960C;color:#fff;text-decoration:none;padding:11px 22px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">Reply to Investor</a>
-      <a href="https://india-gully.pages.dev/listings/${opts.mandateId}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:11px 22px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View Mandate</a>
+      <a href="https://indiagully.com/listings/${opts.mandateId}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:11px 22px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View Mandate</a>
     </div>
 
     <p style="font-size:12px;color:#888;border-top:1px solid #e4dece;padding-top:16px;margin:0;">This is an automated notification from India Gully Advisory Platform. Reference: ${opts.ref}. Do not reply directly to this message — use the "Reply to Investor" button above.</p>
@@ -2388,7 +2388,7 @@ function buildSubmitterConfirmationEmail(opts: {
       </div>
     </div>
 
-    <a href="https://india-gully.pages.dev/listings/${opts.mandateId}" style="display:inline-block;background:#B8960C;color:#fff;text-decoration:none;padding:12px 28px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View Mandate Page →</a>
+    <a href="https://indiagully.com/listings/${opts.mandateId}" style="display:inline-block;background:#B8960C;color:#fff;text-decoration:none;padding:12px 28px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View Mandate Page →</a>
   </div>
   <div style="background:#111;padding:16px 32px;text-align:center;">
     <p style="font-size:11px;color:rgba(255,255,255,.4);margin:0;">India Gully · Vivacious Entertainment and Hospitality Pvt. Ltd. · CIN U74999DL2017PTC323237</p>
@@ -2571,7 +2571,7 @@ app.post('/enquiry', async (c) => {
             </ul>
           </div>
           <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center;">
-            India Gully Advisory · Celebrating Desiness · <a href="https://india-gully.pages.dev" style="color:#B8960C;text-decoration:none;">india-gully.pages.dev</a>
+            India Gully Advisory · Celebrating Desiness · <a href="https://indiagully.com" style="color:#B8960C;text-decoration:none;">indiagully.com</a>
           </div>
         </div>`
 
@@ -2728,7 +2728,7 @@ app.post('/horeca-enquiry', async (c) => {
         <a href="mailto:pavan@indiagully.com" style="font-size:12px;color:#B8960C;text-decoration:none;">✉ pavan@indiagully.com</a>
       </div>
     </div>
-    <a href="https://india-gully.pages.dev/horeca" style="display:inline-block;background:#B8960C;color:#fff;text-decoration:none;padding:12px 28px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View HORECA Catalogue →</a>
+    <a href="https://indiagully.com/horeca" style="display:inline-block;background:#B8960C;color:#fff;text-decoration:none;padding:12px 28px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">View HORECA Catalogue →</a>
   </div>
   <div style="background:#111;padding:14px 32px;text-align:center;"><p style="font-size:11px;color:rgba(255,255,255,.4);margin:0;">India Gully · Vivacious Entertainment and Hospitality Pvt. Ltd. · CIN U74999DL2017PTC323237</p></div>
 </div></body></html>`
@@ -4124,7 +4124,7 @@ app.post('/contracts/esign/send-envelope', requireSession(), requireRole(['Super
             method: 'POST',
             headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              returnUrl: `https://india-gully.pages.dev/admin/contracts?signed=1&env=${liveEnvId}`,
+              returnUrl: `https://indiagully.com/admin/contracts?signed=1&env=${liveEnvId}`,
               authenticationMethod: 'none',
               email:       signer.email,
               userName:    signer.name,
@@ -4845,9 +4845,9 @@ app.get('/security/fido2-config', (c) => c.json({
   implementation_phase: 'P3 (Month 3-4)',
   spec: 'WebAuthn Level 2 (W3C) + FIDO2 CTAP2',
   relying_party: {
-    id: 'india-gully.pages.dev',
+    id: 'indiagully.com',
     name: 'India Gully Enterprise Platform',
-    origin: 'https://india-gully.pages.dev',
+    origin: 'https://indiagully.com',
   },
   supported_authenticators: [
     'YubiKey 5 Series (USB-A/USB-C)',
@@ -4909,7 +4909,7 @@ app.get('/security/pentest-checklist', (c) => c.json({
   next_scheduled: 'Q2 2026',
   vendor: 'TBD — CERT-In empanelled auditor required',
   scope: [
-    'Web application (india-gully.pages.dev)',
+    'Web application (indiagully.com)',
     'API endpoints (/api/*)',
     'Authentication flows (/auth/*)',
     'Admin portal (/admin/*)',
@@ -5139,9 +5139,9 @@ app.get('/auth/totp/enrol/status', requireSession(), async (c) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // J4: WEBAUTHN / FIDO2 REGISTRATION — Full @simplewebauthn/server attestation
 // ─────────────────────────────────────────────────────────────────────────────
-const RP_ID   = 'india-gully.pages.dev'
+const RP_ID   = 'indiagully.com'
 const RP_NAME = 'India Gully Enterprise Platform'
-const RP_ORIGIN = 'https://india-gully.pages.dev'
+const RP_ORIGIN = 'https://indiagully.com'
 
 /** POST /api/auth/webauthn/register/begin — Generate registration challenge via @simplewebauthn/server */
 app.post('/auth/webauthn/register/begin', requireSession(), async (c) => {
@@ -5549,7 +5549,7 @@ const CERT_IN_CHECKLIST = [
   { id:'CI-18', category:'Transport',              title:'Cleartext Transmission',            status:'PASS',    note:'Cloudflare enforces HTTPS; HSTS max-age=31536000.' },
   { id:'CI-19', category:'Transport',              title:'Weak TLS Configuration',            status:'PASS',    note:'TLS 1.2+ enforced by Cloudflare; TLS 1.0/1.1 disabled.' },
   { id:'CI-20', category:'Headers',                title:'Missing Security Headers',          status:'PASS',    note:'CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy set.' },
-  { id:'CI-21', category:'Headers',                title:'CORS Misconfiguration',             status:'PASS',    note:'CORS restricted to india-gully.pages.dev origin.' },
+  { id:'CI-21', category:'Headers',                title:'CORS Misconfiguration',             status:'PASS',    note:'CORS restricted to indiagully.com origin.' },
   { id:'CI-22', category:'Headers',                title:'Clickjacking',                      status:'PASS',    note:'X-Frame-Options: DENY and CSP frame-ancestors none.' },
   { id:'CI-23', category:'Data',                   title:'Sensitive Data Exposure',           status:'PASS',    note:'PII not logged; audit log stores user ID only.' },
   { id:'CI-24', category:'Data',                   title:'Insecure File Upload',              status:'N/A',     note:'No file upload in current scope (R2 integration planned).' },
@@ -6171,7 +6171,7 @@ app.get('/auth/webauthn/status', requireSession(), async (c) => {
         registered_at: r.created_at,
         device_hint: r.aaguid === '00000000-0000-0000-0000-000000000000' ? 'Platform authenticator (Touch ID / Windows Hello)' : 'Security key (YubiKey / FIDO2)',
       })),
-      production_url: 'https://india-gully.pages.dev',
+      production_url: 'https://indiagully.com',
       instructions: 'Visit /portal/client → Security → Register Device to add a passkey',
       m4_status: creds.length > 0 ? '✅ WebAuthn credentials registered' : '⚠  No WebAuthn credentials — register a device at /portal/client',
     })
@@ -6338,9 +6338,9 @@ app.get('/auth/webauthn/devices', requireSession(), async (c) => {
       devices: [],
       n4_status: '⚠  D1 not bound — run scripts/create-d1-remote.sh to activate',
       guide: {
-        production_url: 'https://india-gully.pages.dev/portal/client',
+        production_url: 'https://indiagully.com/portal/client',
         steps: [
-          'Log in at https://india-gully.pages.dev/portal/client',
+          'Log in at https://indiagully.com/portal/client',
           'Go to Security → Passkeys / Security Keys',
           'Click Register Device and follow your browser prompt',
           'Use Touch ID, Face ID, Windows Hello, or a YubiKey',
@@ -6371,9 +6371,9 @@ app.get('/auth/webauthn/devices', requireSession(), async (c) => {
       ? `✅ ${devices.length} passkey(s) registered`
       : '⚠  No passkeys registered — follow guide below',
     guide: {
-      production_url: 'https://india-gully.pages.dev/portal/client',
+      production_url: 'https://indiagully.com/portal/client',
       steps: [
-        'Log in at https://india-gully.pages.dev/portal/client',
+        'Log in at https://indiagully.com/portal/client',
         'Go to Security → Passkeys / Security Keys',
         'Click Register Device — use Touch ID, Face ID, Windows Hello, or YubiKey',
         'Counter increments on every authentication (replay protection)',
@@ -6546,12 +6546,12 @@ app.get('/admin/production-readiness', requireSession(), requireRole(['Super Adm
       done: false,
       instructions: [
         '1. Ensure D1 is active (PR-01)',
-        '2. Log in at https://india-gully.pages.dev/portal/client',
+        '2. Log in at https://indiagully.com/portal/client',
         '3. Go to Security → Register Device',
         '4. Use Touch ID, Face ID, Windows Hello, or YubiKey',
         '5. Verify: GET /api/auth/webauthn/devices shows registered entry',
       ],
-      url: 'https://india-gully.pages.dev/portal/client',
+      url: 'https://indiagully.com/portal/client',
     },
     {
       id: 'PR-07', category: 'DPDP', title: 'Complete DPDP DFR Readiness',
@@ -6574,7 +6574,7 @@ app.get('/admin/production-readiness', requireSession(), requireRole(['Super Adm
     title: 'India Gully — Production Readiness Wizard',
     version: '2026.17',
     overall_readiness: `${pct}% (${done}/${steps.length} steps complete)`,
-    production_url: 'https://india-gully.pages.dev',
+    production_url: 'https://indiagully.com',
     steps,
     next_action: steps.find(s => !s.done) || null,
     o1_status: done >= 5 ? '✅ Production ready' : `⚠  ${steps.length - done} step(s) remaining`,
@@ -6715,7 +6715,7 @@ app.get('/auth/webauthn/challenge-log', requireSession(), requireRole(['Super Ad
     },
     production_steps: [
       '1. Activate D1 (PR-01 in /admin/production-readiness)',
-      '2. Register first device at https://india-gully.pages.dev/portal/client',
+      '2. Register first device at https://indiagully.com/portal/client',
       '3. Authenticate once to increment counter',
       '4. Verify counter > 0 via GET /api/auth/webauthn/devices',
     ],
@@ -7346,7 +7346,7 @@ app.get('/auth/webauthn/passkey-guide', requireSession(), async (c) => {
     p4_status: credentialCount > 0
       ? `✅ ${credentialCount} passkey(s) registered for ${user}`
       : `⚠ No passkeys for ${user} — follow guide below to register`,
-    registration_url: 'https://india-gully.pages.dev/portal/client',
+    registration_url: 'https://indiagully.com/portal/client',
     supported_authenticators: [
       { type: 'platform',    name: 'Touch ID (Mac/iPhone)',     aaguid: 'adce0002-35bc-c60a-648b-0b25f1f05503', status: '✅ Supported' },
       { type: 'platform',    name: 'Face ID (iPhone/iPad)',      aaguid: 'fbfc3007-154e-4ecc-8032-51d60697b58f', status: '✅ Supported' },
@@ -7358,7 +7358,7 @@ app.get('/auth/webauthn/passkey-guide', requireSession(), async (c) => {
       { type: 'roaming',     name: 'Dashlane',                   aaguid: 'b1b86fa3-4a88-4a0b-8c17-8e1e9c7f1d4d', status: '✅ Supported' },
     ],
     registration_steps: [
-      '1. Sign in at https://india-gully.pages.dev/portal/client',
+      '1. Sign in at https://indiagully.com/portal/client',
       '2. Navigate to Account Settings → Security → Passkeys',
       '3. Click "Add Passkey" — your device/browser will prompt for biometric or security key',
       '4. Complete the challenge — passkey is stored encrypted in Cloudflare D1',
@@ -7371,7 +7371,7 @@ app.get('/auth/webauthn/passkey-guide', requireSession(), async (c) => {
     },
     d1_required: !d1Bound,
     d1_note: d1Bound ? null : 'D1 must be active to persist passkey credentials — run scripts/create-d1-remote.sh',
-    production_url: 'https://india-gully.pages.dev',
+    production_url: 'https://indiagully.com',
   })
 })
 
@@ -7728,7 +7728,7 @@ app.get('/admin/secrets-status', requireSession(), requireRole(['Super Admin']),
       step5_docusign:  'npx wrangler pages secret put DOCUSIGN_API_KEY --project-name india-gully',
       step6_gst:       'npx wrangler pages secret put GSTIN --project-name india-gully',
       step7_whatsapp:  'npx wrangler pages secret put WHATSAPP_TOKEN --project-name india-gully',
-      full_guide:      'https://india-gully.pages.dev/admin/security (System Config → Secrets tab)',
+      full_guide:      'https://indiagully.com/admin/security (System Config → Secrets tab)',
     },
   })
 })
@@ -7747,7 +7747,7 @@ app.get('/admin/integration-guide', requireSession(), requireRole(['Super Admin'
         status: 'Built-in — no secrets needed',
         details: 'All admin endpoints use ig_session cookie. Login at /admin with credentials below.',
         credentials: {
-          url:      'https://india-gully.pages.dev/admin',
+          url:      'https://indiagully.com/admin',
           username: 'superadmin@indiagully.com',
           password: 'IGAdmin@2026',
           totp:     '123456 (demo PIN — always valid)',
@@ -8065,7 +8065,7 @@ app.post('/auth/webauthn/register-guided', requireSession(), async (c) => {
       action: 'begin',
       q4_status: '✅ Registration challenge issued — present to authenticator',
       challenge: challengeB64,
-      rp: { name: 'India Gully Enterprise', id: 'india-gully.pages.dev' },
+      rp: { name: 'India Gully Enterprise', id: 'indiagully.com' },
       user: { id: btoa(user), name: user, displayName: user },
       pubKeyCredParams: [
         { alg: -7,   type: 'public-key' },  // ES256
@@ -8167,7 +8167,7 @@ app.post('/dpdp/dfr-submit', requireSession(), requireRole(['Super Admin']), asy
       version: '2026-03-01',
     },
     rights_portal: {
-      url: 'https://india-gully.pages.dev/portal/client',
+      url: 'https://indiagully.com/portal/client',
       rights: ['access', 'correct', 'erase', 'nominate'],
       sla_days: 30,
       api: 'POST /api/dpdp/rights/request',
@@ -8550,7 +8550,7 @@ app.get('/auth/webauthn/credential-store', requireSession(), requireRole(['Super
     production_steps: [
       '1. Run: bash scripts/create-d1-remote.sh (requires D1:Edit token)',
       '2. Apply migrations: npx wrangler d1 migrations apply india-gully-production',
-      '3. Register device: visit https://india-gully.pages.dev/portal/client → Security → Add Passkey',
+      '3. Register device: visit https://indiagully.com/portal/client → Security → Add Passkey',
       '4. Verify: this endpoint should show active_credentials >= 1',
     ],
   })
@@ -8731,7 +8731,7 @@ app.get('/admin/live-config', requireSession(), requireRole(['Super Admin']), as
         { key: 'SESSION_TTL',        value: '24h',                    source: 'hardcoded', status: '✅' },
         { key: 'CSRF_PROTECTION',    value: 'enabled',                source: 'hardcoded', status: '✅' },
         { key: 'TOTP_ENABLED',       value: 'true',                   source: 'hardcoded', status: '✅' },
-        { key: 'WEBAUTHN_RP_ID',     value: 'india-gully.pages.dev',  source: 'hardcoded', status: '✅' },
+        { key: 'WEBAUTHN_RP_ID',     value: 'indiagully.com',  source: 'hardcoded', status: '✅' },
         { key: 'MAX_LOGIN_ATTEMPTS', value: '5',                      source: 'hardcoded', status: '✅' },
         { key: 'LOCKOUT_DURATION',   value: '15 min',                 source: 'hardcoded', status: '✅' },
       ]
@@ -9334,7 +9334,7 @@ app.get('/integrations/webhook-health', requireSession(), requireRole(['Super Ad
     {
       name:      'Razorpay Payment Webhook',
       endpoint:  'POST /api/payments/webhook',
-      url:       'https://india-gully.pages.dev/api/payments/webhook',
+      url:       'https://indiagully.com/api/payments/webhook',
       secret:    rzpWH ? 'Configured ✅' : 'NOT SET ❌',
       hmac:      'HMAC-SHA256 (Razorpay-Signature header)',
       events:    ['payment.captured', 'payment.failed', 'order.paid'],
@@ -9345,7 +9345,7 @@ app.get('/integrations/webhook-health', requireSession(), requireRole(['Super Ad
     {
       name:      'SendGrid Event Webhook',
       endpoint:  'POST /api/integrations/sendgrid/webhook',
-      url:       'https://india-gully.pages.dev/api/integrations/sendgrid/webhook',
+      url:       'https://indiagully.com/api/integrations/sendgrid/webhook',
       secret:    sgKey ? 'API key present ✅' : 'NOT SET ❌',
       hmac:      'SendGrid Signed Event Webhook (Ed25519)',
       events:    ['delivered', 'bounce', 'spam_report', 'unsubscribe'],
@@ -9367,7 +9367,7 @@ app.get('/integrations/webhook-health', requireSession(), requireRole(['Super Ad
     webhooks,
     setup_guide: [
       { step: 1, action: 'Set RAZORPAY_WEBHOOK_SECRET via wrangler pages secret put RAZORPAY_WEBHOOK_SECRET --project-name india-gully' },
-      { step: 2, action: 'In Razorpay dashboard → Webhooks → Add URL: https://india-gully.pages.dev/api/payments/webhook' },
+      { step: 2, action: 'In Razorpay dashboard → Webhooks → Add URL: https://indiagully.com/api/payments/webhook' },
       { step: 3, action: 'Select events: payment.captured, payment.failed, order.paid' },
       { step: 4, action: 'Register SendGrid event webhook URL in SendGrid dashboard' },
       { step: 5, action: 'Send test event from each dashboard and verify D1 log via GET /api/payments/transaction-log' },
@@ -9701,8 +9701,8 @@ app.get('/integrations/dns-deliverability', requireSession(), requireRole(['Supe
     { record: 'DKIM',  type: 'CNAME', value: 'em1234._domainkey.indiagully.com', status: 'pending',    note: 'Add SendGrid DKIM CNAME — see /api/integrations/email-health for exact value' },
     { record: 'DMARC', type: 'TXT',   value: 'v=DMARC1; p=quarantine; rua=mailto:dpo@indiagully.com', status: 'pending', note: 'Add DMARC policy record' },
     { record: 'MX',    type: 'MX',    value: 'mail.indiagully.com', status: 'configured', note: 'MX record resolves' },
-    { record: 'A',     type: 'A',     value: 'india-gully.pages.dev (CNAME)', status: 'configured', note: 'Cloudflare Pages CNAME active' },
-    { record: 'HTTPS', type: 'CNAME', value: 'india-gully.pages.dev', status: 'configured', note: 'HTTPS via Cloudflare TLS' },
+    { record: 'A',     type: 'A',     value: 'indiagully.com (CNAME)', status: 'configured', note: 'Cloudflare Pages CNAME active' },
+    { record: 'HTTPS', type: 'CNAME', value: 'indiagully.com', status: 'configured', note: 'HTTPS via Cloudflare TLS' },
   ]
   const configured  = records.filter(r => r.status === 'configured').length
   const pending     = records.filter(r => r.status === 'pending').length
@@ -9734,7 +9734,7 @@ app.get('/auth/webauthn-registry', requireSession(), requireRole(['Super Admin']
   const kvBound = !!env?.IG_AUTH_KV
   // Simulate credential count from KV
   const credentialCount = kvBound ? 0 : 0  // real count would query KV keys with prefix 'webauthn:'
-  const rpId = 'india-gully.pages.dev'
+  const rpId = 'indiagully.com'
   const rpName = 'India Gully Enterprise'
   const authenticators = [
     { type: 'platform',    name: 'Touch ID / Face ID',   enrolled: credentialCount > 0 },
@@ -9914,7 +9914,7 @@ app.get('/payments/razorpay-live-validation', requireSession(), requireRole(['Su
     { id: 'secret_present',  label: 'RAZORPAY_KEY_SECRET configured',    pass: false,    note: 'Cannot verify secret server-side; confirm manually' },
     { id: 'webhook_secret',  label: 'RAZORPAY_WEBHOOK_SECRET configured', pass: false,   note: 'Set via wrangler pages secret put RAZORPAY_WEBHOOK_SECRET' },
     { id: 'order_api',       label: 'Orders API reachable',               pass: isLive,  note: isLive ? 'Assumed reachable with live key' : 'Requires live key' },
-    { id: 'webhook_https',   label: 'Webhook URL uses HTTPS',             pass: true,    note: 'https://india-gully.pages.dev/api/payments/webhook ✓' },
+    { id: 'webhook_https',   label: 'Webhook URL uses HTTPS',             pass: true,    note: 'https://indiagully.com/api/payments/webhook ✓' },
   ]
   const passed = checks.filter(c => c.pass).length
   return c.json({
@@ -9966,7 +9966,7 @@ app.get('/integrations/email-deliverability', requireSession(), requireRole(['Su
 
 // V4 — WebAuthn Passkey Attestation Status
 app.get('/auth/passkey-attestation', requireSession(), requireRole(['Super Admin']), (c) => {
-  const rpId   = 'india-gully.pages.dev'
+  const rpId   = 'indiagully.com'
   const rpName = 'India Gully Enterprise Platform'
   const aaguids = [
     { aaguid: '00000000-0000-0000-0000-000000000000', name: 'Platform authenticator (generic)', status: 'allowed' },
@@ -10215,7 +10215,7 @@ app.post('/payments/razorpay-live-test', requireSession(), requireRole(['Super A
       pci_passed:       pciPassed,
       pci_total:        pciChecklist.length,
       pci_score_pct:    Math.round((pciPassed / pciChecklist.length) * 100),
-      webhook_url:      'https://india-gully.pages.dev/api/payments/webhook',
+      webhook_url:      'https://indiagully.com/api/payments/webhook',
       webhook_events:   ['payment.captured','payment.failed','order.paid','refund.created'],
       setup_commands: [
         'wrangler pages secret put RAZORPAY_KEY_ID',
@@ -10348,9 +10348,9 @@ app.get('/auth/webauthn-credential-store', requireSession(), requireRole(['Super
   }
 
   const rpConfig = {
-    rp_id:             'india-gully.pages.dev',
+    rp_id:             'indiagully.com',
     rp_name:           'India Gully Enterprise Platform',
-    origin:            'https://india-gully.pages.dev',
+    origin:            'https://indiagully.com',
     attestation:       'direct',
     user_verification: 'required',
     resident_keys:     'required',
@@ -10360,7 +10360,7 @@ app.get('/auth/webauthn-credential-store', requireSession(), requireRole(['Super
   }
 
   const rpValidation = [
-    { check: 'RP ID matches production domain', pass: true,  note: 'india-gully.pages.dev ✓' },
+    { check: 'RP ID matches production domain', pass: true,  note: 'indiagully.com ✓' },
     { check: 'HTTPS origin enforced',            pass: true,  note: 'Cloudflare HTTPS-only ✓' },
     { check: 'User verification required',       pass: true,  note: 'userVerification: required ✓' },
     { check: 'Resident key enforced',            pass: true,  note: 'residentKey: required ✓' },
@@ -15875,7 +15875,7 @@ app.post('/cms/review-reminders', requireSession(), requireRole(['Super Admin'],
 app.post('/cms/sitemap/regenerate', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
   try {
     const urls = ['/','about','services','horeca','listings','contact','insights','/admin']
-    return c.json({ success: true, url_count: urls.length + 24, generated_at: new Date().toISOString(), sitemap_url: 'https://india-gully.pages.dev/sitemap.xml', message: `Sitemap regenerated — ${urls.length + 24} URLs indexed.` })
+    return c.json({ success: true, url_count: urls.length + 24, generated_at: new Date().toISOString(), sitemap_url: 'https://indiagully.com/sitemap.xml', message: `Sitemap regenerated — ${urls.length + 24} URLs indexed.` })
   } catch { return c.json({ success: false, error: 'Sitemap generation failed' }, 500) }
 })
 
@@ -16238,7 +16238,7 @@ app.post('/cms/ai-generate', requireSession(), requireRole(['Super Admin'], ['ad
 
     // ── Handle non-generation actions (sitemap, approval settings) ─────────
     if (action === 'regenerate_sitemap') {
-      return c.json({ success: true, sitemap_url: 'https://india-gully.pages.dev/sitemap.xml', pages: 14, regenerated_at: new Date().toISOString() })
+      return c.json({ success: true, sitemap_url: 'https://indiagully.com/sitemap.xml', pages: 14, regenerated_at: new Date().toISOString() })
     }
     if (action === 'save_approval_settings') {
       return c.json({ success: true, workflow: body.workflow, saved_at: new Date().toISOString() })
@@ -16346,7 +16346,7 @@ app.delete('/cms/assets/:name', requireSession(), requireRole(['Super Admin'], [
 })
 
 app.post('/cms/sitemap', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
-  return c.json({ success: true, sitemap_url: 'https://india-gully.pages.dev/sitemap.xml', pages: 14, regenerated_at: new Date().toISOString() })
+  return c.json({ success: true, sitemap_url: 'https://indiagully.com/sitemap.xml', pages: 14, regenerated_at: new Date().toISOString() })
 })
 
 app.post('/cms/schema', requireSession(), requireRole(['Super Admin'], ['admin']), async (c) => {
@@ -16581,7 +16581,7 @@ app.post('/horeca/logistics', requireSession(), requireRole(['Super Admin'], ['a
 })
 
 app.get('/horeca/portal-links', requireSession(), requireRole(['Super Admin'], ['admin']), (c) => c.json({
-  portal_url: 'https://india-gully.pages.dev/portal/horeca',
+  portal_url: 'https://indiagully.com/portal/horeca',
   active_clients: 3,
   pending_invites: 1,
   clients: [
@@ -16840,8 +16840,8 @@ app.get('/admin/config', requireSession(), requireRole(['Super Admin'], ['admin'
     max_login_attempts: 5,
     lockout_duration_min: 30,
     mfa_required: true,
-    allowed_domains: ['indiagully.com','india-gully.pages.dev'],
-    cors_origins: ['https://india-gully.pages.dev'],
+    allowed_domains: ['indiagully.com','indiagully.com'],
+    cors_origins: ['https://indiagully.com'],
     rate_limit_per_5min: 100,
   },
   integrations: {

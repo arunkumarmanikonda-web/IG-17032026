@@ -333,7 +333,7 @@ app.get('/', (c) => {
 `
   return c.html(layout('HORECA Solutions', content, {
     description: 'India Gully HORECA Solutions — kitchen equipment, FF&E, OS&E, linens, uniforms and guest amenities for hotels and F&B operators across India.',
-    canonical: 'https://india-gully.pages.dev/horeca'
+    canonical: 'https://indiagully.com/horeca'
   }))
 })
 
@@ -1214,7 +1214,7 @@ function igCatDownloadPDF() {
     + '</tr></thead><tbody>' + catSections + '</tbody></table>'
     + '<div style="margin-top:14px;padding-top:8px;border-top:1px solid #e4dece;display:flex;justify-content:space-between;align-items:center;">'
     + '<div style="font-size:7.5px;color:#94a3b8;">All prices in INR exclusive of GST · Prices subject to change without notice · For latest pricing contact Pavan Manikonda</div>'
-    + '<div style="font-size:7.5px;color:#94a3b8;">india-gully.pages.dev/horeca · pavan@indiagully.com · +91 62825 56067</div>'
+    + '<div style="font-size:7.5px;color:#94a3b8;">indiagully.com/horeca · pavan@indiagully.com · +91 62825 56067</div>'
     + '</div></body></html>';
 
   var w = window.open('', '_blank', 'width=1200,height=900');
@@ -1341,7 +1341,7 @@ document.addEventListener('DOMContentLoaded', igCatLoad);
 `
   return c.html(layout('HORECA Product Catalogue', content, {
     description: 'India Gully HORECA product catalogue — browse 500+ SKUs across kitchen equipment, crockery, linen, bar, housekeeping, furniture, technology and safety. Download CSV or PDF.',
-    canonical: 'https://india-gully.pages.dev/horeca/catalogue'
+    canonical: 'https://indiagully.com/horeca/catalogue'
   }))
 })
 

@@ -13,7 +13,7 @@ export function layout(title: string, content: string, opts?: {
   heroPreload?: string    // optional above-fold image URL to preload with high priority
 }) {
   const desc = opts?.description || "India Gully — Celebrating Desiness. India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt & HORECA Solutions."
-  const ogImg = opts?.ogImage || 'https://india-gully.pages.dev/static/og.jpg'
+  const ogImg = opts?.ogImage || 'https://indiagully.com/static/og.jpg'
 
   return `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -47,7 +47,7 @@ ${opts?.canonical ? `<link rel="canonical" href="${opts.canonical}">` : ''}
 <!-- FAVICON: hologram asset — locked, no AI, no optimisation, lossless only -->
 ${opts?.jsonLd ? `<script type="application/ld+json">${typeof opts.jsonLd === 'string' ? opts.jsonLd : JSON.stringify(opts.jsonLd)}</script>` : ''}
 <!-- Phase 42 — Base Organization JSON-LD on every page -->
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"India Gully Advisory","alternateName":"India Gully","url":"https://indiagully.com","logo":"https://indiagully.com/assets/logo-primary.png","description":"India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt and HORECA Solutions.","address":{"@type":"PostalAddress","addressCountry":"IN","addressLocality":"Gurugram"},"contactPoint":{"@type":"ContactPoint","contactType":"customer service","email":"advisory@indiagully.com"},"sameAs":["https://india-gully.pages.dev"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"India Gully Advisory","alternateName":"India Gully","url":"https://indiagully.com","logo":"https://indiagully.com/assets/logo-primary.png","description":"India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt and HORECA Solutions.","address":{"@type":"PostalAddress","addressCountry":"IN","addressLocality":"Gurugram"},"contactPoint":{"@type":"ContactPoint","contactType":"customer service","email":"advisory@indiagully.com"},"sameAs":["https://indiagully.com"]}</script>
 <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon-64.png">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">

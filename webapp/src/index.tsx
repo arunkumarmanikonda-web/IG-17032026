@@ -59,14 +59,14 @@ app.use('*', async (c, next) => {
       `https://fonts.googleapis.com https://cdn.jsdelivr.net; ` +
     `font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; ` +
     `img-src 'self' data: https: https://api.qrserver.com; ` +
-    `connect-src 'self' https://india-gully.pages.dev https://indiagully.com ` +
+    `connect-src 'self' https://indiagully.com ` +
       `https://cloudflareinsights.com; ` +
     `frame-ancestors 'none'; base-uri 'self'; form-action 'self';`
   )
 })
 
 app.use('/api/*', cors({
-  origin: ['https://india-gully.pages.dev', 'http://localhost:3000'],
+  origin: ['https://indiagully.com', 'http://localhost:3000'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
   credentials: true,
@@ -192,7 +192,7 @@ app.get('/legal/disclaimer', (c) => c.html(legalPage('Disclaimer', `
 
 // ── SEO: sitemap.xml ─────────────────────────────────────────────────────────
 app.get('/sitemap.xml', (c) => {
-  const BASE = 'https://india-gully.pages.dev'
+  const BASE = 'https://indiagully.com'
   const now = new Date().toISOString().split('T')[0]
 
   const staticPages = [
@@ -258,7 +258,7 @@ ${insightIds.map(id => `  <url>
 
 // ── SEO: robots.txt ──────────────────────────────────────────────────────────
 app.get('/robots.txt', (c) => {
-  const BASE = 'https://india-gully.pages.dev'
+  const BASE = 'https://indiagully.com'
   return c.text(
     `User-agent: *\nAllow: /\nDisallow: /portal/\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${BASE}/sitemap.xml\n`,
     200,
