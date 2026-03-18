@@ -55,7 +55,7 @@ app.get('/', (c) => {
   <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
     <div>
       <p style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;">Product Catalogue — Live &amp; Downloadable</p>
-      <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;color:var(--ink);margin:0;">Browse 500+ SKUs across 8 categories. Download full catalogue as CSV or PDF.</h3>
+      <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;color:var(--ink);margin:0;">Browse 63+ SKUs across 10 categories. Download full catalogue as CSV or PDF.</h3>
     </div>
     <div style="display:flex;gap:.875rem;flex-wrap:wrap;">
       <a href="/horeca/catalogue" style="background:var(--gold);color:#fff;text-decoration:none;padding:.65rem 1.5rem;font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;display:inline-flex;align-items:center;gap:.5rem;"><i class="fas fa-th-large"></i>View Full Catalogue</a>
@@ -490,16 +490,39 @@ app.get('/catalogue', (c) => {
           </label>
         </div>
 
-        <!-- GST Filter -->
+        <!-- Supplier Filter -->
         <div style="background:#fff;border:1px solid var(--border);margin-top:1rem;padding:1rem;">
-          <label style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:.5rem;">GST Rate</label>
+          <label style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:.5rem;">Filter by Supplier</label>
           <select id="cat-gst-filter" class="ig-inp" style="font-size:.78rem;" onchange="igCatFilter()">
-            <option value="">All GST Rates</option>
-            <option value="5">5%</option>
-            <option value="12">12%</option>
-            <option value="18">18%</option>
-            <option value="28">28%</option>
+            <option value="">All Suppliers</option>
+            <option value="ARI">ARI — Ariane</option>
+            <option value="OCN">OCN — Ocean</option>
+            <option value="DLP">DLP — Dolphy</option>
+            <option value="WEL">WEL — Welspun</option>
+            <option value="TRD">TRD — Trident</option>
+            <option value="BST">BST — Blue Star</option>
+            <option value="HIK">HIK — Hikvision</option>
+            <option value="CRI">CRI — Crispo</option>
+            <option value="FLM">FLM — Filmop</option>
+            <option value="SMS">SMS — Samsung</option>
           </select>
+        </div>
+
+        <!-- Featured Brands -->
+        <div style="background:linear-gradient(135deg,#0a1628,#1A3A6B);border:1px solid rgba(184,150,12,.3);margin-top:1rem;padding:1rem;">
+          <p style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.625rem;"><i class="fas fa-award" style="margin-right:.35rem;"></i>Featured Brands</p>
+          <div style="display:flex;flex-direction:column;gap:.5rem;">
+            <button onclick="igCatSearchBySupplier('ARI')" style="background:rgba(124,58,237,.15);color:#c4b5fd;border:1px solid rgba(124,58,237,.3);padding:.45rem .75rem;font-size:.72rem;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.5rem;">
+              <span style="background:#7c3aed;color:#fff;padding:.1rem .4rem;font-size:.6rem;font-weight:800;font-family:monospace;">ARI</span> Ariane
+            </button>
+            <button onclick="igCatSearchBySupplier('OCN')" style="background:rgba(37,99,235,.15);color:#93c5fd;border:1px solid rgba(37,99,235,.3);padding:.45rem .75rem;font-size:.72rem;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.5rem;">
+              <span style="background:#2563eb;color:#fff;padding:.1rem .4rem;font-size:.6rem;font-weight:800;font-family:monospace;">OCN</span> Ocean
+            </button>
+            <button onclick="igCatSearchBySupplier('DLP')" style="background:rgba(5,150,105,.15);color:#6ee7b7;border:1px solid rgba(5,150,105,.3);padding:.45rem .75rem;font-size:.72rem;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.5rem;">
+              <span style="background:#059669;color:#fff;padding:.1rem .4rem;font-size:.6rem;font-weight:800;font-family:monospace;">DLP</span> Dolphy
+            </button>
+          </div>
+          <p style="font-size:.6rem;color:rgba(255,255,255,.4);margin-top:.5rem;line-height:1.5;">Highlighted brands from our curated supplier catalogue.</p>
         </div>
 
         <!-- Download Box -->
@@ -535,9 +558,8 @@ app.get('/catalogue', (c) => {
             <select id="cat-sort" class="ig-inp" style="font-size:.78rem;max-width:160px;" onchange="igCatFilter()">
               <option value="default">Sort: Default</option>
               <option value="name">Name A–Z</option>
-              <option value="price_asc">Price: Low–High</option>
-              <option value="price_desc">Price: High–Low</option>
-              <option value="stock_asc">Stock: Low First</option>
+              <option value="sku">SKU / Product ID</option>
+              <option value="supplier">By Supplier</option>
               <option value="featured">Featured First</option>
             </select>
             <button onclick="igCatToggleView('grid')" id="btn-view-grid" style="background:var(--gold);color:#fff;border:none;padding:.4rem .6rem;cursor:pointer;" title="Grid view">
@@ -564,15 +586,12 @@ app.get('/catalogue', (c) => {
             <table style="width:100%;border-collapse:collapse;font-size:.78rem;">
               <thead>
                 <tr style="background:#f8f6f1;border-bottom:2px solid var(--border);">
-                  <th style="padding:.625rem 1rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">SKU</th>
+                  <th style="padding:.625rem 1rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">SKU / Product ID</th>
                   <th style="padding:.625rem 1rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Product</th>
                   <th style="padding:.625rem 1rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Category</th>
                   <th style="padding:.625rem 1rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Unit</th>
-                  <th style="padding:.625rem .75rem;text-align:right;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Price ₹</th>
-                  <th style="padding:.625rem .75rem;text-align:right;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">GST</th>
                   <th style="padding:.625rem .75rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">HSN</th>
-                  <th style="padding:.625rem .75rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Brand</th>
-                  <th style="padding:.625rem .75rem;text-align:center;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Stock</th>
+                  <th style="padding:.625rem .75rem;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);">Supplier</th>
                 </tr>
               </thead>
               <tbody id="cat-table-tbody" style=""></tbody>
@@ -993,28 +1012,39 @@ function igCatClearFilters() {
   igCatFilter();
 }
 
+function igCatSearchBySupplier(code) {
+  document.getElementById('cat-gst-filter').value = code;
+  _igCatActiveCategory = '';
+  document.querySelectorAll('.cat-sidebar-btn').forEach(function(b){ b.classList.remove('active'); });
+  var allBtn = document.getElementById('cat-btn-all');
+  if (allBtn) allBtn.classList.add('active');
+  igCatFilter();
+}
+
 function igCatFilter() {
   var search = (document.getElementById('cat-search').value || '').toLowerCase().trim();
   var featuredOnly = document.getElementById('cat-featured-only').checked;
-  var gstFilter = document.getElementById('cat-gst-filter').value;
+  var supplierFilter = document.getElementById('cat-gst-filter').value;
   var sort = document.getElementById('cat-sort').value;
 
   var filtered = _igCatProducts.filter(function(p) {
     if (_igCatActiveCategory && p.category !== _igCatActiveCategory) return false;
     if (featuredOnly && !p.featured) return false;
-    if (gstFilter && String(p.gst_rate) !== gstFilter) return false;
+    if (supplierFilter) {
+      var code = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
+      if (code !== supplierFilter) return false;
+    }
     if (search) {
-      var hay = (p.name + ' ' + p.sku + ' ' + (p.brand||'') + ' ' + (p.description||'')).toLowerCase();
+      var hay = (p.name + ' ' + (p.sku||p.id||'') + ' ' + (p.supplierCode||'') + ' ' + (p.spaceType||'') + ' ' + (p.description||'')).toLowerCase();
       if (!hay.includes(search)) return false;
     }
     return true;
   });
 
   // Sort
-  if (sort === 'name') filtered.sort(function(a,b){ return a.name.localeCompare(b.name); });
-  else if (sort === 'price_asc') filtered.sort(function(a,b){ return a.price - b.price; });
-  else if (sort === 'price_desc') filtered.sort(function(a,b){ return b.price - a.price; });
-  else if (sort === 'stock_asc') filtered.sort(function(a,b){ return a.stock - b.stock; });
+  if (sort === 'name') filtered.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  else if (sort === 'sku') filtered.sort(function(a,b){ return (a.sku||a.id||'').localeCompare(b.sku||b.id||''); });
+  else if (sort === 'supplier') filtered.sort(function(a,b){ return (a.supplierCode||'').localeCompare(b.supplierCode||''); });
   else if (sort === 'featured') filtered.sort(function(a,b){ return (b.featured?1:0) - (a.featured?1:0); });
 
   // Update count
@@ -1046,59 +1076,73 @@ function igCatFilter() {
 }
 
 function igCatRenderGrid(products) {
+  // Category icon map (updated for new categories)
   var catIconMap = {
-    'Kitchen Equipment': 'fire', 'Crockery & Cutlery': 'concierge-bell',
-    'Linen & Soft Furnishing': 'bed', 'Bar & Beverages': 'wine-glass-alt',
-    'Housekeeping Supplies': 'broom', 'Furniture & Fixtures': 'couch',
-    'Tech & POS Systems': 'desktop', 'Safety & Security': 'shield-alt',
-    'Guest Amenities': 'spa', 'Staff Uniforms': 'tshirt', 'Technology & AV': 'tv'
+    'Kitchen Equipment': 'fire', 'Glassware & Tableware': 'glass-cheers',
+    'Hotel Linen & Textiles': 'bed', 'Guest Amenities': 'spa',
+    'Washroom & Hygiene': 'soap', 'Housekeeping Supplies': 'broom',
+    'Furniture & Fixtures': 'couch', 'Tech & AV Systems': 'tv',
+    'Bar & Beverage Equipment': 'wine-glass-alt', 'Safety & Security': 'shield-alt',
+    // Legacy categories
+    'Crockery & Cutlery': 'concierge-bell', 'Linen & Soft Furnishing': 'bed',
+    'Bar & Beverages': 'wine-glass-alt', 'Tech & POS Systems': 'desktop',
   };
+  // Featured brand badges (Ariane, Ocean, Dolphy get special highlighting)
+  var featuredBrands = { 'ARI': {label:'Ariane', bg:'#7c3aed', txt:'#fff'}, 'OCN': {label:'Ocean', bg:'#2563eb', txt:'#fff'}, 'DLP': {label:'Dolphy', bg:'#059669', txt:'#fff'} };
   var html = '';
   products.forEach(function(p) {
-    var lowStock = p.stock <= p.reorder && p.stock > 0;
-    var outOfStock = p.stock === 0;
-    var stockColor = outOfStock ? '#dc2626' : (lowStock ? '#d97706' : '#16a34a');
-    var stockBg    = outOfStock ? 'rgba(220,38,38,.07)' : (lowStock ? 'rgba(217,119,6,.07)' : 'rgba(22,163,74,.07)');
-    var stockText  = outOfStock ? 'Out of Stock' : (lowStock ? 'Low — ' + p.stock + ' left' : 'In Stock');
     var catData    = _igCatCategories.find(function(c){ return c.name === p.category; }) || {};
     var catColor   = catData.color || '#475569';
     var catIcon    = catIconMap[p.category] || catData.icon || 'box';
-    var priceIncGst = p.price ? Math.round(p.price * (1 + (p.gst_rate||18)/100)) : 0;
-
+    var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
+    var brandBadge = featuredBrands[supplierCode];
+    // Build specs snippet (show first 4 specs)
+    var specsHtml = '';
+    if (p.specs && typeof p.specs === 'object') {
+      var specKeys = Object.keys(p.specs).slice(0, 4);
+      specsHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.2rem .4rem;margin-top:.35rem;">';
+      specKeys.forEach(function(k) {
+        specsHtml += '<div style="font-size:.58rem;color:#64748b;"><span style="color:#94a3b8;font-weight:600;">' + k + ':</span> ' + p.specs[k] + '</div>';
+      });
+      specsHtml += '</div>';
+    }
     html += '<div class="prod-card" style="display:flex;flex-direction:column;">'
       // Featured banner
       + (p.featured ? '<div style="background:linear-gradient(90deg,var(--gold),#a37a08);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .875rem;display:flex;align-items:center;gap:.3rem;"><i class="fas fa-star" style="font-size:.55rem;"></i>Featured SKU</div>' : '')
-      // Image / category icon area
-      + '<div style="height:130px;background:linear-gradient(145deg,' + catColor + '15 0%,' + catColor + '05 100%);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,.06);overflow:hidden;">'
+      // Image area — shows actual product image with fallback icon
+      + '<div style="height:160px;background:linear-gradient(145deg,' + catColor + '15 0%,' + catColor + '05 100%);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,.06);overflow:hidden;">'
       + '<div style="position:absolute;bottom:-20px;right:-20px;width:90px;height:90px;border-radius:50%;background:' + catColor + '08;"></div>'
       + '<div style="position:absolute;top:-10px;left:-10px;width:60px;height:60px;border-radius:50%;background:' + catColor + '06;"></div>'
-      + (p.image ? '<img src="' + p.image + '" alt="' + p.name.replace(/"/g,'') + '" style="max-height:110px;max-width:88%;object-fit:contain;position:relative;z-index:1;" loading="lazy">'
-                 : '<div style="text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div><span style="font-size:.58rem;color:' + catColor + ';font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.8;">' + (p.category||'').split(' & ')[0] + '</span></div>')
+      + (p.image ? '<img src="' + p.image + '" alt="' + (p.name||'').replace(/"/g,'') + '" style="width:100%;height:160px;object-fit:cover;position:relative;z-index:1;" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div style="display:none;text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div></div>'
+        : '<div style="text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div><span style="font-size:.58rem;color:' + catColor + ';font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.8;">' + (p.category||'').split(' & ')[0] + '</span></div>')
+      // Space type tag overlaid on image
+      + (p.spaceType ? '<div style="position:absolute;top:.5rem;left:.5rem;z-index:2;background:rgba(0,0,0,.55);color:#fff;font-size:.55rem;font-weight:600;padding:.18rem .5rem;letter-spacing:.05em;">' + p.spaceType + '</div>' : '')
       + '</div>'
       // Content
-      + '<div style="padding:1rem 1.1rem;flex:1;display:flex;flex-direction:column;gap:.35rem;">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;">'
-      + '<span style="font-size:.58rem;font-weight:700;letter-spacing:.1em;font-family:monospace;color:#0d9488;">' + p.sku + '</span>'
-      + '<span style="font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.15rem .45rem;background:' + catColor + '18;color:' + catColor + ';border:1px solid ' + catColor + '33;">' + p.hsn + '</span>'
+      + '<div style="padding:.875rem 1rem;flex:1;display:flex;flex-direction:column;gap:.3rem;">'
+      // SKU + Brand badge row
+      + '<div style="display:flex;justify-content:space-between;align-items:center;gap:.4rem;">'
+      + '<span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;font-family:monospace;color:#0d9488;background:#f0fdf4;padding:.2rem .45rem;border:1px solid #a7f3d0;">' + (p.sku||p.id) + '</span>'
+      + (brandBadge ? '<span style="font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.18rem .5rem;background:' + brandBadge.bg + ';color:' + brandBadge.txt + ';">' + brandBadge.label + '</span>'
+                    : (supplierCode ? '<span style="font-size:.58rem;font-weight:700;letter-spacing:.08em;padding:.15rem .4rem;background:' + catColor + '18;color:' + catColor + ';border:1px solid ' + catColor + '33;">' + supplierCode + '</span>' : ''))
       + '</div>'
-      + '<h3 style="font-size:.875rem;font-weight:700;color:var(--ink);line-height:1.3;margin:0;">' + p.name + '</h3>'
-      + (p.brand ? '<p style="font-size:.68rem;color:#94a3b8;margin:0;"><i class="fas fa-trademark" style="margin-right:.2rem;font-size:.55rem;"></i>' + p.brand + '</p>' : '')
-      + (p.description ? '<p style="font-size:.72rem;color:var(--ink-muted);line-height:1.5;margin:0;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + p.description + '</p>' : '<div style="flex:1;"></div>')
-      // Price row
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.35rem;padding:.625rem 0;border-top:1px solid var(--border);margin-top:.35rem;">'
-      + '<div><div style="font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:.15rem;">Ex-GST / ' + (p.unit||'Piece') + '</div><div style="font-family:Georgia,serif;font-size:1.15rem;color:var(--gold);">&#8377;' + (p.price||0).toLocaleString('en-IN') + '</div></div>'
-      + '<div><div style="font-size:.55rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:.15rem;">Inc. GST (' + (p.gst_rate||18) + '%)</div><div style="font-size:.88rem;font-weight:700;color:var(--ink);">&#8377;' + priceIncGst.toLocaleString('en-IN') + '</div></div>'
+      // Product name
+      + '<h3 style="font-size:.85rem;font-weight:700;color:var(--ink);line-height:1.3;margin:0;">' + (p.name||'') + '</h3>'
+      // Category badge + HSN
+      + '<div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">'
+      + '<span style="font-size:.55rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:.12rem .4rem;background:' + catColor + '15;color:' + catColor + ';border:1px solid ' + catColor + '25;">' + (p.category||'') + '</span>'
+      + (p.unit ? '<span style="font-size:.55rem;color:#94a3b8;font-weight:500;">per ' + p.unit + '</span>' : '')
       + '</div>'
-      // Stock + CTA
-      + '<div style="display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;background:' + stockBg + ';border:1px solid ' + stockColor + '33;">'
-      + '<i class="fas fa-circle" style="font-size:.35rem;color:' + stockColor + ';"></i>'
-      + '<span style="font-size:.67rem;font-weight:600;color:' + stockColor + ';flex:1;">' + stockText + '</span>'
+      // Description
+      + (p.description ? '<p style="font-size:.7rem;color:var(--ink-muted);line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + p.description + '</p>' : '')
+      // Specs grid
+      + specsHtml
       + '</div>'
-      + '</div>'
-      // CTA footer
-      + '<div style="padding:.625rem 1.1rem;border-top:1px solid var(--border);background:#fafaf7;">'
-      + '<a href="/horeca#enquiry" class="prod-quote-btn" data-sku="' + p.sku.replace(/"/g,'') + '" data-name="' + p.name.replace(/"/g,'&quot;') + '" onclick="igCatEnquire(event,this.dataset.sku,this.dataset.name)">'
-      + '<i class="fas fa-paper-plane" style="font-size:.6rem;"></i>Request Quote</a>'
+      // CTA footer — no pricing, just enquiry
+      + '<div style="padding:.625rem 1rem;border-top:1px solid var(--border);background:#fafaf7;display:flex;align-items:center;justify-content:space-between;">'
+      + '<span style="font-size:.6rem;color:#94a3b8;font-family:monospace;">' + (p.hsn ? 'HSN: ' + p.hsn : '') + '</span>'
+      + '<a href="/horeca#enquiry" class="prod-quote-btn" data-sku="' + (p.sku||p.id||'').replace(/"/g,'') + '" data-name="' + (p.name||'').replace(/"/g,'&quot;') + '" onclick="igCatEnquire(event,this.dataset.sku,this.dataset.name)" style="font-size:.65rem;padding:.35rem .75rem;">'
+      + '<i class="fas fa-paper-plane" style="font-size:.55rem;margin-right:.3rem;"></i>Enquire</a>'
       + '</div>'
       + '</div>';
   });
@@ -1106,25 +1150,22 @@ function igCatRenderGrid(products) {
 }
 
 function igCatRenderTable(products) {
+  var featuredBrands = { 'ARI': 'Ariane', 'OCN': 'Ocean', 'DLP': 'Dolphy' };
   var html = '';
   products.forEach(function(p) {
-    var lowStock = p.stock <= p.reorder && p.stock > 0;
-    var outOfStock = p.stock === 0;
-    var stockColor = outOfStock ? '#dc2626' : (lowStock ? '#d97706' : '#16a34a');
     var catColor = (_igCatCategories.find(function(c){ return c.name === p.category; }) || {}).color || '#475569';
+    var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
+    var brandName = featuredBrands[supplierCode] || supplierCode || '—';
     html += '<tr style="border-bottom:1px solid var(--border);">'
-      + '<td style="padding:.625rem 1rem;"><span style="font-size:.7rem;font-weight:700;font-family:monospace;color:#0d9488;">' + p.sku + '</span>' + (p.featured ? ' <i class="fas fa-star" style="color:var(--gold);font-size:.55rem;"></i>' : '') + '</td>'
-      + '<td style="padding:.625rem 1rem;"><span style="font-size:.8rem;font-weight:600;color:var(--ink);">' + p.name + '</span>' + (p.brand ? '<br><span style="font-size:.65rem;color:#94a3b8;">' + p.brand + '</span>' : '') + '</td>'
+      + '<td style="padding:.625rem 1rem;"><span style="font-size:.7rem;font-weight:700;font-family:monospace;color:#0d9488;">' + (p.sku||p.id) + '</span>' + (p.featured ? ' <i class="fas fa-star" style="color:var(--gold);font-size:.55rem;"></i>' : '') + '</td>'
+      + '<td style="padding:.625rem 1rem;"><span style="font-size:.8rem;font-weight:600;color:var(--ink);">' + (p.name||'') + '</span>' + (p.spaceType ? '<br><span style="font-size:.6rem;color:#94a3b8;"><i class="fas fa-map-marker-alt" style="margin-right:.2rem;"></i>' + p.spaceType + '</span>' : '') + '</td>'
       + '<td style="padding:.625rem 1rem;"><span class="cat-badge" style="background:' + catColor + '22;color:' + catColor + ';">' + (p.category||'') + '</span></td>'
       + '<td style="padding:.625rem 1rem;font-size:.75rem;color:var(--ink-muted);">' + (p.unit||'Piece') + '</td>'
-      + '<td style="padding:.625rem .75rem;text-align:right;font-family:Georgia,serif;font-size:.9rem;color:var(--gold);">&#8377;' + (p.price||0).toLocaleString('en-IN') + '</td>'
-      + '<td style="padding:.625rem .75rem;text-align:right;font-size:.75rem;color:var(--ink-muted);">' + (p.gst_rate||18) + '%</td>'
       + '<td style="padding:.625rem .75rem;font-size:.7rem;color:#94a3b8;font-family:monospace;">' + (p.hsn||'—') + '</td>'
-      + '<td style="padding:.625rem .75rem;font-size:.75rem;color:var(--ink-muted);">' + (p.brand||'—') + '</td>'
-      + '<td style="padding:.625rem .75rem;text-align:center;"><span style="font-size:.72rem;font-weight:700;color:' + stockColor + ';">' + (p.stock||0) + '</span></td>'
+      + '<td style="padding:.625rem .75rem;font-size:.75rem;font-weight:600;color:' + catColor + ';">' + brandName + '</td>'
       + '</tr>';
   });
-  document.getElementById('cat-table-tbody').innerHTML = html || '<tr><td colspan="9" style="padding:2rem;text-align:center;color:var(--ink-muted);">No products found</td></tr>';
+  document.getElementById('cat-table-tbody').innerHTML = html || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--ink-muted);">No products found</td></tr>';
 }
 
 function igCatToggleView(view) {
@@ -1146,19 +1187,18 @@ function igSaveCsv(filename, csv) {
 }
 
 function igBuildCsv(products) {
-  var headers = ['SKU', 'Product Name', 'Category', 'Unit', 'Price (INR)', 'GST Rate (%)', 'HSN Code', 'Brand', 'Stock Qty', 'Reorder Level', 'Featured', 'Description'];
+  var headers = ['Product ID', 'SKU', 'Product Name', 'Category', 'Space Type', 'Unit', 'Supplier Code', 'HSN Code', 'Featured', 'Description'];
   var rows = products.map(function(p) {
+    var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
     return [
-      p.sku,
+      p.id || p.sku,
+      p.sku || p.id,
       '"' + (p.name||'').replace(/"/g,"'") + '"',
       '"' + (p.category||'').replace(/"/g,"'") + '"',
+      '"' + (p.spaceType||'').replace(/"/g,"'") + '"',
       p.unit || 'Piece',
-      p.price || 0,
-      p.gst_rate || 18,
+      supplierCode,
       p.hsn || '',
-      '"' + (p.brand||'').replace(/"/g,"'") + '"',
-      p.stock || 0,
-      p.reorder || 0,
       p.featured ? 'Yes' : 'No',
       '"' + (p.description||'').replace(/"/g,"'").substring(0, 200) + '"'
     ].join(',');
@@ -1197,12 +1237,12 @@ function igCatDownloadCSV() {
 function igCatDownloadFiltered() {
   var search = (document.getElementById('cat-search').value || '').toLowerCase().trim();
   var featuredOnly = document.getElementById('cat-featured-only').checked;
-  var gstFilter = document.getElementById('cat-gst-filter').value;
+  var supplierFilter = document.getElementById('cat-gst-filter').value;
   var filtered = _igCatProducts.filter(function(p) {
     if (_igCatActiveCategory && p.category !== _igCatActiveCategory) return false;
     if (featuredOnly && !p.featured) return false;
-    if (gstFilter && String(p.gst_rate) !== gstFilter) return false;
-    if (search) { var hay = (p.name+' '+p.sku+' '+(p.brand||'')+(p.description||'')).toLowerCase(); if (!hay.includes(search)) return false; }
+    if (supplierFilter) { var code = p.supplierCode || (p.sku ? p.sku.split('-')[0] : ''); if (code !== supplierFilter) return false; }
+    if (search) { var hay = (p.name+' '+(p.sku||p.id||'')+' '+(p.supplierCode||'')+(p.description||'')).toLowerCase(); if (!hay.includes(search)) return false; }
     return true;
   });
   if (filtered.length === 0) { igShowToast('No products match current filters', 'warn'); return; }
@@ -1226,18 +1266,17 @@ function igCatDownloadPDF() {
 
   var catSections = Object.keys(catMap).map(function(cat) {
     var rows = catMap[cat].map(function(p, i) {
-      var stockColor = p.stock===0?'#dc2626':(p.stock<=p.reorder?'#d97706':'#16a34a');
+      var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
       return '<tr style="background:' + (i%2===0?'#fff':'#fafaf7') + ';page-break-inside:avoid;">'
-        + '<td style="padding:5px 8px;font-family:monospace;font-size:8px;color:#0d9488;white-space:nowrap;border-bottom:1px solid #ede8df;">' + p.sku + '</td>'
-        + '<td style="padding:5px 8px;border-bottom:1px solid #ede8df;"><div style="font-size:9.5px;font-weight:700;color:#111;">' + p.name + '</div>' + (p.brand?'<div style="font-size:7.5px;color:#94a3b8;margin-top:1px;">'+p.brand+'</div>':'') + '</td>'
+        + '<td style="padding:5px 8px;font-family:monospace;font-size:8px;color:#0d9488;white-space:nowrap;border-bottom:1px solid #ede8df;">' + (p.sku||p.id) + '</td>'
+        + '<td style="padding:5px 8px;border-bottom:1px solid #ede8df;"><div style="font-size:9.5px;font-weight:700;color:#111;">' + (p.name||'') + '</div>' + (p.spaceType?'<div style="font-size:7.5px;color:#94a3b8;margin-top:1px;">'+p.spaceType+'</div>':'') + '</td>'
         + '<td style="padding:5px 8px;font-size:8px;color:#475569;border-bottom:1px solid #ede8df;">' + (p.unit||'Piece') + '</td>'
-        + '<td style="padding:5px 8px;font-size:10px;font-weight:700;color:#B8960C;text-align:right;border-bottom:1px solid #ede8df;">₹' + (p.price||0).toLocaleString('en-IN') + '</td>'
-        + '<td style="padding:5px 8px;font-size:8px;text-align:center;border-bottom:1px solid #ede8df;">' + (p.gst_rate||18) + '%</td>'
         + '<td style="padding:5px 8px;font-size:8px;font-family:monospace;border-bottom:1px solid #ede8df;">' + (p.hsn||'—') + '</td>'
-        + '<td style="padding:5px 8px;text-align:center;border-bottom:1px solid #ede8df;"><span style="font-size:9px;font-weight:700;color:'+stockColor+';">' + (p.stock||0) + '</span></td>'
+        + '<td style="padding:5px 8px;font-size:8px;font-weight:700;color:#0d9488;border-bottom:1px solid #ede8df;">' + supplierCode + '</td>'
+        + '<td style="padding:5px 8px;font-size:8px;border-bottom:1px solid #ede8df;text-align:center;">' + (p.featured?'★':'') + '</td>'
         + '</tr>';
     }).join('');
-    return '<tr style="page-break-inside:avoid;"><td colspan="7" style="padding:10px 8px 4px;background:#1A3A6B;"><span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;">' + cat + '</span><span style="font-size:8px;color:rgba(255,255,255,.5);margin-left:8px;">' + catMap[cat].length + ' products</span></td></tr>'
+    return '<tr style="page-break-inside:avoid;"><td colspan="6" style="padding:10px 8px 4px;background:#1A3A6B;"><span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;">' + cat + '</span><span style="font-size:8px;color:rgba(255,255,255,.5);margin-left:8px;">' + catMap[cat].length + ' products</span></td></tr>'
       + rows;
   }).join('');
 
@@ -1261,17 +1300,17 @@ function igCatDownloadPDF() {
     + '<div><div style="font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(184,150,12,.7);margin-bottom:6px;">India Gully · HORECA Solutions Division</div>'
     + '<div style="font-family:Georgia,serif;font-size:26px;color:#fff;line-height:1.15;margin-bottom:4px;">HORECA Product<br>Catalogue</div>'
     + '<div style="font-size:9px;color:rgba(255,255,255,.5);">Kitchen Equipment · FF&E · OS&E · Linen · Uniforms · Guest Amenities</div>'
-    + '<div class="badge-row"><span class="badge">' + products.length + ' Products</span><span class="badge">' + Object.keys(catMap).length + ' Categories</span><span class="badge">GST Inclusive</span></div></div>'
+    + '<div class="badge-row"><span class="badge">' + products.length + ' Products</span><span class="badge">' + Object.keys(catMap).length + ' Categories</span><span class="badge">Enquiry Only — No Pricing</span></div></div>'
     + '<div style="text-align:right;"><div style="font-size:9px;color:rgba(255,255,255,.5);">Generated: ' + date + '</div>'
     + '<div style="font-size:9px;color:rgba(255,255,255,.5);margin-top:4px;">Pavan Manikonda — HORECA Division</div>'
     + '<div style="font-size:9px;color:rgba(255,255,255,.5);">pavan@indiagully.com</div>'
     + '<div style="font-size:9px;color:rgba(255,255,255,.5);">+91 62825 56067</div>'
     + '<div style="font-size:8px;color:rgba(255,255,255,.35);margin-top:6px;">Vivacious Entertainment &amp; Hospitality Pvt. Ltd.<br>GSTIN: 07AAGCV0867P1ZN</div></div></div></div>'
     + '<table><thead><tr>'
-    + '<th style="width:80px;">SKU</th><th>Product Name</th><th style="width:70px;">Unit</th><th style="width:90px;text-align:right;">Price (INR)</th><th style="width:50px;text-align:center;">GST%</th><th style="width:70px;">HSN Code</th><th style="width:50px;text-align:center;">Stock</th>'
+    + '<th style="width:100px;">SKU / Product ID</th><th>Product Name</th><th style="width:70px;">Unit</th><th style="width:70px;">HSN Code</th><th style="width:60px;">Supplier</th><th style="width:30px;text-align:center;">Feat.</th>'
     + '</tr></thead><tbody>' + catSections + '</tbody></table>'
     + '<div style="margin-top:14px;padding-top:8px;border-top:1px solid #e4dece;display:flex;justify-content:space-between;align-items:center;">'
-    + '<div style="font-size:7.5px;color:#94a3b8;">All prices in INR exclusive of GST · Prices subject to change without notice · For latest pricing contact Pavan Manikonda</div>'
+    + '<div style="font-size:7.5px;color:#94a3b8;">No pricing shown — contact India Gully HORECA Division for customised quotations · Prices subject to negotiation based on quantities</div>'
     + '<div style="font-size:7.5px;color:#94a3b8;">indiagully.com/horeca · pavan@indiagully.com · +91 62825 56067</div>'
     + '</div></body></html>';
 
@@ -1398,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', igCatLoad);
 </script>
 `
   return c.html(layout('HORECA Product Catalogue', content, {
-    description: 'India Gully HORECA product catalogue — browse 500+ SKUs across kitchen equipment, crockery, linen, bar, housekeeping, furniture, technology and safety. Download CSV or PDF.',
+    description: 'India Gully HORECA product catalogue — browse 63+ SKUs across kitchen equipment, glassware, linen, guest amenities, washroom supplies, housekeeping, furniture, tech and safety. Featured brands: Ariane, Ocean, Dolphy.',
     canonical: 'https://indiagully.com/horeca/catalogue'
   }))
 })
