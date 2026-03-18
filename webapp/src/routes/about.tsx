@@ -34,49 +34,139 @@ app.get('/', (c) => {
 <!-- VISION & MISSION -->
 <div class="sec-wh" style="padding-top:7rem;">
   <div class="wrap">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;" class="mob-stack">
-      <div class="reveal-l">
-        <div class="gr"></div>
-        <p class="eyebrow" style="margin-bottom:.875rem;">Our Purpose</p>
-        <h2 class="h2" style="margin-bottom:3rem;">Vision &amp; Mission</h2>
 
-        <div style="border-left:3px solid var(--gold);padding:1.75rem 2rem;background:linear-gradient(135deg,rgba(184,150,12,.04),transparent);margin-bottom:1.75rem;position:relative;">
-          <div style="position:absolute;top:1.5rem;left:-3px;width:3px;height:40px;background:linear-gradient(180deg,var(--gold),var(--gold-lt));"></div>
-          <p style="font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;">Vision</p>
-          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);line-height:1.7;font-style:italic;">"To be India's most respected diversified advisory enterprise, creating extraordinary experiences in hospitality and entertainment while delivering unmatched strategic value to our clients and stakeholders."</p>
+    <!-- Section header -->
+    <div style="text-align:center;max-width:600px;margin:0 auto 5rem;">
+      <div class="gr-c"></div>
+      <p class="eyebrow" style="margin-bottom:.875rem;">Our Purpose</p>
+      <h2 class="h2">Vision, Mission<br>&amp; Guiding Principles</h2>
+      <p class="lead" style="margin-top:1.25rem;">The strategic intent and values that govern every mandate, every relationship, every decision we make.</p>
+    </div>
+
+    <!-- Vision + Mission two-column -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:5rem;" class="mob-stack">
+
+      <!-- VISION -->
+      <div class="reveal-l" style="position:relative;overflow:hidden;background:var(--ink);padding:3rem 2.5rem;border:1px solid rgba(184,150,12,.18);">
+        <!-- Gold corner accent -->
+        <div style="position:absolute;top:0;left:0;width:80px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+        <div style="position:absolute;top:0;left:0;width:3px;height:80px;background:linear-gradient(180deg,var(--gold),transparent);"></div>
+        <!-- Subtle bg glow -->
+        <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(184,150,12,.07) 0%,transparent 70%);pointer-events:none;"></div>
+
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;">
+          <div style="width:36px;height:36px;background:rgba(184,150,12,.12);border:1px solid rgba(184,150,12,.3);display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-eye" style="color:var(--gold);font-size:.8rem;"></i>
+          </div>
+          <span style="font-size:.6rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);">Vision</span>
         </div>
 
-        <div style="border-left:3px solid var(--border);padding:1.75rem 2rem;background:var(--parch);">
-          <p style="font-size:.6rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.75rem;">Mission</p>
-          <p style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);line-height:1.7;font-style:italic;">"To combine deep sector expertise with operational excellence and global best practices, enabling our clients and ventures to achieve sustainable, scalable growth that benefits all stakeholders."</p>
-        </div>
+        <blockquote style="font-family:'DM Serif Display',Georgia,serif;font-size:1.2rem;color:#fff;line-height:1.75;font-style:italic;margin:0 0 1.75rem;border:none;padding:0;">
+          "To be India's preeminent force in Real Estate, Hospitality and Entertainment — integrating institutional rigour with bespoke advisory and trading solutions, while setting the benchmark for excellence across every vertical."
+        </blockquote>
+
+        <p style="font-size:.8rem;color:rgba(255,255,255,.45);line-height:1.75;border-top:1px solid rgba(255,255,255,.07);padding-top:1.25rem;">
+          We do not follow the market. We define its next chapter — transaction by transaction, mandate by mandate, across every sector we operate in.
+        </p>
       </div>
 
-      <div class="reveal-r">
-        <div class="gr"></div>
-        <p class="eyebrow" style="margin-bottom:.875rem;">Core Values</p>
-        <h2 class="h2" style="margin-bottom:3rem;">The Principles<br>That Guide Us</h2>
+      <!-- MISSION -->
+      <div class="reveal-r" style="position:relative;overflow:hidden;background:var(--parch);padding:3rem 2.5rem;border:1px solid var(--border);">
+        <!-- Navy corner accent -->
+        <div style="position:absolute;top:0;left:0;width:80px;height:3px;background:linear-gradient(90deg,#1A3A6B,transparent);"></div>
+        <div style="position:absolute;top:0;left:0;width:3px;height:80px;background:linear-gradient(180deg,#1A3A6B,transparent);"></div>
 
-        <div style="display:flex;flex-direction:column;gap:0;">
-          ${[
-            { icon:'⚖️', name:'Integrity',   desc:'Transparent, ethical conduct in every engagement. We act in the best interests of our clients and maintain the highest standards of professional ethics.' },
-            { icon:'🏆', name:'Excellence',  desc:'Relentless pursuit of the highest standards in everything we do, from mandate delivery to client communication and internal governance.' },
-            { icon:'🤝', name:'Partnership', desc:'Long-term relationships built on trust, shared objectives and sustained value creation for clients, partners and communities we operate in.' },
-            { icon:'💡', name:'Innovation',  desc:'Embracing new ideas, methodologies and technologies to solve complex challenges and create differentiated outcomes.' },
-          ].map(v => `
-          <div style="display:flex;gap:1.5rem;padding:1.75rem 0;border-bottom:1px solid var(--border);align-items:flex-start;transition:background .2s;" onmouseover="this.style.background='rgba(184,150,12,.02)'" onmouseout="this.style.background='transparent'">
-            <span style="font-size:1.6rem;flex-shrink:0;width:40px;text-align:center;">${v.icon}</span>
-            <div>
-              <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);margin-bottom:.4rem;">${v.name}</h3>
-              <p style="font-size:.875rem;color:var(--ink-soft);line-height:1.8;">${v.desc}</p>
-            </div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;">
+          <div style="width:36px;height:36px;background:rgba(26,58,107,.08);border:1px solid rgba(26,58,107,.2);display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-rocket" style="color:#1A3A6B;font-size:.8rem;"></i>
           </div>
-          `).join('')}
+          <span style="font-size:.6rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#1A3A6B;">Mission</span>
         </div>
+
+        <blockquote style="font-family:'DM Serif Display',Georgia,serif;font-size:1.2rem;color:var(--ink);line-height:1.75;font-style:italic;margin:0 0 1.75rem;border:none;padding:0;">
+          "To empower stakeholders through a unique synergy of data-driven strategy and Yield-Centric Focus — delivering high-impact advisory, world-class hospitality and entertainment experiences that benchmark the standards of excellence."
+        </blockquote>
+
+        <p style="font-size:.8rem;color:var(--ink-muted);line-height:1.75;border-top:1px solid var(--border);padding-top:1.25rem;">
+          Every engagement is anchored in measurable outcomes. We are not satisfied until our clients are — and we engineer every mandate to maximise risk-adjusted returns on both capital and trust.
+        </p>
       </div>
     </div>
+
+    <!-- PRINCIPLES — full-width 4-column grid -->
+    <div class="reveal">
+      <div style="text-align:center;margin-bottom:3rem;">
+        <p class="eyebrow" style="margin-bottom:.5rem;">Core Values</p>
+        <h2 class="h2">The Principles That Guide Us</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;" class="principles-grid">
+        ${[
+          {
+            fa: 'fa-balance-scale',
+            color: '#B8960C',
+            bg: 'rgba(184,150,12,.06)',
+            border: 'rgba(184,150,12,.2)',
+            name: 'Institutional Integrity',
+            tagline: 'Fiduciary first. Always.',
+            desc: 'We operate with the transparency and discipline of a global institution. Acting as true fiduciaries, every engagement is grounded in ethical conduct, complete disclosure and the uncompromising best interests of our stakeholders — not our own.'
+          },
+          {
+            fa: 'fa-trophy',
+            color: '#1A3A6B',
+            bg: 'rgba(26,58,107,.06)',
+            border: 'rgba(26,58,107,.2)',
+            name: 'Benchmark Excellence',
+            tagline: 'We do not follow. We define.',
+            desc: 'We do not merely meet industry standards — we author them. Our relentless pursuit of excellence spans every dimension: mandate delivery, research depth, transaction precision and the quality of counsel we provide at every stage.'
+          },
+          {
+            fa: 'fa-handshake',
+            color: '#15803d',
+            bg: 'rgba(21,128,61,.06)',
+            border: 'rgba(21,128,61,.2)',
+            name: 'Yield-Centric Partnership',
+            tagline: 'Aligned incentives. Sustained value.',
+            desc: 'We build long-term relationships centred on measurable, yield-driven success. Our unique synergy of capital markets insight and operational expertise ensures every engagement delivers not just advice — but compounding, high-impact results for clients and communities alike.'
+          },
+          {
+            fa: 'fa-lightbulb',
+            color: '#7C3AED',
+            bg: 'rgba(124,58,237,.06)',
+            border: 'rgba(124,58,237,.2)',
+            name: 'Strategic Innovation',
+            tagline: 'Data-driven. Bespoke thinking.',
+            desc: 'We synthesise deep sector data with bespoke strategic thinking to solve India\'s most complex asset and advisory challenges. By embracing new methodologies and cross-vertical intelligence, we transform traditional sectors into engines of institutional-grade value creation.'
+          },
+        ].map(p => `
+        <div style="position:relative;overflow:hidden;background:var(--parch);border:1px solid var(--border);padding:2.25rem 1.75rem;transition:all .25s;cursor:default;"
+             onmouseover="this.style.borderColor='${p.border}';this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.08)'"
+             onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)';this.style.boxShadow='none'">
+          <!-- Top accent bar -->
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,${p.color},transparent);"></div>
+
+          <!-- Icon -->
+          <div style="width:48px;height:48px;background:${p.bg};border:1px solid ${p.border};display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+            <i class="fas ${p.fa}" style="color:${p.color};font-size:1rem;"></i>
+          </div>
+
+          <!-- Title -->
+          <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:var(--ink);margin-bottom:.3rem;line-height:1.25;">${p.name}</h3>
+          <p style="font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:${p.color};margin-bottom:1rem;">${p.tagline}</p>
+
+          <!-- Description -->
+          <p style="font-size:.84rem;color:var(--ink-soft);line-height:1.85;">${p.desc}</p>
+        </div>
+        `).join('')}
+      </div>
+    </div>
+
   </div>
 </div>
+<style>
+@media(max-width:900px){.principles-grid{grid-template-columns:1fr 1fr!important;}}
+@media(max-width:560px){.principles-grid{grid-template-columns:1fr!important;}}
+</style>
 
 <!-- JOURNEY / TIMELINE -->
 <div class="sec-pd" style="padding-top:7rem;">
