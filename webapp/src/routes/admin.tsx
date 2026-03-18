@@ -7677,7 +7677,7 @@ app.get('/horeca', (c) => {
   };
 
   window.igIngApproveItem = function(id) {
-    igApi.post('/horeca/publish-queue/approve', { item_id: id }).then(function(r) {
+    igApi.post('/horeca/publish-queue/approve', { ids: [id] }).then(function(r) {
       igToast('Product published: ' + id, 'success');
       igIngLoadPublishQueue();
       igIngLoadJobs();
@@ -7691,7 +7691,7 @@ app.get('/horeca', (c) => {
         var items = (d && d.items) || [];
         if (!items.length) { igToast('Queue is empty','info'); return; }
         var promises = items.map(function(item) {
-          return igApi.post('/horeca/publish-queue/approve', { item_id: item.id||item.sku });
+          return igApi.post('/horeca/publish-queue/approve', { ids: [item.id||item.sku] });
         });
         Promise.allSettled(promises).then(function(results) {
           var approved = results.filter(function(r){ return r.status==='fulfilled'; }).length;
@@ -7705,7 +7705,7 @@ app.get('/horeca', (c) => {
 
   window.igIngRejectItem = function(id) {
     igConfirm('Reject this item? It will not be added to the catalogue.', function() {
-      igApi.post('/horeca/publish-queue/reject', { item_id: id, reason: 'Rejected by admin' }).then(function() {
+      igApi.post('/horeca/publish-queue/reject', { ids: [id], reason: 'Rejected by admin' }).then(function() {
         igToast('Item rejected', 'info');
         igIngLoadPublishQueue();
       }).catch(function() { igToast('Reject failed','warn'); });
@@ -7713,7 +7713,7 @@ app.get('/horeca', (c) => {
   };
 
   window.igIngResolveDup = function(newId, existingId, resolution) {
-    igApi.post('/horeca/duplicates/resolve', { new_id: newId, existing_id: existingId, resolution: resolution }).then(function(r) {
+    igApi.post('/horeca/duplicates/resolve', { candidate_id: newId, existing_id: existingId, resolution: resolution }).then(function(r) {
       var msg = resolution==='merge' ? 'Products merged' : resolution==='keep_new' ? 'New version kept' : 'Existing version kept';
       igToast(msg + ' — duplicate resolved', 'success');
       igIngLoadDuplicateQueue();
