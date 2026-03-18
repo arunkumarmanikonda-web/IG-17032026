@@ -85,7 +85,7 @@ app.get('/', (c) => {
         { icon:'couch',          name:'Furniture & Fixtures',  catKey:'Furniture & Fixtures',      desc:'Restaurant tables, lobby chairs, lounge furniture, pool deck. 5 SKUs.',                        color:'rgba(146,64,14,.07)',  skus:5 },
         { icon:'tv',             name:'Tech & AV Systems',     catKey:'Tech & AV Systems',         desc:'Hotel TVs, Wi-Fi, POS terminals, CCTV, room safes. 5 SKUs from Samsung, HIK, Godrej.',        color:'rgba(29,78,216,.07)',  skus:5 },
       ].map(cat =>
-      '<a href="/horeca/catalogue#cat-' + encodeURIComponent(cat.catKey) + '" data-cat="' + cat.catKey + '" onclick="igGoToCat(event,\'' + cat.catKey.replace(/'/g,'\\x27') + '\')" style="text-decoration:none;display:block;background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:pointer;" onmouseover="this.style.background=\'var(--parch)\';this.style.boxShadow=\'0 8px 32px rgba(0,0,0,.06)\';this.querySelector(\'.cat-top\').style.opacity=\'1\'" onmouseout="this.style.background=\'#fff\';this.style.boxShadow=\'none\';this.querySelector(\'.cat-top\').style.opacity=\'0\'">'
+      '<a href="/horeca/catalogue" class="horeca-cat-card" data-catkey="' + cat.catKey + '" style="text-decoration:none;display:block;background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:pointer;">'
       + '<div class="cat-top" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;"></div>'
       + '<div style="width:52px;height:52px;background:' + cat.color + ';border:1px solid rgba(184,150,12,.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">'
       + '<i class="fas fa-' + cat.icon + '" style="color:var(--gold);font-size:1.1rem;"></i>'
@@ -100,11 +100,29 @@ app.get('/', (c) => {
       ).join('')}
     </div>
 <script>
-function igGoToCat(e, catName) {
-  e.preventDefault();
-  sessionStorage.setItem('horeca_cat_filter', catName);
-  window.location.href = '/horeca/catalogue';
-}
+// Category card click handlers — uses data-catkey + event delegation (no inline onclick)
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.horeca-cat-card').forEach(function(card) {
+    card.addEventListener('mouseenter', function() {
+      this.style.background = 'var(--parch)';
+      this.style.boxShadow = '0 8px 32px rgba(0,0,0,.06)';
+      var top = this.querySelector('.cat-top');
+      if (top) top.style.opacity = '1';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.background = '#fff';
+      this.style.boxShadow = 'none';
+      var top = this.querySelector('.cat-top');
+      if (top) top.style.opacity = '0';
+    });
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      var catName = this.dataset.catkey || '';
+      if (catName) sessionStorage.setItem('horeca_cat_filter', catName);
+      window.location.href = '/horeca/catalogue';
+    });
+  });
+});
 </script>
   </div>
 </div>
@@ -908,7 +926,7 @@ window.igRFQWhatsApp = function(){
   var name=( document.getElementById('rfq-name')||{value:''}).value.trim();
   var company=(document.getElementById('rfq-company')||{value:''}).value.trim();
   var loc=(document.getElementById('rfq-location')||{value:''}).value.trim();
-  var msg='Hi Pavan, HORECA Quick RFQ\nType: '+_rfqType+'\nCategories: '+_rfqCats.join(', ')+(company?'\nProperty: '+company+(loc?', '+loc:''):'')+(name?'\nContact: '+name:'');
+  var _nl='\\n';var msg='Hi Pavan, HORECA Quick RFQ'+_nl+'Type: '+_rfqType+_nl+'Categories: '+_rfqCats.join(', ')+(company?_nl+'Property: '+company+(loc?', '+loc:''):'')+(name?_nl+'Contact: '+name:'');
   window.open('https://wa.me/916282556067?text='+encodeURIComponent(msg),'_blank');
 };
 
@@ -1025,7 +1043,7 @@ function igCatLoad() {
 function igCatBuildSidebar() {
   var sb = document.getElementById('cat-sidebar');
   var allActive = !_igCatActiveCategory ? ' active' : '';
-  var html = '<div class="cat-sidebar-btn' + allActive + '" onclick="igCatSelectCategory(\'\')" id="cat-btn-all">'
+  var html = '<div class="cat-sidebar-btn' + allActive + '" data-cat="" id="cat-btn-all">'
     + '<span style="font-size:.8rem;font-weight:600;color:var(--ink);">All Categories</span>'
     + '<span id="cat-count-all" style="font-size:.65rem;color:var(--gold);font-weight:700;">' + _igCatProducts.length + '</span>'
     + '</div>';
@@ -1033,12 +1051,16 @@ function igCatBuildSidebar() {
     var count = _igCatProducts.filter(function(p){ return p.category === cat.name; }).length;
     var iconColor = cat.color || '#475569';
     var isActive = (_igCatActiveCategory === cat.name) ? ' active' : '';
-    html += '<div class="cat-sidebar-btn' + isActive + '" onclick="igCatSelectCategory(\'' + cat.name.replace(/'/g,"\'") + '\')" id="cat-btn-' + cat.id + '">'
+    html += '<div class="cat-sidebar-btn' + isActive + '" data-cat="' + cat.name.replace(/"/g,'&quot;') + '" id="cat-btn-' + cat.id + '">'
       + '<span style="font-size:.78rem;color:var(--ink);display:flex;align-items:center;gap:.4rem;"><i class="fas fa-' + (cat.icon||'box') + '" style="color:' + iconColor + ';font-size:.7rem;width:14px;"></i>' + cat.name + '</span>'
       + '<span style="font-size:.65rem;color:#94a3b8;font-weight:600;">' + count + '</span>'
       + '</div>';
   });
   sb.innerHTML = html;
+  // Bind click via event delegation (avoids inline-onclick escaping issues)
+  sb.querySelectorAll('.cat-sidebar-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { igCatSelectCategory(this.dataset.cat || ''); });
+  });
 }
 
 function igCatSelectCategory(cat) {
@@ -1157,14 +1179,14 @@ function igCatRenderGrid(products) {
     var encodedSku  = (p.sku||p.id||'').replace(/"/g,'').replace(/'/g,'\\x27');
     var encodedName = (p.name||'').replace(/"/g,'&quot;').replace(/'/g,'\\x27');
     var encodedCat  = (p.category||'').replace(/"/g,'').replace(/'/g,'\\x27');
-    html += '<div class="prod-card" style="display:flex;flex-direction:column;cursor:pointer;" onclick="igCatEnquire(event,\'' + encodedSku + '\',\'' + encodedName + '\',\'' + encodedCat + '\')" title="Click to enquire about this product">'
+    html += '<div class="prod-card" style="display:flex;flex-direction:column;cursor:pointer;" data-sku="' + encodedSku + '" data-name="' + encodedName.replace(/"/g,'&quot;') + '" data-cat="' + encodedCat.replace(/"/g,'&quot;') + '" title="Click to enquire about this product">'
       // Featured banner
       + (p.featured ? '<div style="background:linear-gradient(90deg,var(--gold),#a37a08);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .875rem;display:flex;align-items:center;gap:.3rem;"><i class="fas fa-star" style="font-size:.55rem;"></i>Featured SKU</div>' : '')
       // Image area — shows actual product image with fallback icon
       + '<div style="height:160px;background:linear-gradient(145deg,' + catColor + '15 0%,' + catColor + '05 100%);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,.06);overflow:hidden;">'
       + '<div style="position:absolute;bottom:-20px;right:-20px;width:90px;height:90px;border-radius:50%;background:' + catColor + '08;"></div>'
       + '<div style="position:absolute;top:-10px;left:-10px;width:60px;height:60px;border-radius:50%;background:' + catColor + '06;"></div>'
-      + (p.image ? '<img src="' + p.image + '" alt="' + (p.name||'').replace(/"/g,'') + '" style="width:100%;height:160px;object-fit:cover;position:relative;z-index:1;" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div style="display:none;text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div></div>'
+      + (p.image ? '<img src="' + p.image + '" alt="' + (p.name||'').replace(/"/g,'') + '" style="width:100%;height:160px;object-fit:cover;position:relative;z-index:1;" loading="lazy" onerror="this.style.display=&quot;none&quot;;this.nextSibling.style.display=&quot;flex&quot;"><div style="display:none;text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div></div>'
         : '<div style="text-align:center;position:relative;z-index:1;"><div style="width:58px;height:58px;background:' + catColor + '20;border:1.5px solid ' + catColor + '40;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;"><i class="fas fa-' + catIcon + '" style="color:' + catColor + ';font-size:1.25rem;"></i></div><span style="font-size:.58rem;color:' + catColor + ';font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.8;">' + (p.category||'').split(' & ')[0] + '</span></div>')
       // Space type tag overlaid on image
       + (p.spaceType ? '<div style="position:absolute;top:.5rem;left:.5rem;z-index:2;background:rgba(0,0,0,.55);color:#fff;font-size:.55rem;font-weight:600;padding:.18rem .5rem;letter-spacing:.05em;">' + p.spaceType + '</div>' : '')
@@ -1197,7 +1219,17 @@ function igCatRenderGrid(products) {
       + '</div>'
       + '</div>';
   });
-  document.getElementById('cat-grid-view').innerHTML = html || '<p style="padding:2rem;color:var(--ink-muted);">No products found.</p>';
+  var grid = document.getElementById('cat-grid-view');
+  grid.innerHTML = html || '<p style="padding:2rem;color:var(--ink-muted);">No products found.</p>';
+  // Bind clicks via event delegation on data-* attrs (avoids inline-onclick escaping issues)
+  grid.querySelectorAll('.prod-card[data-sku]').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      var t = e.target;
+      // Don't trigger enquire if user clicked the direct quote button
+      if (t && (t.classList.contains('prod-quote-btn') || t.closest('.prod-quote-btn'))) return;
+      igCatEnquire(e, this.dataset.sku, this.dataset.name, this.dataset.cat);
+    });
+  });
 }
 
 function igCatRenderTable(products) {
@@ -1469,7 +1501,7 @@ window.igCatEnquire = function(e, sku, name, category) {
   // Reset and open the RFQ panel
   window.igQuickRFQOpen();
   // Pre-fill notes with the product SKU and name
-  if (rfqNotes) rfqNotes.value = 'Enquiring about: [' + sku + '] ' + name + '\nPlease provide availability and quote.';
+  if (rfqNotes) rfqNotes.value = 'Enquiring about: [' + sku + '] ' + name + '\\nPlease provide availability and quote.';
   // Pre-tick the matching supply category checkbox
   if (category) {
     var catMap = {
@@ -1673,15 +1705,21 @@ function igPortalLoad() {
 
 function igPortalBuildSidebar() {
   var sb = document.getElementById('portal-cat-sidebar');
-  var html = '<div onclick="igPortalFilter(\\'\\')" style="padding:.625rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fffbeb;border-left:3px solid var(--gold);">'
+  var html = '<div data-pcat="" style="padding:.625rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fffbeb;border-left:3px solid var(--gold);">'
     + '<span style="font-size:.78rem;font-weight:600;color:var(--ink);">All Categories</span>'
     + '<span style="font-size:.63rem;color:#94a3b8;">' + _portalProducts.length + '</span>'
     + '</div>';
   _portalCategories.forEach(function(cat){
     var cnt = _portalProducts.filter(function(p){ return p.category===cat.name; }).length;
-    html += '<div onclick="igPortalFilter(\\'' + cat.name.replace(/'/g,"\\'") + '\\')" style="padding:.625rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onmouseover="this.style.background=\\'#fffbeb\\'" onmouseout="this.style.background=\\'\\'"><span style="font-size:.78rem;color:var(--ink);"><i class=\\"fas fa-' + (cat.icon||'box') + '\\" style=\\"color:' + (cat.color||'#475569') + ';font-size:.7rem;margin-right:.35rem;\\"></i>' + cat.name + '</span><span style="font-size:.63rem;color:#94a3b8;">' + cnt + '</span></div>';
+    html += '<div data-pcat="' + cat.name.replace(/"/g,'&quot;') + '" style="padding:.625rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.78rem;color:var(--ink);"><i class="fas fa-' + (cat.icon||'box') + '" style="color:' + (cat.color||'#475569') + ';font-size:.7rem;margin-right:.35rem;"></i>' + cat.name + '</span><span style="font-size:.63rem;color:#94a3b8;">' + cnt + '</span></div>';
   });
   sb.innerHTML = html;
+  // Bind hover+click via JS (avoids inline-onclick escaping issues)
+  sb.querySelectorAll('[data-pcat]').forEach(function(btn) {
+    btn.addEventListener('mouseenter', function() { this.style.background = '#fffbeb'; });
+    btn.addEventListener('mouseleave', function() { this.style.background = this.dataset.pcat === _portalActiveCat ? '#fffbeb' : ''; });
+    btn.addEventListener('click', function() { igPortalFilter(this.dataset.pcat || ''); });
+  });
 }
 
 function igPortalFilter(cat) {
@@ -1725,12 +1763,19 @@ function igPortalRender() {
       + '</div>'
       + '<div style="padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;">'
       + '<input type="number" min="1" value="1" id="qty-' + p.sku.replace(/[^a-z0-9]/gi,'-') + '" style="width:50px;border:1px solid var(--border);padding:.3rem .4rem;font-size:.78rem;text-align:center;">'
-      + '<button onclick="igPortalAddCart(\\'' + p.sku + '\\',\\'' + p.name.replace(/'/g,"\\'") + '\\')" style="flex:1;background:var(--gold);color:#fff;border:none;padding:.4rem;font-size:.72rem;font-weight:600;cursor:pointer;"><i class="fas fa-cart-plus" style="margin-right:.3rem;"></i>Add to Cart</button>'
+      + '<button class="portal-cart-btn" data-psku="' + p.sku.replace(/"/g,'&quot;') + '" data-pname="' + p.name.replace(/"/g,'&quot;') + '" style="flex:1;background:var(--gold);color:#fff;border:none;padding:.4rem;font-size:.72rem;font-weight:600;cursor:pointer;"><i class="fas fa-cart-plus" style="margin-right:.3rem;"></i>Add to Cart</button>'
       + '<a href="/horeca#enquiry" style="background:#f1f5f9;color:var(--ink);border:1px solid var(--border);padding:.4rem .6rem;font-size:.68rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;" title="Request quote"><i class="fas fa-paper-plane" style="color:var(--gold);"></i></a>'
       + '</div>'
       + '</div>';
   });
-  document.getElementById('portal-product-grid').innerHTML = html || '<div style="padding:3rem;text-align:center;color:#94a3b8;grid-column:span 3;">No products found</div>';
+  var grid = document.getElementById('portal-product-grid');
+  grid.innerHTML = html || '<div style="padding:3rem;text-align:center;color:#94a3b8;grid-column:span 3;">No products found</div>';
+  // Bind cart buttons via event delegation
+  grid.querySelectorAll('.portal-cart-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      igPortalAddCart(this.dataset.psku, this.dataset.pname);
+    });
+  });
 }
 
 function igPortalAddCart(sku, name) {

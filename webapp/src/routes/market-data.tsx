@@ -259,15 +259,20 @@ app.get('/', (c) => {
   const now = 'March 2026'
   const cityPins = CITY_DATA.map((d, i) => {
     const pinColor = d.occNum >= 75 ? '#4ade80' : d.occNum >= 70 ? '#e8c84a' : '#93c5fd'
-    const r = 7 + (d.occNum - 65) * 0.4
-    const lx = d.cx + (d.cx > 400 ? 16 : -16)
-    const anchor = d.cx > 400 ? 'start' : 'end'
+    const r = 8 + (d.occNum - 65) * 0.35
+    // Smart label placement: left-side cities label to the right, right-side to the left
+    // Special cases for nearby cities to avoid overlaps
+    const labelRight = d.cx < 380  // Most cities are left of center
+    const lx = labelRight ? d.cx + r + 8 : d.cx - r - 8
+    const anchor = labelRight ? 'start' : 'end'
+    // Offset label y for nearby pins (Chandigarh near Delhi, Pune near Mumbai)
+    const ly = d.cy + 4
     return `
-  <g class="map-pin" data-city="${i}" style="cursor:pointer;" onclick="showCityPanel(${i})">
-    <circle cx="${d.cx}" cy="${d.cy}" r="${r + 6}" fill="${pinColor}" opacity="0.15" class="map-pin-pulse"/>
-    <circle cx="${d.cx}" cy="${d.cy}" r="${r}" fill="${pinColor}" stroke="#fff" stroke-width="1.8" filter="url(#pinShadow)"/>
-    <text x="${d.cx}" y="${d.cy + 4}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6.5" font-weight="700" fill="#000">${d.occ.replace('%','')}</text>
-    <text x="${lx}" y="${d.cy + 4}" text-anchor="${anchor}" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(255,255,255,.85)" font-weight="600">${d.city}</text>
+  <g class="map-pin" data-city="${i}" data-idx="${i}" style="cursor:pointer;" onclick="showCityPanel(${i})">
+    <circle cx="${d.cx}" cy="${d.cy}" r="${r + 7}" fill="${pinColor}" opacity="0.12" class="map-pin-pulse"/>
+    <circle cx="${d.cx}" cy="${d.cy}" r="${r}" fill="${pinColor}" stroke="#000" stroke-width="1.2" filter="url(#pinShadow)"/>
+    <text x="${d.cx}" y="${ly}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="#000">${d.occ.replace('%','')}</text>
+    <text x="${lx}" y="${ly}" text-anchor="${anchor}" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(255,255,255,.8)" font-weight="600">${d.city}</text>
   </g>`
   }).join('')
 
@@ -318,70 +323,105 @@ app.get('/', (c) => {
   </div>
 </section>
 
-<!-- ── INDIA MAP + ACTIVE CITIES ─────────────────────────────────────── -->
-<section style="background:var(--bg-dk);padding:3rem 0;">
+<!-- ── INDIA ADVISORY FOOTPRINT ───────────────────────────────────────── -->
+<section style="background:var(--bg-dk);padding:4rem 0 3rem;">
   <div class="container" style="max-width:1200px;margin:0 auto;padding:0 1.5rem;">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:2rem;">
-      <div>
-        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;color:#fff;margin:0 0 .4rem;">India Advisory Footprint</h2>
-        <p style="font-size:.8rem;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;margin:0;">Click a city pin to view rate card details</p>
-      </div>
-      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;">
-        <div style="display:flex;align-items:center;gap:.4rem;"><span style="width:10px;height:10px;border-radius:50%;background:#4ade80;display:inline-block;"></span><span style="font-size:.72rem;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;">Occ ≥75%</span></div>
-        <div style="display:flex;align-items:center;gap:.4rem;"><span style="width:10px;height:10px;border-radius:50%;background:#e8c84a;display:inline-block;"></span><span style="font-size:.72rem;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;">Occ 70–74%</span></div>
-        <div style="display:flex;align-items:center;gap:.4rem;"><span style="width:10px;height:10px;border-radius:50%;background:#93c5fd;display:inline-block;"></span><span style="font-size:.72rem;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;">Occ &lt;70%</span></div>
+
+    <!-- Section header -->
+    <div style="margin-bottom:2.5rem;">
+      <p style="font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;font-family:'DM Sans',sans-serif;">Active Coverage · Q1 2026</p>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;color:#fff;margin:0;line-height:1.15;">India Advisory Footprint</h2>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;padding:.5rem .875rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;">
+          <span style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-right:.25rem;">Occupancy:</span>
+          <div style="display:flex;align-items:center;gap:.35rem;"><span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;flex-shrink:0;"></span><span style="font-size:.68rem;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">≥ 75%</span></div>
+          <div style="display:flex;align-items:center;gap:.35rem;"><span style="width:8px;height:8px;border-radius:50%;background:#e8c84a;display:inline-block;flex-shrink:0;"></span><span style="font-size:.68rem;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">70–74%</span></div>
+          <div style="display:flex;align-items:center;gap:.35rem;"><span style="width:8px;height:8px;border-radius:50%;background:#93c5fd;display:inline-block;flex-shrink:0;"></span><span style="font-size:.68rem;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">&lt; 70%</span></div>
+        </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;" class="mob-stack">
 
-      <!-- ── PERFECT INDIA SVG MAP ── -->
-      <div style="position:relative;background:rgba(0,0,0,0);">
-        <svg id="indiaMap" viewBox="60 -20 740 760" xmlns="http://www.w3.org/2000/svg"
-             style="width:100%;max-width:500px;display:block;margin:0 auto;overflow:visible;">
+    <!-- Map + Panel layout -->
+    <div style="display:grid;grid-template-columns:45% 1fr;gap:2.5rem;align-items:start;" class="mob-stack">
 
-          ${INDIA_STATES_SVG}
-
-          <!-- City pins with labels -->
-          ${cityPins}
-
-          <!-- INDIA watermark -->
-          <text x="290" y="450" text-anchor="middle"
-                font-family="DM Serif Display,Georgia,serif" font-size="22"
-                fill="rgba(255,255,255,0.06)" font-weight="400" letter-spacing="6">INDIA</text>
-        </svg>
+      <!-- ── India SVG Map ── -->
+      <div style="position:relative;">
+        <!-- Map frame -->
+        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.25rem;overflow:hidden;position:relative;">
+          <!-- Subtle bg glow -->
+          <div style="position:absolute;top:10%;left:10%;width:80%;height:80%;background:radial-gradient(ellipse,rgba(106,170,100,.06) 0%,transparent 70%);pointer-events:none;"></div>
+          <svg id="indiaMap" viewBox="60 -20 740 760" xmlns="http://www.w3.org/2000/svg"
+               style="width:100%;display:block;overflow:visible;position:relative;z-index:1;">
+            ${INDIA_STATES_SVG}
+            <!-- City pins with labels -->
+            ${cityPins}
+            <!-- INDIA watermark -->
+            <text x="290" y="450" text-anchor="middle"
+                  font-family="DM Serif Display,Georgia,serif" font-size="20"
+                  fill="rgba(255,255,255,0.04)" font-weight="400" letter-spacing="8">INDIA</text>
+          </svg>
+        </div>
+        <p style="font-size:.62rem;color:rgba(255,255,255,.25);font-family:'DM Sans',sans-serif;margin:.6rem 0 0;text-align:center;">J&amp;K shown per India's territorial claim. Click a city pin.</p>
       </div>
 
-      <!-- City detail panel -->
-      <div id="cityPanel" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.75rem;min-height:320px;">
-        <div id="cityDefault" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;text-align:center;">
-          <div style="font-size:2.5rem;margin-bottom:.75rem;opacity:.25;">📍</div>
-          <p style="color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;font-size:.9rem;line-height:1.6;">Select a city pin on the map<br>to view detailed rate card data</p>
-        </div>
-        <div id="cityDetail" style="display:none;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-            <div>
-              <div id="cpCity" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.6rem;color:#fff;"></div>
-              <div id="cpTrend" style="font-size:.72rem;font-family:'DM Sans',sans-serif;color:rgba(255,255,255,.4);margin-top:.2rem;"></div>
+      <!-- ── Right column: City panel + City chips ── -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+        <!-- City detail panel -->
+        <div id="cityPanel" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.5rem;min-height:280px;transition:border-color .2s;">
+          <div id="cityDefault" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:240px;text-align:center;">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+              <i class="fas fa-map-marker-alt" style="font-size:1.1rem;color:rgba(255,255,255,.2);"></i>
             </div>
-            <div id="cpOcc" style="font-family:'DM Serif Display',Georgia,serif;font-size:2rem;"></div>
+            <p style="color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;font-size:.82rem;line-height:1.65;margin:0;">Select a city pin on the map<br>to view rate card &amp; market data</p>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
-            <div class="cp-stat"><div class="cp-stat-lbl">ADR</div><div id="cpAdr" class="cp-stat-val" style="color:var(--gold);"></div></div>
-            <div class="cp-stat"><div class="cp-stat-lbl">RevPAR</div><div id="cpRevpar" class="cp-stat-val" style="color:#93c5fd;"></div></div>
-            <div class="cp-stat"><div class="cp-stat-lbl">Cap Rate</div><div id="cpCap" class="cp-stat-val"></div></div>
-            <div class="cp-stat"><div class="cp-stat-lbl">Hotel Room</div><div id="cpHotel" class="cp-stat-val" style="color:#4ade80;"></div></div>
-          </div>
-          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:.85rem;">
-            <div style="font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;font-family:'DM Sans',sans-serif;">Office (Grade-A)</div>
-            <div id="cpOffice" style="font-size:.88rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;"></div>
-          </div>
-          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:.85rem;margin-top:.85rem;">
-            <div style="font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;font-family:'DM Sans',sans-serif;">Prime Retail</div>
-            <div id="cpRetail" style="font-size:.88rem;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;"></div>
+          <div id="cityDetail" style="display:none;">
+            <!-- City name + trend + occ -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;">
+              <div>
+                <div id="cpCity" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;color:#fff;line-height:1.1;margin-bottom:.3rem;"></div>
+                <div id="cpTrend" style="font-size:.7rem;font-family:'DM Sans',sans-serif;color:rgba(255,255,255,.4);letter-spacing:.04em;"></div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;margin-bottom:.15rem;">Hotel Occ.</div>
+                <div id="cpOcc" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.75rem;line-height:1;"></div>
+              </div>
+            </div>
+            <!-- Stat grid 2×2 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1rem;">
+              <div class="cp-stat"><div class="cp-stat-lbl">ADR (Avg Room Rate)</div><div id="cpAdr" class="cp-stat-val" style="color:var(--gold);"></div></div>
+              <div class="cp-stat"><div class="cp-stat-lbl">RevPAR</div><div id="cpRevpar" class="cp-stat-val" style="color:#93c5fd;"></div></div>
+              <div class="cp-stat"><div class="cp-stat-lbl">Cap Rate</div><div id="cpCap" class="cp-stat-val" style="color:rgba(255,255,255,.85);"></div></div>
+              <div class="cp-stat"><div class="cp-stat-lbl">Hotel Room Rate</div><div id="cpHotel" class="cp-stat-val" style="color:#4ade80;"></div></div>
+            </div>
+            <!-- Office + Retail rates -->
+            <div style="background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:.75rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <div>
+                <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.3rem;font-family:'DM Sans',sans-serif;">Grade-A Office</div>
+                <div id="cpOffice" style="font-size:.8rem;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;line-height:1.4;"></div>
+              </div>
+              <div>
+                <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.3rem;font-family:'DM Sans',sans-serif;">Prime Retail</div>
+                <div id="cpRetail" style="font-size:.8rem;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;line-height:1.4;"></div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- City quick-select chips -->
+        <div>
+          <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;margin-bottom:.625rem;">Quick Select</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem;" id="cityChips">
+            ${CITY_DATA.map((d, i) => {
+              const pinColor = d.occNum >= 75 ? '#4ade80' : d.occNum >= 70 ? '#e8c84a' : '#93c5fd'
+              return `<button onclick="showCityPanel(${i})" id="chip-${i}" class="city-chip" style="display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:100px;cursor:pointer;font-size:.68rem;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;"><span style="width:7px;height:7px;border-radius:50%;background:${pinColor};flex-shrink:0;"></span>${d.city}</button>`
+            }).join('')}
+          </div>
+        </div>
+
       </div>
     </div>
+
   </div>
 </section>
 
@@ -604,18 +644,26 @@ app.get('/', (c) => {
 
 /* City panel stat boxes */
 .cp-stat {
-  background:rgba(255,255,255,.04);
+  background:rgba(255,255,255,.03);
   border:1px solid rgba(255,255,255,.07);
   border-radius:8px;
-  padding:.75rem 1rem;
+  padding:.7rem .875rem;
+  transition:background .18s;
 }
+.cp-stat:hover { background:rgba(255,255,255,.05); }
 .cp-stat-lbl {
-  font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;margin-bottom:.3rem;
+  font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;margin-bottom:.25rem;
 }
 .cp-stat-val {
   font-family:'DM Serif Display',Georgia,serif;
-  font-size:1.05rem;color:#fff;
+  font-size:1rem;color:#fff;
+}
+/* City chip hover */
+.city-chip:hover {
+  background:rgba(255,255,255,.07) !important;
+  border-color:rgba(255,255,255,.18) !important;
+  color:rgba(255,255,255,.85) !important;
 }
 </style>
 
@@ -632,21 +680,39 @@ function showCityPanel(idx) {
   document.getElementById('cityDefault').style.display = 'none';
   document.getElementById('cityDetail').style.display = 'block';
   document.getElementById('cpCity').textContent = d.city;
-  document.getElementById('cpTrend').textContent = d.trend === 'up' ? '↑ Positive trend' : d.trend === 'down' ? '↓ Declining' : '→ Stable';
-  var occColor = parseFloat(d.occ) >= 75 ? '#4ade80' : parseFloat(d.occ) >= 70 ? '#e8c84a' : '#93c5fd';
+  document.getElementById('cpTrend').textContent = d.trend === 'up' ? '↑ Positive momentum' : d.trend === 'down' ? '↓ Declining' : '→ Stable';
+  var occNum = parseFloat(d.occ);
+  var occColor = occNum >= 75 ? '#4ade80' : occNum >= 70 ? '#e8c84a' : '#93c5fd';
   document.getElementById('cpOcc').textContent = d.occ;
   document.getElementById('cpOcc').style.color = occColor;
   document.getElementById('cpAdr').textContent = d.adr;
   document.getElementById('cpRevpar').textContent = d.revpar;
   document.getElementById('cpCap').textContent = d.cap;
   document.getElementById('cpHotel').textContent = d.hotel;
-  document.getElementById('cpOffice').textContent = d.office + ' per sq ft';
-  document.getElementById('cpRetail').textContent = d.retail + ' per sq ft';
+  document.getElementById('cpOffice').textContent = d.office + ' / sq ft';
+  document.getElementById('cpRetail').textContent = d.retail + ' / sq ft';
 
-  /* highlight active pin */
+  /* Highlight active map pin */
   document.querySelectorAll('.map-pin').forEach(function(g, i) {
-    g.style.opacity = i === idx ? '1' : '0.55';
+    g.style.opacity = i === idx ? '1' : '0.45';
   });
+
+  /* Highlight active city chip */
+  document.querySelectorAll('.city-chip').forEach(function(btn, i) {
+    if (i === idx) {
+      btn.style.background = 'rgba(212,174,42,.12)';
+      btn.style.borderColor = 'rgba(212,174,42,.35)';
+      btn.style.color = 'var(--gold)';
+    } else {
+      btn.style.background = 'rgba(255,255,255,.04)';
+      btn.style.borderColor = 'rgba(255,255,255,.09)';
+      btn.style.color = 'rgba(255,255,255,.55)';
+    }
+  });
+
+  /* Highlight city panel border */
+  var panel = document.getElementById('cityPanel');
+  if (panel) panel.style.borderColor = 'rgba(212,174,42,.25)';
 }
 
 function sortCity(by) {
