@@ -12,7 +12,7 @@ const app = new Hono()
 const CITY_DATA = [
   {
     city: 'Delhi NCR',
-    cx: 378, cy: 270,   // lon 77.0°E, lat 28.6°N
+    cx: 291, cy: 308,   // lon 77.2°E, lat 28.6°N — calibrated
     office: '₹8,500–10,500',  hotel: '₹6,200–9,500',   retail: '₹12,000–28,000',
     occ: '72%', adr: '₹7,200',  revpar: '₹5,184', cap: '7.5–9.0%',
     trend: 'up', occNum: 72,
@@ -20,7 +20,7 @@ const CITY_DATA = [
   },
   {
     city: 'Mumbai',
-    cx: 222, cy: 484,   // lon 72.8°E, lat 18.9°N
+    cx: 152, cy: 664,   // lon 72.8°E, lat 18.9°N — calibrated
     office: '₹22,000–28,000', hotel: '₹10,500–18,000', retail: '₹35,000–55,000',
     occ: '78%', adr: '₹12,500', revpar: '₹9,750', cap: '7.0–8.5%',
     trend: 'up', occNum: 78,
@@ -28,7 +28,7 @@ const CITY_DATA = [
   },
   {
     city: 'Bengaluru',
-    cx: 330, cy: 672,   // lon 77.6°E, lat 12.9°N
+    cx: 304, cy: 884,   // lon 77.6°E, lat 12.9°N — calibrated
     office: '₹8,000–12,000',  hotel: '₹5,500–9,000',   retail: '₹10,000–22,000',
     occ: '74%', adr: '₹6,800',  revpar: '₹5,032', cap: '7.5–9.0%',
     trend: 'up', occNum: 74,
@@ -36,7 +36,7 @@ const CITY_DATA = [
   },
   {
     city: 'Hyderabad',
-    cx: 380, cy: 574,   // lon 78.5°E, lat 17.4°N
+    cx: 333, cy: 719,   // lon 78.5°E, lat 17.4°N — calibrated
     office: '₹6,500–9,500',   hotel: '₹4,800–7,500',   retail: '₹8,000–18,000',
     occ: '71%', adr: '₹5,900',  revpar: '₹4,189', cap: '8.0–10.0%',
     trend: 'stable', occNum: 71,
@@ -44,7 +44,7 @@ const CITY_DATA = [
   },
   {
     city: 'Pune',
-    cx: 265, cy: 510,   // lon 73.9°E, lat 18.5°N
+    cx: 187, cy: 678,   // lon 73.9°E, lat 18.5°N — calibrated
     office: '₹5,500–8,000',   hotel: '₹3,800–6,500',   retail: '₹7,500–16,000',
     occ: '68%', adr: '₹4,700',  revpar: '₹3,196', cap: '8.5–10.5%',
     trend: 'up', occNum: 68,
@@ -52,7 +52,7 @@ const CITY_DATA = [
   },
   {
     city: 'Chennai',
-    cx: 390, cy: 694,   // lon 80.2°E, lat 13.1°N
+    cx: 386, cy: 876,   // lon 80.2°E, lat 13.1°N — calibrated
     office: '₹5,000–7,500',   hotel: '₹4,200–7,000',   retail: '₹8,000–16,000',
     occ: '70%', adr: '₹5,200',  revpar: '₹3,640', cap: '8.5–10.5%',
     trend: 'stable', occNum: 70,
@@ -60,7 +60,7 @@ const CITY_DATA = [
   },
   {
     city: 'Chandigarh',
-    cx: 330, cy: 202,   // lon 76.8°E, lat 30.7°N
+    cx: 279, cy: 231,   // lon 76.8°E, lat 30.7°N — calibrated
     office: '₹3,500–5,500',   hotel: '₹3,200–5,500',   retail: '₹6,000–12,000',
     occ: '69%', adr: '₹4,800',  revpar: '₹3,312', cap: '9.0–11.5%',
     trend: 'up', occNum: 69,
@@ -68,7 +68,7 @@ const CITY_DATA = [
   },
   {
     city: 'Jaipur',
-    cx: 285, cy: 342,   // lon 75.8°E, lat 26.9°N
+    cx: 247, cy: 370,   // lon 75.8°E, lat 26.9°N — calibrated
     office: '₹3,000–4,500',   hotel: '₹3,800–6,500',   retail: '₹5,500–11,000',
     occ: '67%', adr: '₹5,500',  revpar: '₹3,685', cap: '9.5–12.0%',
     trend: 'up', occNum: 67,
@@ -176,357 +176,212 @@ const SVG_DEFS = `
 
 // Layer 2: Base India SVG paths — accurate state geometry
 // All coordinates computed from geographic lat/lon using the projection formula above
-// States ordered roughly north-to-south for proper z-ordering
+// Formula: cx = (lon − 68) × 31.67,  cy = (37 − lat) × 36.67
+// All state paths rebuilt with accurate geographic vertices — v72 calibration
 const SVG_BASE_LAYER = `
-<!-- ════ LAYER 2: BASE MAP STATES ════ -->
+<!-- ════ LAYER 2: BASE MAP STATES (v72 — accurate geographic coordinates) ════ -->
 
 <!-- ── Ocean background glow ── -->
-<ellipse cx="475" cy="540" rx="340" ry="440" fill="url(#indiaBodyGlow)" opacity="0.6"/>
+<ellipse cx="475" cy="600" rx="380" ry="500" fill="url(#indiaBodyGlow)" opacity="0.5"/>
 
-<!-- ══ JAMMU & KASHMIR + LADAKH (India's full territorial claim)
-     Covers: POK, Gilgit-Baltistan, Aksai Chin, Indian J&K + Ladakh
-     Approx bounding: lon 72.9°–80.5°E, lat 32.2°–37.2°N
-     Key vertices (projected):
-       73°E,37°N  → (158,  0)
-       80.5°E,37°N → (395,  0)
-       80.5°E,34°N → (395,110)
-       79°E,32.5°N → (347,165)
-       76°E,32.5°N → (253,165)
-       74.5°E,33°N → (203,147)
-       73°E,34°N  → (158,110)
-══ -->
+<!-- ══ JAMMU & KASHMIR + LADAKH — India's full territorial claim ══ -->
+<!-- Includes POK, Gilgit-Baltistan, Aksai Chin per Survey of India -->
 <path id="state-jk"
-  d="M 155,0 L 165,0 L 240,0 L 310,0 L 380,0 L 410,0
-     L 420,22 L 415,55 L 405,82 L 395,108
-     L 378,128 L 358,148 L 340,162
-     L 316,168 L 294,164 L 272,160
-     L 250,162 L 230,162 L 210,155
-     L 192,144 L 174,128 L 162,108
-     L 152,82 L 150,55 L 152,28 Z"
+  d="M 158,0 L 317,0 L 396,0 L 396,92 L 364,128 L 333,154 L 317,176 L 285,165 L 260,165 L 247,165 L 206,139 L 174,92 L 158,37 Z"
   fill="#50a048" stroke="rgba(255,255,255,0.5)" stroke-width="1.4" stroke-dasharray="5,3"
   class="state-path" data-state="Jammu &amp; Kashmir / Ladakh"/>
 
-<!-- ── HIMACHAL PRADESH
-     Approx: lon 75.5°–79°E, lat 30.4°–33.2°N
-     Key: 76°E,33°N=(253,147)  79°E,33°N=(348,147)  79°E,30.5°N=(348,238)  76°E,30.5°N=(253,238)
-── -->
+<!-- ── HIMACHAL PRADESH ── -->
 <path id="state-hp"
-  d="M 253,148 L 295,142 L 340,148 L 352,162 L 356,182
-     L 348,204 L 332,222 L 308,232 L 282,228 L 262,218
-     L 250,200 L 248,178 L 252,160 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 253,147 L 301,139 L 348,154 L 342,205 L 304,242 L 247,242 L 238,213 L 238,165 L 253,147 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Himachal Pradesh"/>
 
-<!-- ── PUNJAB
-     Approx: lon 73.9°–76.9°E, lat 29.5°–32.5°N
-     Key: 74°E,32.5°N=(190,165)  76.9°E,32.5°N=(282,165)  76.9°E,29.5°N=(282,275)
-── -->
+<!-- ── PUNJAB ── -->
 <path id="state-pb"
-  d="M 192,165 L 250,162 L 268,178 L 270,200 L 258,222
-     L 238,238 L 215,242 L 196,232 L 182,214 L 178,194 L 182,175 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 187,165 L 241,165 L 253,235 L 260,264 L 215,275 L 187,264 L 187,202 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Punjab"/>
 
-<!-- ── HARYANA
-     Approx: lon 74.5°–77.6°E, lat 27.6°–30.9°N
-── -->
+<!-- ── HARYANA ── -->
 <path id="state-hr"
-  d="M 258,222 L 282,228 L 308,232 L 328,248 L 335,268
-     L 330,290 L 314,306 L 292,312 L 268,308 L 248,294
-     L 238,272 L 238,252 L 248,236 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 253,235 L 304,242 L 304,345 L 269,359 L 215,359 L 209,330 L 209,275 L 253,257 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Haryana"/>
 
-<!-- ── DELHI (UT — small rectangle)
-     Approx: lon 76.8°–77.3°E, lat 28.4°–28.9°N
-── -->
+<!-- ── DELHI (UT) ── -->
 <path id="state-dl"
-  d="M 280,295 L 298,290 L 310,298 L 308,316 L 290,320 L 278,312 Z"
+  d="M 279,293 L 295,297 L 298,315 L 279,315 Z"
   fill="#5ab050" stroke="rgba(255,255,255,0.6)" stroke-width="1.0"
   class="state-path" data-state="Delhi"/>
 
-<!-- ── UTTARAKHAND
-     Approx: lon 77.6°–81.1°E, lat 28.7°–31.4°N
-── -->
+<!-- ── UTTARAKHAND ── -->
 <path id="state-uk"
-  d="M 332,222 L 356,214 L 390,210 L 418,216 L 432,230
-     L 428,254 L 410,270 L 385,278 L 358,274 L 336,262
-     L 325,244 L 326,232 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 304,242 L 317,220 L 396,220 L 412,238 L 396,304 L 364,304 L 317,304 L 304,275 L 304,242 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Uttarakhand"/>
 
-<!-- ── UTTAR PRADESH
-     Largest state. lon 77°–84.6°E, lat 23.9°–30.4°N
-── -->
+<!-- ── UTTAR PRADESH ── -->
 <path id="state-up"
-  d="M 292,312 L 314,306 L 335,292 L 360,280 L 395,278
-     L 428,278 L 460,285 L 490,298 L 508,318 L 514,342
-     L 510,368 L 494,388 L 468,402 L 438,410 L 406,412
-     L 375,408 L 345,400 L 318,390 L 298,375 L 282,358
-     L 275,336 L 278,318 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 291,308 L 304,242 L 317,275 L 396,304 L 526,359 L 507,477 L 475,477 L 396,458 L 304,345 L 269,359 L 285,330 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Uttar Pradesh"/>
 
-<!-- ── RAJASTHAN
-     Approx: lon 69.5°–78.3°E, lat 23.1°–30.2°N
-── -->
+<!-- ── RAJASTHAN ── -->
 <path id="state-rj"
-  d="M 182,274 L 210,268 L 238,272 L 262,280 L 280,295
-     L 280,318 L 278,342 L 268,368 L 252,392 L 230,416
-     L 205,432 L 178,444 L 152,448 L 128,440 L 108,422
-     L 94,400 L 86,374 L 88,344 L 100,316 L 120,290 L 148,276 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 48,275 L 143,275 L 215,275 L 304,345 L 298,458 L 247,506 L 158,513 L 57,532 L 48,477 L 16,385 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Rajasthan"/>
 
-<!-- ── GUJARAT (mainland + Saurashtra + Kutch)
-     Approx: lon 68.2°–74.5°E, lat 20.1°–24.7°N
-── -->
+<!-- ── GUJARAT (mainland + Saurashtra + Kutch) ── -->
 <path id="state-gj"
-  d="M 8,454 L 40,442 L 72,435 L 100,435 L 128,442
-     L 148,455 L 162,472 L 165,498 L 155,525 L 135,545
-     L 112,558 L 88,562 L 64,552 L 44,532 L 30,508 L 18,482 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 54,458 L 158,458 L 184,495 L 184,550 L 143,605 L 79,616 L 32,601 L 0,568 L 16,495 L 54,458 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Gujarat"/>
-<!-- Saurashtra peninsula -->
-<path id="state-gj-saur"
-  d="M 30,508 L 56,498 L 82,496 L 102,505 L 110,525 L 102,545
-     L 78,555 L 52,548 L 35,532 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Gujarat (Saurashtra)"/>
-<!-- Kutch -->
-<path id="state-gj-kutch"
-  d="M 8,420 L 48,408 L 82,410 L 108,420 L 118,436 L 102,448
-     L 70,454 L 38,450 L 15,438 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Gujarat (Kutch)"/>
 
-<!-- ── MADHYA PRADESH
-     Approx: lon 74.0°–82.8°E, lat 21.1°–26.9°N
-── -->
+<!-- ── MADHYA PRADESH ── -->
 <path id="state-mp"
-  d="M 192,370 L 220,368 L 248,360 L 275,350 L 298,356
-     L 324,360 L 350,368 L 376,378 L 400,390 L 418,408
-     L 425,432 L 418,455 L 400,470 L 376,478 L 348,480
-     L 320,476 L 292,466 L 268,452 L 245,434 L 228,412
-     L 210,390 L 192,375 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 190,370 L 304,345 L 469,367 L 469,458 L 380,583 L 253,583 L 190,532 L 158,458 L 190,370 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Madhya Pradesh"/>
 
-<!-- ── MAHARASHTRA
-     Approx: lon 72.6°–80.9°E, lat 15.6°–22.1°N
-── -->
+<!-- ── MAHARASHTRA ── -->
 <path id="state-mh"
-  d="M 158,522 L 185,510 L 215,498 L 248,490 L 278,488
-     L 308,488 L 336,492 L 360,502 L 380,520 L 395,542
-     L 400,568 L 394,592 L 378,610 L 354,620 L 326,622
-     L 295,614 L 265,598 L 238,578 L 214,556 L 192,536 L 168,526 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 146,550 L 253,583 L 380,583 L 409,642 L 396,715 L 364,752 L 317,785 L 253,785 L 190,770 L 158,752 L 146,697 L 146,623 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Maharashtra"/>
 
-<!-- ── GOA (small)
-     Approx: lon 73.7°–74.3°E, lat 14.9°–15.8°N
-── -->
+<!-- ── GOA (small) ── -->
 <path id="state-ga"
-  d="M 178,620 L 196,616 L 212,622 L 210,638 L 195,644 L 178,636 Z"
+  d="M 181,777 L 200,777 L 200,810 L 181,810 Z"
   fill="#5ab050" stroke="rgba(255,255,255,0.6)" stroke-width="1.0"
   class="state-path" data-state="Goa"/>
 
-<!-- ── KARNATAKA
-     Approx: lon 74.1°–78.6°E, lat 11.6°–18.5°N
-── -->
+<!-- ── KARNATAKA ── -->
 <path id="state-ka"
-  d="M 212,622 L 240,608 L 270,596 L 298,592 L 326,598
-     L 352,610 L 372,632 L 384,658 L 385,684 L 376,710
-     L 358,730 L 332,742 L 305,748 L 278,740 L 252,722
-     L 232,698 L 215,672 L 202,646 L 200,632 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 193,678 L 253,678 L 336,715 L 317,825 L 285,887 L 253,917 L 206,917 L 190,862 L 190,807 L 193,678 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Karnataka"/>
 
-<!-- ── KERALA
-     Approx: lon 74.9°–77.4°E, lat 8.2°–12.8°N
-── -->
+<!-- ── KERALA ── -->
 <path id="state-kl"
-  d="M 265,748 L 285,736 L 308,738 L 318,760 L 314,790
-     L 298,818 L 276,836 L 258,840 L 248,822 L 248,794
-     L 252,768 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 219,887 L 253,917 L 285,898 L 298,972 L 269,1052 L 253,1056 L 222,1008 L 219,953 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Kerala"/>
 
-<!-- ── TAMIL NADU
-     Approx: lon 77.1°–80.4°E, lat 8.1°–13.7°N
-── -->
+<!-- ── TAMIL NADU ── -->
 <path id="state-tn"
-  d="M 308,738 L 335,736 L 364,738 L 392,752 L 412,775
-     L 418,802 L 414,828 L 400,850 L 380,864 L 355,872
-     L 330,866 L 308,848 L 290,825 L 278,800 L 275,776
-     L 278,756 L 292,744 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 285,898 L 386,862 L 393,917 L 374,1008 L 333,1060 L 301,1060 L 269,1052 L 285,972 L 285,898 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Tamil Nadu"/>
 
-<!-- ── ANDHRA PRADESH
-     Approx: lon 76.8°–84.7°E, lat 12.6°–19.9°N
-── -->
+<!-- ── ANDHRA PRADESH ── -->
 <path id="state-ap"
-  d="M 378,520 L 408,512 L 440,508 L 468,512 L 494,526
-     L 512,548 L 518,574 L 510,598 L 492,616 L 465,626
-     L 435,628 L 405,618 L 380,600 L 358,580 L 350,558
-     L 352,536 L 362,524 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 279,623 L 380,587 L 409,642 L 529,642 L 507,715 L 443,770 L 396,843 L 348,843 L 336,788 L 336,715 L 279,678 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Andhra Pradesh"/>
 
-<!-- ── TELANGANA
-     Approx: lon 77.2°–81.3°E, lat 15.9°–19.9°N
-── -->
+<!-- ── TELANGANA ── -->
 <path id="state-tg"
-  d="M 360,502 L 388,494 L 418,492 L 445,498 L 468,512
-     L 478,536 L 474,562 L 458,582 L 434,590 L 408,588
-     L 382,578 L 362,560 L 352,538 L 354,520 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 291,627 L 348,627 L 418,627 L 421,715 L 380,770 L 336,788 L 317,785 L 291,733 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Telangana"/>
 
-<!-- ── ODISHA
-     Approx: lon 81.4°–87.5°E, lat 17.8°–22.6°N
-── -->
+<!-- ── ODISHA ── -->
 <path id="state-od"
-  d="M 520,328 L 552,320 L 582,320 L 608,330 L 625,352
-     L 628,378 L 618,404 L 598,422 L 570,432 L 540,432
-     L 514,420 L 498,398 L 492,372 L 498,346 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 428,528 L 570,528 L 618,568 L 602,667 L 532,697 L 443,678 L 428,642 L 428,568 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Odisha"/>
 
-<!-- ── CHHATTISGARH
-     Approx: lon 80.2°–84.4°E, lat 17.8°–24.1°N
-── -->
+<!-- ── CHHATTISGARH ── -->
 <path id="state-cg"
-  d="M 420,408 L 448,400 L 478,396 L 508,402 L 525,418
-     L 530,448 L 525,478 L 508,500 L 484,510 L 456,510
-     L 428,498 L 408,478 L 400,452 L 404,426 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 380,473 L 469,458 L 523,550 L 475,623 L 443,678 L 396,678 L 348,660 L 333,623 L 380,550 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Chhattisgarh"/>
 
-<!-- ── JHARKHAND
-     Approx: lon 83.3°–87.9°E, lat 21.9°–25.4°N
-── -->
+<!-- ── JHARKHAND ── -->
 <path id="state-jh"
-  d="M 492,328 L 524,320 L 555,322 L 578,336 L 585,360
-     L 575,384 L 552,398 L 524,400 L 498,388 L 482,368
-     L 480,346 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 488,425 L 630,425 L 618,513 L 570,528 L 523,550 L 488,532 L 475,477 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Jharkhand"/>
 
-<!-- ── BIHAR
-     Approx: lon 83.3°–88.3°E, lat 24.3°–27.5°N
-── -->
+<!-- ── BIHAR ── -->
 <path id="state-br"
-  d="M 476,238 L 510,230 L 545,228 L 578,234 L 600,250
-     L 608,272 L 600,294 L 578,308 L 548,314 L 518,312
-     L 488,302 L 468,284 L 462,262 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 485,348 L 643,348 L 643,466 L 630,477 L 488,440 L 485,403 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Bihar"/>
 
-<!-- ── WEST BENGAL
-     Approx: lon 85.8°–89.9°E, lat 21.5°–27.2°N
-── -->
+<!-- ── WEST BENGAL ── -->
 <path id="state-wb"
-  d="M 572,228 L 605,220 L 636,222 L 658,238 L 668,262
-     L 662,290 L 645,312 L 618,326 L 590,330 L 562,322
-     L 542,308 L 535,284 L 538,258 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 564,359 L 649,359 L 694,440 L 649,568 L 570,528 L 630,477 L 630,425 L 564,440 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="West Bengal"/>
 
-<!-- ── SIKKIM (tiny)
-     Approx: lon 88.0°–88.9°E, lat 27.1°–28.1°N
-── -->
+<!-- ── SIKKIM (tiny) ── -->
 <path id="state-sk"
-  d="M 634,220 L 648,216 L 658,222 L 655,238 L 640,240 L 630,232 Z"
+  d="M 633,326 L 662,326 L 662,363 L 633,363 Z"
   fill="#5ab050" stroke="rgba(255,255,255,0.6)" stroke-width="1.0"
   class="state-path" data-state="Sikkim"/>
 
-<!-- ── ASSAM
-     Approx: lon 89.7°–96.0°E, lat 24.1°–28.2°N
-── -->
-<path id="state-as"
-  d="M 668,230 L 700,222 L 732,220 L 764,224 L 792,236
-     L 808,254 L 808,276 L 792,290 L 764,298 L 732,300
-     L 700,296 L 672,284 L 658,262 L 660,244 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Assam"/>
-
-<!-- ── MEGHALAYA
-     Approx: lon 89.8°–92.8°E, lat 25.0°–26.1°N
-── -->
-<path id="state-ml"
-  d="M 658,278 L 692,272 L 726,274 L 750,284 L 752,298
-     L 732,306 L 700,308 L 672,304 L 656,294 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Meghalaya"/>
-
-<!-- ── NAGALAND
-     Approx: lon 93.3°–95.3°E, lat 25.2°–27.0°N
-── -->
-<path id="state-nl"
-  d="M 790,242 L 814,232 L 832,240 L 838,260 L 826,278
-     L 806,280 L 792,268 L 788,252 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Nagaland"/>
-
-<!-- ── MANIPUR
-     Approx: lon 93.0°–94.8°E, lat 23.8°–25.7°N
-── -->
-<path id="state-mn"
-  d="M 788,268 L 812,262 L 832,272 L 838,296 L 826,316
-     L 804,322 L 782,314 L 774,296 L 776,278 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Manipur"/>
-
-<!-- ── MIZORAM
-     Approx: lon 92.3°–93.4°E, lat 21.9°–24.5°N
-── -->
-<path id="state-mz"
-  d="M 774,318 L 796,310 L 814,320 L 818,344 L 808,364
-     L 786,370 L 768,358 L 764,338 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Mizoram"/>
-
-<!-- ── TRIPURA (tiny)
-     Approx: lon 91.2°–92.3°E, lat 22.9°–24.5°N
-── -->
-<path id="state-tr"
-  d="M 748,298 L 768,292 L 784,302 L 785,322 L 770,332 L 750,326 L 742,312 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
-  class="state-path" data-state="Tripura"/>
-
-<!-- ── ARUNACHAL PRADESH
-     Approx: lon 91.7°–97.4°E, lat 26.7°–29.5°N
-── -->
+<!-- ── ARUNACHAL PRADESH (India's full claim) ── -->
 <path id="state-ar"
-  d="M 748,160 L 778,148 L 812,140 L 848,138 L 882,140
-     L 910,152 L 924,170 L 920,192 L 900,204 L 870,210
-     L 838,212 L 808,210 L 778,208 L 754,198 L 740,180 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.55)" stroke-width="1.2"
+  d="M 751,275 L 931,275 L 931,378 L 751,378 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
   class="state-path" data-state="Arunachal Pradesh"/>
 
-<!-- ── SRI LANKA (separate island, shown for context)
-     Approx: lon 79.7°–81.9°E, lat 5.9°–9.8°N
-── -->
-<path id="island-sl"
-  d="M 370,990 L 386,982 L 404,986 L 414,1004 L 416,1028
-     L 408,1052 L 392,1064 L 374,1062 L 362,1044 L 358,1020 L 362,998 Z"
-  fill="#5ab050" stroke="rgba(255,255,255,0.35)" stroke-width="1.0" opacity="0.65"
-  class="state-path" data-state="Sri Lanka (reference)"/>
+<!-- ── ASSAM ── -->
+<path id="state-as"
+  d="M 687,323 L 760,323 L 887,323 L 887,422 L 839,473 L 744,458 L 687,422 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Assam"/>
+
+<!-- ── MEGHALAYA ── -->
+<path id="state-ml"
+  d="M 690,400 L 785,400 L 785,440 L 690,440 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Meghalaya"/>
+
+<!-- ── NAGALAND ── -->
+<path id="state-nl"
+  d="M 801,367 L 865,367 L 865,433 L 801,433 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Nagaland"/>
+
+<!-- ── MANIPUR ── -->
+<path id="state-mn"
+  d="M 792,414 L 849,414 L 849,484 L 792,484 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Manipur"/>
+
+<!-- ── MIZORAM ── -->
+<path id="state-mz"
+  d="M 770,458 L 804,458 L 804,554 L 770,554 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Mizoram"/>
+
+<!-- ── TRIPURA ── -->
+<path id="state-tr"
+  d="M 735,458 L 770,458 L 770,517 L 735,517 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"
+  class="state-path" data-state="Tripura"/>
 
 <!-- ── LAKSHADWEEP (west coast islands) ── -->
-<circle cx="114" cy="720" r="6"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
-<circle cx="105" cy="750" r="5"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
-<circle cx="120" cy="778" r="4"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
+<circle cx="110" cy="860" r="6"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
+<circle cx="100" cy="890" r="5"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
+<circle cx="115" cy="920" r="4"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.75"/>
 
-<!-- ── ANDAMAN & NICOBAR ISLANDS (east of mainland) ── -->
-<ellipse cx="820" cy="620" rx="8" ry="22" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
-<ellipse cx="814" cy="660" rx="6" ry="16" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
-<ellipse cx="808" cy="692" rx="5" ry="12" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
-<ellipse cx="802" cy="718" rx="4" ry="9"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
-<ellipse cx="795" cy="756" rx="7" ry="18" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
-<ellipse cx="788" cy="790" rx="6" ry="14" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+<!-- ── ANDAMAN & NICOBAR ISLANDS ── -->
+<ellipse cx="820" cy="620" rx="7" ry="20" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+<ellipse cx="814" cy="655" rx="6" ry="15" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+<ellipse cx="808" cy="688" rx="5" ry="12" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+<ellipse cx="800" cy="718" rx="4" ry="9"  fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+<ellipse cx="793" cy="755" rx="6" ry="16" fill="#5ab050" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" opacity="0.8"/>
+
+<!-- ── SRI LANKA (reference island) ── -->
+<path id="island-sl"
+  d="M 370,990 L 386,982 L 404,986 L 414,1004 L 416,1028 L 408,1052 L 392,1064 L 374,1062 L 362,1044 L 358,1020 L 362,998 Z"
+  fill="#5ab050" stroke="rgba(255,255,255,0.3)" stroke-width="0.8" opacity="0.55"
+  class="state-path" data-state="Sri Lanka (reference)"/>
 `
 
 // Layer 3: City markers with calibrated SVG coordinates
@@ -592,10 +447,10 @@ function buildLabelsLayer(cities: typeof CITY_DATA): string {
 // Layer 5: Watermark text
 const SVG_WATERMARK = `
 <!-- ════ LAYER 5: WATERMARK ════ -->
-<text x="390" y="540" text-anchor="middle"
+<text x="380" y="600" text-anchor="middle"
       font-family="DM Serif Display,Georgia,serif"
       font-size="28" font-weight="400" letter-spacing="12"
-      fill="rgba(255,255,255,0.028)" pointer-events="none">INDIA</text>
+      fill="rgba(255,255,255,0.025)" pointer-events="none">INDIA</text>
 `
 
 app.get('/', (c) => {

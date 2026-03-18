@@ -8197,11 +8197,11 @@ app.get('/horeca', (c) => {
     igToast('Syncing inventory from vendor feeds…','info');
     igApi.get('/horeca/inventory').then(function(d){
       var csv = igBuildCsv(['SKU','Name','Category','Stock','Min Reorder','Unit Price','Vendor','Last Updated'],
-        [['KE-001','Commercial Oven','Kitchen Equipment','3','2','₹85,000','Premier Kitchen Supplies',new Date().toLocaleDateString('en-IN')],
-         ['CC-012','Bone China Dinner Set','Crockery & Cutlery','48','20','₹12,500','Hotelware India Ltd.',new Date().toLocaleDateString('en-IN')],
-         ['LN-003','Cotton Bath Towels (100)','Linen & Fabrics','145','50','₹8,200','Royal Linen & Textiles',new Date().toLocaleDateString('en-IN')],
-         ['FO-007','Luggage Trolley','Front Office','4','2','₹18,500','FrontDesk Solutions',new Date().toLocaleDateString('en-IN')],
-         ['HK-015','Industrial Vacuum Cleaner','Housekeeping','6','3','₹32,000','CleanPro Housekeeping',new Date().toLocaleDateString('en-IN')]]
+        [['OC-TW-CR-001-WH','Bone China Dinner Set 24pc','Tableware (Crockery)','48','20','₹12,500','OC — Glassware & Tableware',new Date().toLocaleDateString('en-IN')],
+         ['OC-TW-GL-001-WG','Crystal Wine Glass Tulip Set/6','Tableware (Glassware)','24','6','₹8,200','OC — Glassware & Tableware',new Date().toLocaleDateString('en-IN')],
+         ['JS-BB-CD-001-RO','GN 1/1 Chafing Dish Gel 9L','Buffet & Banquet','12','4','₹18,500','JS — Kitchenware & Buffetware',new Date().toLocaleDateString('en-IN')],
+         ['JS-KW-GN-001-1X','GN 1/1 Perforated Pan 65mm','Kitchenware','36','12','₹4,200','JS — Kitchenware & Buffetware',new Date().toLocaleDateString('en-IN')],
+         ['DP-HK-VU-001-ST','Hotel Vacuum Cleaner 1400W','Housekeeping','6','3','₹32,000','DP — Washroom & Dispensing',new Date().toLocaleDateString('en-IN')]]
       );
       igSaveFile('inventory-sync-'+new Date().toISOString().slice(0,10)+'.csv', csv, 'text/csv');
       igToast('Inventory synced — '+(d&&d.total_skus||213)+' SKUs updated — sync report downloaded','success');
@@ -8262,43 +8262,46 @@ app.get('/horeca', (c) => {
 
   // ── HORECA: Open SKU Category (replaces toast-only) ──────────────────────
   var HORECA_SKU_DATA = {
-    'Kitchen Equipment': [
-      {sku:'KE-001',name:'6-Burner Commercial Range',unit:'Piece',price:85000,stock:4,reorder:2},
-      {sku:'KE-002',name:'Convection Oven 40L',unit:'Piece',price:42000,stock:2,reorder:1},
-      {sku:'KE-003',name:'Commercial Refrigerator 500L',unit:'Piece',price:65000,stock:3,reorder:2},
-      {sku:'KE-004',name:'Industrial Dishwasher',unit:'Piece',price:120000,stock:1,reorder:1},
-      {sku:'KE-005',name:'Commercial Deep Fryer',unit:'Piece',price:28000,stock:2,reorder:1},
+    'Tableware (Crockery)': [
+      {sku:'OC-TW-CR-001-WH',name:'Bone China Dinner Plate 27cm',unit:'Piece',price:850,stock:240,reorder:48},
+      {sku:'OC-TW-CR-002-WH',name:'Bone China Side Plate 18cm',unit:'Piece',price:620,stock:180,reorder:36},
+      {sku:'OC-TW-CR-003-WH',name:'Bone China Soup Bowl 250ml',unit:'Piece',price:780,stock:120,reorder:24},
+      {sku:'VN-TW-CR-001-SS',name:'SS Chafing Dish Round 3.5L',unit:'Piece',price:2800,stock:24,reorder:6},
+      {sku:'JS-KW-GN-001-1X',name:'GN 1/1 Gastronorm Pan 65mm',unit:'Piece',price:1850,stock:48,reorder:12},
     ],
-    'Crockery & Cutlery': [
-      {sku:'CC-012',name:'Bone China Dinner Set (24)',unit:'Set',price:4500,stock:28,reorder:10},
-      {sku:'CC-013',name:'Stainless Steel Cutlery Set',unit:'Set',price:1200,stock:45,reorder:20},
-      {sku:'CC-014',name:'Soup Bowls (12-pack)',unit:'Pack',price:800,stock:30,reorder:15},
+    'Tableware (Glassware)': [
+      {sku:'OC-TW-GL-001-WG',name:'Crystal Wine Glass Tulip Set/6',unit:'Set',price:3200,stock:24,reorder:6},
+      {sku:'OC-TW-GL-002-WG',name:'Highball Glass 350ml Set/6',unit:'Set',price:2400,stock:18,reorder:6},
+      {sku:'OC-TW-GL-003-WG',name:'Water Jug 1.5L Crystal',unit:'Piece',price:1800,stock:12,reorder:4},
     ],
-    'Linen & Fabrics': [
-      {sku:'LN-003',name:'Egyptian Cotton Bed Sheets',unit:'Set',price:2800,stock:120,reorder:50},
-      {sku:'LN-004',name:'Pillow Cases (4-pack)',unit:'Pack',price:650,stock:200,reorder:80},
-      {sku:'LN-005',name:'Bath Towels Premium',unit:'Piece',price:450,stock:180,reorder:60},
+    'Tableware (Cutlery)': [
+      {sku:'VN-TW-CT-001-SS',name:'SS 18/10 Dinner Fork',unit:'Piece',price:420,stock:180,reorder:60},
+      {sku:'VN-TW-CT-002-SS',name:'SS 18/10 Dinner Knife',unit:'Piece',price:480,stock:160,reorder:60},
+      {sku:'VN-TW-CT-003-SS',name:'SS 18/10 Dessert Spoon',unit:'Piece',price:350,stock:200,reorder:60},
     ],
-    'Front Office': [
-      {sku:'FO-002',name:'Reception Desk System',unit:'Unit',price:45000,stock:2,reorder:1},
-      {sku:'FO-003',name:'Digital Key Card System',unit:'Unit',price:15000,stock:4,reorder:2},
+    'Buffet & Banquet': [
+      {sku:'JS-BB-CD-001-RO',name:'Chafing Dish Gel Fuel 9L Round',unit:'Piece',price:4800,stock:12,reorder:4},
+      {sku:'JS-BB-CD-002-RC',name:'Chafing Dish Induction 1/1 GN',unit:'Piece',price:12500,stock:6,reorder:2},
+      {sku:'JS-BB-TR-001-ST',name:'Buffet Tray SS 1/1 GN',unit:'Piece',price:2200,stock:24,reorder:8},
     ],
     'Housekeeping': [
-      {sku:'HK-008',name:'Industrial Vacuum Cleaner',unit:'Piece',price:12500,stock:6,reorder:3},
-      {sku:'HK-009',name:'Mop & Bucket Set',unit:'Set',price:800,stock:20,reorder:8},
+      {sku:'DP-HK-VU-001-ST',name:'Hotel Vacuum Cleaner 1400W',unit:'Piece',price:32000,stock:6,reorder:3},
+      {sku:'EF-HK-MP-001-ST',name:'Wet & Dry Mop Combo Set',unit:'Set',price:4800,stock:12,reorder:4},
+      {sku:'FL-HK-TL-001-60',name:'Housekeeping Trolley 60cm',unit:'Piece',price:18500,stock:4,reorder:2},
     ],
-    'Food & Beverage': [
-      {sku:'FB-015',name:'Wine Glass Set (12pcs)',unit:'Set',price:2200,stock:3,reorder:8},
-      {sku:'FB-016',name:'Bar Shaker Set',unit:'Set',price:1800,stock:5,reorder:3},
+    'Serviceware': [
+      {sku:'JS-SW-TR-001-ST',name:'Hotel Tray SS Rectangular 40cm',unit:'Piece',price:2800,stock:24,reorder:8},
+      {sku:'JS-SW-TR-002-ST',name:'Room Service Tray 35cm',unit:'Piece',price:1800,stock:18,reorder:6},
     ],
-    'Maintenance': [
-      {sku:'MT-001',name:'Electrical Maintenance Kit',unit:'Kit',price:8500,stock:3,reorder:2},
-      {sku:'MT-002',name:'Plumbing Tool Set',unit:'Set',price:4200,stock:2,reorder:1},
+    'Small Appliances (OS&E)': [
+      {sku:'GD-OS-SF-001-DG',name:'In-Room Electronic Safe 35L',unit:'Piece',price:8500,stock:20,reorder:5},
+      {sku:'AR-OS-HD-001-WM',name:'Hair Dryer Wall-Mount 1800W',unit:'Piece',price:3200,stock:30,reorder:10},
+      {sku:'AR-OS-KT-001-BL',name:'In-Room Kettle 1L SS',unit:'Piece',price:2400,stock:25,reorder:8},
     ],
-    'Technology': [
-      {sku:'TK-001',name:'Smart TV 55in 4K',unit:'Piece',price:38000,stock:12,reorder:5},
-      {sku:'TK-002',name:'Wi-Fi Access Point',unit:'Piece',price:12000,stock:8,reorder:4},
-    ]
+    'Barware': [
+      {sku:'OC-BW-SH-001-SS',name:'Boston Shaker Set SS 18/10',unit:'Set',price:2800,stock:8,reorder:3},
+      {sku:'OC-BW-JG-001-SS',name:'Jigger Double SS 25/50ml',unit:'Piece',price:650,stock:12,reorder:4},
+    ],
   };
   window.igOpenSkuCat = function(cat, color){
     var items = HORECA_SKU_DATA[cat] || [];

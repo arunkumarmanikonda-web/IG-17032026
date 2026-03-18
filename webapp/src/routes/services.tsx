@@ -186,6 +186,219 @@ ${SERVICES.map((s, i) => `
 </div>
 `).join('')}
 
+<!-- ══ INDIA ADVISORY FOOTPRINT MAP ══════════════════════════════════════ -->
+<div id="india-footprint" class="sec-md" style="padding-top:5rem;padding-bottom:5rem;overflow:hidden;">
+  <div class="wrap">
+    <div style="text-align:center;max-width:600px;margin:0 auto 3rem;">
+      <div class="gr-lt"></div>
+      <p class="eyebrow" style="margin-bottom:.75rem;">Pan-India Presence</p>
+      <h2 class="h2-lt" style="margin-bottom:1rem;">Our Advisory Footprint</h2>
+      <p class="lead-lt" style="max-width:500px;margin:0 auto;">Active mandates and advisory presence across India's key real estate, hospitality and retail markets.</p>
+    </div>
+
+    <!-- Map + City List grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="mob-stack">
+
+      <!-- India SVG Map -->
+      <div style="position:relative;">
+        <div style="position:absolute;top:10%;left:10%;width:80%;height:80%;background:radial-gradient(ellipse,rgba(184,150,12,.08) 0%,transparent 70%);pointer-events:none;"></div>
+        <svg id="serviceIndiaMap" viewBox="0 0 680 780" xmlns="http://www.w3.org/2000/svg"
+             preserveAspectRatio="xMidYMid meet"
+             style="width:100%;height:auto;display:block;"
+             aria-label="India advisory footprint map">
+          <defs>
+            <filter id="svsShadow">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(184,150,12,0.4)"/>
+            </filter>
+            <radialGradient id="svsGold" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#f0d060"/>
+              <stop offset="100%" stop-color="#B8960C"/>
+            </radialGradient>
+          </defs>
+
+          <!-- India outline - simplified but geographically correct SVG -->
+          <!-- Scale: ~22.5px/deg longitude, ~26px/deg latitude -->
+          <!-- Origin: lon 68°E=0, lat 37°N=0 (y inverted) -->
+          <!-- J&K + Ladakh -->
+          <path d="M 110,0 L 255,0 L 300,18 L 295,58 L 280,82 L 252,108 L 222,118 L 194,115 L 168,112 L 148,108 L 125,82 L 108,55 Z"
+                fill="rgba(80,120,78,0.5)" stroke="rgba(255,255,255,0.35)" stroke-width="1" opacity="0.8"/>
+          <!-- Himachal Pradesh -->
+          <path d="M 182,110 L 208,105 L 245,110 L 254,124 L 248,144 L 232,158 L 210,162 L 192,152 L 180,135 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Punjab -->
+          <path d="M 138,118 L 180,112 L 188,130 L 180,152 L 162,168 L 143,172 L 128,158 L 122,138 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Haryana -->
+          <path d="M 182,158 L 210,162 L 228,174 L 232,195 L 222,212 L 202,220 L 180,218 L 162,205 L 158,182 L 164,168 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Delhi (small) -->
+          <path d="M 202,195 L 216,192 L 222,202 L 218,215 L 205,218 L 198,208 Z"
+                fill="rgba(80,120,78,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="0.6"/>
+          <!-- Uttarakhand -->
+          <path d="M 235,155 L 256,148 L 286,148 L 302,158 L 300,178 L 285,192 L 262,196 L 240,188 L 228,172 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Uttar Pradesh -->
+          <path d="M 200,218 L 228,212 L 258,198 L 300,190 L 340,192 L 368,200 L 388,222 L 385,248 L 368,268 L 338,278 L 305,280 L 272,272 L 245,258 L 220,240 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Rajasthan -->
+          <path d="M 128,180 L 162,175 L 200,178 L 220,196 L 218,222 L 205,248 L 185,272 L 160,292 L 132,305 L 105,308 L 84,295 L 72,268 L 72,240 L 85,212 L 105,192 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Gujarat -->
+          <path d="M 55,320 L 82,312 L 108,315 L 125,328 L 128,350 L 115,372 L 92,382 L 68,378 L 48,360 L 40,335 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Gujarat Saurashtra -->
+          <path d="M 40,348 L 65,340 L 88,350 L 90,370 L 72,380 L 48,372 Z"
+                fill="rgba(80,120,78,0.5)" stroke="rgba(255,255,255,0.3)" stroke-width="0.7"/>
+          <!-- Gujarat Kutch -->
+          <path d="M 5,292 L 38,282 L 65,288 L 75,302 L 62,316 L 35,320 L 12,310 Z"
+                fill="rgba(80,120,78,0.5)" stroke="rgba(255,255,255,0.3)" stroke-width="0.7"/>
+          <!-- Madhya Pradesh -->
+          <path d="M 138,282 L 168,268 L 200,262 L 238,265 L 272,275 L 298,288 L 310,312 L 305,335 L 285,348 L 255,352 L 222,345 L 192,330 L 168,312 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Maharashtra -->
+          <path d="M 110,368 L 138,355 L 168,340 L 200,340 L 228,348 L 252,358 L 268,375 L 270,400 L 258,420 L 235,428 L 205,425 L 178,412 L 155,392 L 132,378 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Karnataka -->
+          <path d="M 150,440 L 178,428 L 210,432 L 238,445 L 252,465 L 255,488 L 245,512 L 225,528 L 200,532 L 172,520 L 150,498 L 138,475 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Goa (small) -->
+          <path d="M 125,440 L 142,435 L 150,444 L 148,455 L 135,460 Z"
+                fill="rgba(80,120,78,0.6)" stroke="rgba(255,255,255,0.35)" stroke-width="0.6"/>
+          <!-- Kerala -->
+          <path d="M 192,532 L 212,525 L 225,538 L 218,562 L 205,580 L 185,590 L 170,582 L 165,562 L 172,542 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Tamil Nadu -->
+          <path d="M 222,530 L 245,525 L 272,530 L 292,548 L 295,572 L 285,598 L 265,615 L 242,618 L 220,605 L 205,582 L 205,558 L 215,540 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Andhra Pradesh -->
+          <path d="M 268,360 L 305,350 L 340,355 L 368,368 L 380,392 L 375,418 L 358,435 L 330,440 L 300,435 L 272,418 L 255,395 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Telangana -->
+          <path d="M 255,350 L 280,342 L 310,345 L 335,358 L 340,378 L 330,400 L 308,408 L 282,405 L 260,390 L 252,368 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Odisha -->
+          <path d="M 375,232 L 410,225 L 442,228 L 462,245 L 460,270 L 445,288 L 418,295 L 390,290 L 370,272 L 365,250 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Chhattisgarh -->
+          <path d="M 305,280 L 338,272 L 368,272 L 390,285 L 395,310 L 385,335 L 365,350 L 340,355 L 310,348 L 292,330 L 290,305 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Jharkhand -->
+          <path d="M 355,215 L 390,210 L 415,218 L 425,238 L 415,258 L 390,268 L 362,262 L 345,245 L 345,228 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Bihar -->
+          <path d="M 338,160 L 368,155 L 400,158 L 420,172 L 422,192 L 408,208 L 382,215 L 355,210 L 335,196 L 328,178 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- West Bengal -->
+          <path d="M 408,155 L 438,148 L 462,155 L 472,175 L 468,200 L 450,215 L 425,218 L 405,205 L 395,185 Z"
+                fill="rgba(80,120,78,0.55)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+          <!-- Assam + NE States (simplified block) -->
+          <path d="M 480,155 L 518,148 L 552,152 L 572,168 L 568,190 L 545,202 L 515,205 L 485,198 L 470,180 Z"
+                fill="rgba(80,120,78,0.5)" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
+          <!-- Arunachal Pradesh -->
+          <path d="M 538,100 L 568,92 L 600,90 L 622,102 L 620,122 L 598,132 L 568,135 L 542,128 L 530,112 Z"
+                fill="rgba(80,120,78,0.5)" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
+          <!-- Sri Lanka (reference) -->
+          <path d="M 265,700 L 278,694 L 290,700 L 294,720 L 285,738 L 270,740 L 260,728 L 260,710 Z"
+                fill="rgba(80,120,78,0.3)" stroke="rgba(255,255,255,0.2)" stroke-width="0.6" opacity="0.6"/>
+          <!-- Andaman islands -->
+          <ellipse cx="592" cy="432" rx="6" ry="16" fill="rgba(80,120,78,0.4)" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+          <ellipse cx="586" cy="462" rx="5" ry="12" fill="rgba(80,120,78,0.4)" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+
+          <!-- City Markers — Advisory Locations -->
+          <!-- Delhi NCR: lon 77°E → x=(77-68)*22.5=202.5, lat 28.6°N → y=(37-28.6)*26=218.4 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Delhi NCR','Real Estate · Hospitality · Retail')" style="cursor:pointer;">
+            <circle cx="206" cy="207" r="12" fill="rgba(184,150,12,0.18)" class="svc-pulse"/>
+            <circle cx="206" cy="207" r="7" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="220" y="211" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Delhi NCR</text>
+          </g>
+          <!-- Mumbai: lon 72.8°E → x=(72.8-68)*22.5=108, lat 18.9°N → y=(37-18.9)*26=470.6 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Mumbai','Real Estate · Entertainment · Retail')" style="cursor:pointer;">
+            <circle cx="108" cy="348" r="12" fill="rgba(184,150,12,0.18)" class="svc-pulse"/>
+            <circle cx="108" cy="348" r="7" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="85" y="341" text-anchor="end" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Mumbai</text>
+          </g>
+          <!-- Chandigarh: lon 76.8°E → x=(76.8-68)*22.5=198, lat 30.7°N → y=(37-30.7)*26=163.8 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Chandigarh','Hospitality · Real Estate')" style="cursor:pointer;">
+            <circle cx="197" cy="163" r="10" fill="rgba(184,150,12,0.15)" class="svc-pulse"/>
+            <circle cx="197" cy="163" r="6" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="210" y="167" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Chandigarh</text>
+          </g>
+          <!-- Kasauli/Chail: lon 77°E, lat 30.9°N -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Kasauli · Chail','Heritage Hospitality')" style="cursor:pointer;">
+            <circle cx="202" cy="158" r="8" fill="rgba(184,150,12,0.12)" class="svc-pulse"/>
+            <circle cx="202" cy="158" r="5" fill="rgba(184,150,12,0.7)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+          </g>
+          <!-- Jaipur: lon 75.8°E → x=(75.8-68)*22.5=175.5, lat 26.9°N → y=(37-26.9)*26=262.6 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Jaipur','Hospitality · Real Estate')" style="cursor:pointer;">
+            <circle cx="175" cy="263" r="10" fill="rgba(184,150,12,0.15)" class="svc-pulse"/>
+            <circle cx="175" cy="263" r="6" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="160" y="256" text-anchor="end" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Jaipur</text>
+          </g>
+          <!-- Bengaluru: lon 77.6°E → x=(77.6-68)*22.5=216, lat 12.9°N → y=(37-12.9)*26=626.6 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Bengaluru','Real Estate · HORECA · Retail')" style="cursor:pointer;">
+            <circle cx="216" cy="498" r="11" fill="rgba(184,150,12,0.15)" class="svc-pulse"/>
+            <circle cx="216" cy="498" r="7" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="229" y="502" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Bengaluru</text>
+          </g>
+          <!-- Hyderabad: lon 78.5°E → x=(78.5-68)*22.5=236.25, lat 17.4°N → y=(37-17.4)*26=509.6 -->
+          <g class="svc-marker" onclick="svcCityTip(this,'Hyderabad','Real Estate · Hospitality')" style="cursor:pointer;">
+            <circle cx="236" cy="382" r="10" fill="rgba(184,150,12,0.15)" class="svc-pulse"/>
+            <circle cx="236" cy="382" r="6" fill="url(#svsGold)" stroke="#B8960C" stroke-width="1.5" filter="url(#svsShadow)"/>
+            <text x="249" y="386" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.85)" paint-order="stroke" stroke="rgba(0,0,0,0.7)" stroke-width="2.5">Hyderabad</text>
+          </g>
+        </svg>
+        <p style="font-size:.58rem;color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;text-align:center;margin-top:.5rem;">J&amp;K shown per India's official territorial claim · Click a marker for details</p>
+      </div>
+
+      <!-- City / Advisory List -->
+      <div>
+        <p style="font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">Active Advisory Markets</p>
+        <div style="display:flex;flex-direction:column;gap:.75rem;" id="svcCityList">
+          ${[
+            { city: 'Delhi NCR', verticals: 'Real Estate · Hospitality · Retail', note: 'Primary market — largest advisory pipeline' },
+            { city: 'Chandigarh & Himachal Pradesh', verticals: 'Hospitality · Heritage', note: 'Hotel Rajshree, Kasauli, Chail active mandates' },
+            { city: 'Jaipur', verticals: 'Hospitality · Heritage', note: '6-property heritage portfolio advisory' },
+            { city: 'Mumbai', verticals: 'Real Estate · Entertainment · Retail', note: '₹2,100 Cr entertainment & retail hub mandate' },
+            { city: 'Bengaluru', verticals: 'Real Estate · HORECA', note: 'Commercial real estate & procurement advisory' },
+            { city: 'Hyderabad', verticals: 'Real Estate · Hospitality', note: 'Fastest-growing Tier-1 market 2026' },
+          ].map((c: any) => `
+          <div style="padding:.875rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-left:3px solid rgba(184,150,12,.5);transition:all .2s;"
+               onmouseover="this.style.background='rgba(184,150,12,.07)';this.style.borderLeftColor='var(--gold)'"
+               onmouseout="this.style.background='rgba(255,255,255,.04)';this.style.borderLeftColor='rgba(184,150,12,.5)'">
+            <div style="font-size:.82rem;font-weight:700;color:#fff;margin-bottom:.2rem;">${c.city}</div>
+            <div style="font-size:.65rem;color:var(--gold);font-weight:600;letter-spacing:.04em;margin-bottom:.2rem;">${c.verticals}</div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.4);">${c.note}</div>
+          </div>`).join('')}
+        </div>
+
+        <!-- Tooltip box -->
+        <div id="svcMapTip" style="display:none;margin-top:1.25rem;padding:1rem;background:rgba(184,150,12,.1);border:1px solid rgba(184,150,12,.3);">
+          <p id="svcTipCity" style="font-size:.88rem;font-weight:700;color:#fff;margin-bottom:.25rem;"></p>
+          <p id="svcTipVerticals" style="font-size:.7rem;color:var(--gold);"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.svc-pulse { animation: svcPulse 2.5s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+@keyframes svcPulse { 0%,100%{r:12px;opacity:.18;} 50%{r:17px;opacity:.06;} }
+.svc-marker:hover circle:last-of-type,.svc-marker:focus circle:last-of-type { filter:brightness(1.3) drop-shadow(0 0 6px rgba(184,150,12,.7)); }
+</style>
+<script>
+function svcCityTip(el, city, verticals) {
+  var tip = document.getElementById('svcMapTip');
+  var cityEl = document.getElementById('svcTipCity');
+  var vertEl = document.getElementById('svcTipVerticals');
+  if (tip && cityEl && vertEl) {
+    cityEl.textContent = city;
+    vertEl.textContent = verticals;
+    tip.style.display = 'block';
+  }
+}
+</script>
+
 <!-- ══ TRANSACTION ADVISORY PARTNERS ════════════════════════════════════ -->
 <div class="sec-wh" style="padding-top:5rem;padding-bottom:5rem;">
   <div class="wrap">
