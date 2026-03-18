@@ -37,14 +37,14 @@ app.get('/', (c) => {
           { n:'₹50 Cr+', l:'Procurement Managed', icon:'rupee-sign' },
           { n:'20',      l:'Verified Suppliers',    icon:'handshake' },
           { n:'15+',     l:'Hotels Supplied',      icon:'hotel' },
-        ].map(s => `
-        <div style="padding:2rem 1.5rem;background:rgba(255,255,255,.03);text-align:center;transition:background .22s;position:relative;overflow:hidden;" onmouseover="this.style.background='rgba(184,150,12,.06)'" onmouseout="this.style.background='rgba(255,255,255,.03)'">
-          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,12,.3),transparent);"></div>
-          <i class="fas fa-\${s.icon}" style="font-size:.75rem;color:rgba(184,150,12,.45);margin-bottom:.625rem;display:block;"></i>
-          <div style="font-family:'DM Serif Display',Georgia,serif;font-size:2.25rem;color:var(--gold);line-height:1;margin-bottom:.4rem;">\${s.n}</div>
-          <div style="font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);">\${s.l}</div>
-        </div>
-        `).join('')}
+        ].map(s =>
+        '<div style="padding:2rem 1.5rem;background:rgba(255,255,255,.03);text-align:center;transition:background .22s;position:relative;overflow:hidden;" onmouseover="this.style.background=\'rgba(184,150,12,.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,.03)\'">'
+        + '<div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,12,.3),transparent);"></div>'
+        + '<i class="fas fa-' + s.icon + '" style="font-size:.75rem;color:rgba(184,150,12,.45);margin-bottom:.625rem;display:block;"></i>'
+        + '<div style="font-family:\'DM Serif Display\',Georgia,serif;font-size:2.25rem;color:var(--gold);line-height:1;margin-bottom:.4rem;">' + s.n + '</div>'
+        + '<div style="font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);">' + s.l + '</div>'
+        + '</div>'
+        ).join('')}
       </div>
     </div>
   </div>
@@ -84,15 +84,16 @@ app.get('/', (c) => {
         { icon:'gift',           name:'Guest Amenities',       desc:'Brand-approved bathroom amenities, room stationery, in-room guest kits and branded items.',    color:'rgba(146,64,14,.07)' },
         { icon:'tools',          name:'SPA & Wellness',        desc:'Spa equipment, treatment beds, wellness product ranges, fitness equipment and AV systems.',    color:'rgba(22,163,74,.07)' },
         { icon:'clipboard-list', name:'Turnkey Packages',      desc:'Complete turnkey procurement from single vendor. Full project management and delivery.',        color:'rgba(184,150,12,.06)' },
-      ].map(cat => `
-      <div style="background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:default;" onmouseover="this.style.background='var(--parch)';this.style.boxShadow='0 8px 32px rgba(0,0,0,.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow='none'">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;" class="cat-top"></div>
-        <div style="width:52px;height:52px;background:\${cat.color};border:1px solid rgba(184,150,12,.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
-          <i class="fas fa-\${cat.icon}" style="color:var(--gold);font-size:1.1rem;"></i>
-        </div>
-        <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.625rem;">\${cat.name}</h3>
-        <p style="font-size:.8rem;color:var(--ink-muted);line-height:1.7;">\${cat.desc}</p>
-      </div>`).join('')}
+      ].map(cat =>
+      '<div style="background:#fff;padding:2rem 1.5rem;transition:all .25s;position:relative;overflow:hidden;cursor:default;" onmouseover="this.style.background=\'var(--parch)\';this.style.boxShadow=\'0 8px 32px rgba(0,0,0,.06)\'" onmouseout="this.style.background=\'#fff\';this.style.boxShadow=\'none\'">'
+      + '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .25s;" class="cat-top"></div>'
+      + '<div style="width:52px;height:52px;background:' + cat.color + ';border:1px solid rgba(184,150,12,.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">'
+      + '<i class="fas fa-' + cat.icon + '" style="color:var(--gold);font-size:1.1rem;"></i>'
+      + '</div>'
+      + '<h3 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.625rem;">' + cat.name + '</h3>'
+      + '<p style="font-size:.8rem;color:var(--ink-muted);line-height:1.7;">' + cat.desc + '</p>'
+      + '</div>'
+      ).join('')}
     </div>
   </div>
 </div>
@@ -109,13 +110,13 @@ app.get('/', (c) => {
     <div style="position:relative;">
       <div style="position:absolute;top:1.5rem;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:1px;background:var(--border);z-index:0;display:none;" class="step-line"></div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;z-index:1;">
-        ${STEPS.map(step => `
-        <div style="padding:0 1.5rem;text-align:center;position:relative;">
-          <div style="width:48px;height:48px;background:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 0 0 1px var(--border);position:relative;z-index:1;">${step.n}</div>
-          <h3 style="font-family:'DM Serif Display',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.625rem;">${step.title}</h3>
-          <p class="body" style="font-size:.8rem;">${step.desc}</p>
-        </div>
-        `).join('')}
+        ${STEPS.map(step =>
+        '<div style="padding:0 1.5rem;text-align:center;position:relative;">'
+        + '<div style="width:48px;height:48px;background:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-family:\'DM Serif Display\',Georgia,serif;font-size:1.1rem;color:#fff;font-weight:700;border:3px solid #fff;box-shadow:0 0 0 1px var(--border);position:relative;z-index:1;">' + step.n + '</div>'
+        + '<h3 style="font-family:\'DM Serif Display\',Georgia,serif;font-size:1.05rem;color:var(--ink);margin-bottom:.625rem;">' + step.title + '</h3>'
+        + '<p class="body" style="font-size:.8rem;">' + step.desc + '</p>'
+        + '</div>'
+        ).join('')}
       </div>
       <style>@media(min-width:640px){.step-line{display:block!important;}}</style>
     </div>
@@ -131,9 +132,7 @@ app.get('/', (c) => {
       <h2 class="h2">Trusted by Leading<br>Hotel Groups</h2>
     </div>
     <div class="ig-prop-grid">
-      ${['Marriott International','Radisson Hotels','Cygnett Hotels','Regenta / Royal Orchid','IHG Hotels','Park Inn by Radisson','Bijolai Palace','Lemon Tree Hotels','Taj Hotels','Accor Hotels','Mahindra Holidays','CGH Earth Hotels'].map(b => `
-      <div class="ig-prop-cell">${b}</div>
-      `).join('')}
+      ${['Marriott International','Radisson Hotels','Cygnett Hotels','Regenta / Royal Orchid','IHG Hotels','Park Inn by Radisson','Bijolai Palace','Lemon Tree Hotels','Taj Hotels','Accor Hotels','Mahindra Holidays','CGH Earth Hotels'].map(b => '<div class="ig-prop-cell">' + b + '</div>').join('')}
     </div>
   </div>
 </div>
@@ -182,16 +181,17 @@ app.get('/', (c) => {
               ${[
                 { n:'01', icon:'envelope-open-text', title:'Acknowledgement', desc:'Confirmation email sent within minutes' },
                 { n:'02', icon:'clipboard-list',     title:'RFQ Review',      desc:'HORECA team reviews your requirements' },
-                { n:'03', icon:'file-invoice',       title:'Quote & Specs',   desc:'Detailed quote issued within 48h' },
-              ].map((s: any) => `
-              <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:1rem .875rem;text-align:center;">
-                <div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(52,211,153,.45);margin-bottom:.5rem;">${s.n}</div>
-                <div style="width:32px;height:32px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;margin:0 auto .625rem;">
-                  <i class="fas fa-${s.icon}" style="color:#34d399;font-size:.72rem;"></i>
-                </div>
-                <div style="font-size:.78rem;font-weight:600;color:#fff;margin-bottom:.3rem;">${s.title}</div>
-                <div style="font-size:.7rem;color:rgba(255,255,255,.4);line-height:1.55;">${s.desc}</div>
-              </div>`).join('')}
+                { n:'03', icon:'file-invoice',       title:'Quote &amp; Specs', desc:'Detailed quote issued within 48h' },
+              ].map((s: any) =>
+              '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:1rem .875rem;text-align:center;">'
+              + '<div style="font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(52,211,153,.45);margin-bottom:.5rem;">' + s.n + '</div>'
+              + '<div style="width:32px;height:32px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;margin:0 auto .625rem;">'
+              + '<i class="fas fa-' + s.icon + '" style="color:#34d399;font-size:.72rem;"></i>'
+              + '</div>'
+              + '<div style="font-size:.78rem;font-weight:600;color:#fff;margin-bottom:.3rem;">' + s.title + '</div>'
+              + '<div style="font-size:.7rem;color:rgba(255,255,255,.4);line-height:1.55;">' + s.desc + '</div>'
+              + '</div>'
+              ).join('')}
             </div>
           </div>
 
@@ -233,11 +233,11 @@ app.get('/', (c) => {
           <div>
             <label class="ig-lbl">Supply Categories Required *</label>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-top:.35rem;">
-              ${['Kitchen Equipment','FF&E: Furniture','OS&E: Supplies','Linen &amp; Tableware','Staff Uniforms','Guest Amenities','Technology &amp; AV','Turnkey (All Categories)'].map(cat => `
-              <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--ink-soft);cursor:pointer;">
-                <input type="checkbox" name="categories" value="${cat}" style="accent-color:var(--gold);">${cat}
-              </label>
-              `).join('')}
+              ${['Kitchen Equipment','FF&E: Furniture','OS&E: Supplies','Linen &amp; Tableware','Staff Uniforms','Guest Amenities','Technology &amp; AV','Turnkey (All Categories)'].map(cat =>
+              '<label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--ink-soft);cursor:pointer;">'
+              + '<input type="checkbox" name="categories" value="' + cat + '" style="accent-color:var(--gold);"> ' + cat
+              + '</label>'
+              ).join('')}
             </div>
           </div>
           <div>
@@ -311,7 +311,7 @@ app.get('/', (c) => {
               'Brand-standard specification writing included',
               'Bulk procurement pricing passed to clients',
               'Ongoing supply contracts for consumables and uniforms',
-            ].map(pt => `<li style="display:flex;gap:.75rem;align-items:flex-start;"><i class="fas fa-check" style="color:var(--gold);font-size:.65rem;margin-top:.25rem;flex-shrink:0;"></i><span style="font-size:.8rem;color:rgba(255,255,255,.5);">${pt}</span></li>`).join('')}
+            ].map(pt => '<li style="display:flex;gap:.75rem;align-items:flex-start;"><i class="fas fa-check" style="color:var(--gold);font-size:.65rem;margin-top:.25rem;flex-shrink:0;"></i><span style="font-size:.8rem;color:rgba(255,255,255,.5);">' + pt + '</span></li>').join('')}
           </ul>
         </div>
         <div style="border:1px solid var(--border);padding:1.5rem;">
@@ -495,16 +495,27 @@ app.get('/catalogue', (c) => {
           <label style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:.5rem;">Filter by Supplier</label>
           <select id="cat-gst-filter" class="ig-inp" style="font-size:.78rem;" onchange="igCatFilter()">
             <option value="">All Suppliers</option>
-            <option value="ARI">ARI — Ariane</option>
-            <option value="OCN">OCN — Ocean</option>
-            <option value="DLP">DLP — Dolphy</option>
-            <option value="WEL">WEL — Welspun</option>
-            <option value="TRD">TRD — Trident</option>
+            <option value="ARI">ARI — Ariane ★</option>
+            <option value="OCN">OCN — Ocean ★</option>
+            <option value="DLP">DLP — Dolphy ★</option>
             <option value="BST">BST — Blue Star</option>
-            <option value="HIK">HIK — Hikvision</option>
             <option value="CRI">CRI — Crispo</option>
+            <option value="EFB">EFB — Eureka Forbes</option>
             <option value="FLM">FLM — Filmop</option>
+            <option value="GOD">GOD — Godrej</option>
+            <option value="HIK">HIK — Hikvision</option>
+            <option value="IG">IG — India Gully</option>
+            <option value="PAX">PAX — PAX Technology</option>
+            <option value="PCH">PCH — Pitco</option>
+            <option value="SFX">SFX — Safex</option>
             <option value="SMS">SMS — Samsung</option>
+            <option value="SPC">SPC — Spaces (Welspun)</option>
+            <option value="TRD">TRD — Trident</option>
+            <option value="UBQ">UBQ — Ubiquiti</option>
+            <option value="UNX">UNX — Unox</option>
+            <option value="VTX">VTX — Vitamix</option>
+            <option value="WEL">WEL — Welspun</option>
+            <option value="WHL">WHL — Winterhalter</option>
           </select>
         </div>
 
@@ -672,29 +683,32 @@ app.get('/catalogue', (c) => {
 
       <!-- Step indicator -->
       <div style="display:flex;align-items:center;gap:0;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
-        ${[1,2,3].map(n => `
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;position:relative;">
-          <div id="rfq-step-dot-${n}" style="width:30px;height:30px;border-radius:50%;background:${n===1?'var(--gold)':'var(--border)'};border:2px solid ${n===1?'var(--gold)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:${n===1?'#fff':'var(--ink-muted)'};transition:all .3s;z-index:1;">${n}</div>
-          <span id="rfq-step-lbl-${n}" style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${n===1?'var(--gold)':'var(--ink-faint)'};transition:color .3s;">${n===1?'Type':n===2?'Details':'Contact'}</span>
-          ${n<3?`<div id="rfq-connector-${n}" style="position:absolute;top:15px;left:calc(50% + 15px);right:calc(-50% + 15px);height:2px;background:var(--border);transition:background .3s;"></div>`:''}
-        </div>`).join('')}
+        ${[1,2,3].map(n =>
+        '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;position:relative;">'
+        + '<div id="rfq-step-dot-' + n + '" style="width:30px;height:30px;border-radius:50%;background:' + (n===1?'var(--gold)':'var(--border)') + ';border:2px solid ' + (n===1?'var(--gold)':'var(--border)') + ';display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:' + (n===1?'#fff':'var(--ink-muted)') + ';transition:all .3s;z-index:1;">' + n + '</div>'
+        + '<span id="rfq-step-lbl-' + n + '" style="font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:' + (n===1?'var(--gold)':'var(--ink-faint)') + ';transition:color .3s;">' + (n===1?'Type':n===2?'Details':'Contact') + '</span>'
+        + (n<3?'<div id="rfq-connector-' + n + '" style="position:absolute;top:15px;left:calc(50% + 15px);right:calc(-50% + 15px);height:2px;background:var(--border);transition:background .3s;"></div>':'')
+        + '</div>'
+        ).join('')}
       </div>
 
       <!-- STEP 1: Property type + supply categories -->
       <div id="rfq-step-1">
         <p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.75rem;">Property Type</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.25rem;">
-          ${['Hotel (New Opening)','Hotel (Refurbishment)','Restaurant / F&B','Resort / Boutique','Hospital / Institutional','Other'].map(t => `
-          <label style="display:flex;align-items:center;gap:.5rem;border:1.5px solid var(--border);padding:.6rem .75rem;cursor:pointer;font-size:.75rem;color:var(--ink-soft);transition:all .2s;" class="rfq-type-opt" onclick="igRFQSelectType(this,'${t.replace(/'/g,"\\x27")}')">
-            <input type="radio" name="rfq-prop-type" value="${t}" style="accent-color:var(--gold);flex-shrink:0;"> ${t}
-          </label>`).join('')}
+          ${['Hotel (New Opening)','Hotel (Refurbishment)','Restaurant / F&B','Resort / Boutique','Hospital / Institutional','Other'].map(t =>
+          '<label style="display:flex;align-items:center;gap:.5rem;border:1.5px solid var(--border);padding:.6rem .75rem;cursor:pointer;font-size:.75rem;color:var(--ink-soft);transition:all .2s;" class="rfq-type-opt" onclick="igRFQSelectType(this,\''+t.replace(/'/g,'\\x27')+'\');">'
+          + '<input type="radio" name="rfq-prop-type" value="' + t.replace(/'/g,'&#39;') + '" style="accent-color:var(--gold);flex-shrink:0;margin-right:.4rem;"> ' + t
+          + '</label>'
+          ).join('')}
         </div>
         <p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.75rem;">Supply Categories Needed</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.35rem;border:1.5px solid var(--border);padding:.75rem;background:#fafaf7;">
-          ${['FF&E','OS&E','Kitchen Equipment','Linen & Towelling','Uniforms','Guest Amenities','SPA & Wellness','Turnkey Package'].map(cat => `
-          <label style="display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--ink-soft);cursor:pointer;padding:.2rem;">
-            <input type="checkbox" name="rfq-cat" value="${cat}" style="accent-color:var(--gold);width:12px;height:12px;flex-shrink:0;"> ${cat}
-          </label>`).join('')}
+          ${['FF&E','OS&E','Kitchen Equipment','Linen &amp; Towelling','Uniforms','Guest Amenities','SPA &amp; Wellness','Turnkey Package'].map(cat =>
+          '<label style="display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--ink-soft);cursor:pointer;padding:.2rem;">'
+          + '<input type="checkbox" name="rfq-cat" value="' + cat.replace(/&amp;/g,'&') + '" style="accent-color:var(--gold);width:12px;height:12px;flex-shrink:0;"> ' + cat
+          + '</label>'
+          ).join('')}
         </div>
         <div id="rfq-err-1" style="display:none;margin-top:.75rem;background:#fef2f2;border:1px solid #fecaca;padding:.5rem .75rem;font-size:.72rem;color:#dc2626;"></div>
         <button onclick="igRFQNextStep(1)" style="width:100%;margin-top:1.25rem;padding:.8rem;background:var(--gold);color:#fff;border:none;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;">
