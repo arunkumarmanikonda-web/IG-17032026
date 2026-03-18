@@ -540,6 +540,31 @@ app.get('/', (c) => {
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
             { '@type': 'ListItem', position: 2, name: 'Our Story & Team', item: 'https://indiagully.com/about' },
           ]
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'When was India Gully founded?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully (Vivacious Entertainment and Hospitality Pvt. Ltd.) was founded in 2017. The firm celebrates Desiness — an ethos of bringing institutional rigour to India\'s real estate, hospitality, retail, entertainment and HORECA sectors.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'Who leads India Gully?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully is led by Managing Director Arun Kumar Manikonda, Executive Director Pavan Kumar Manikonda, and President of Real Estate Amit Jhingan. The senior team has 40+ years of combined advisory experience across Indian real estate and hospitality.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'What does India Gully mean by celebrating Desiness?',
+              acceptedAnswer: { '@type': 'Answer', text: "Celebrating Desiness is India Gully's founding philosophy — a commitment to building distinctly Indian institutions, assets and hospitality brands that carry national character and global standards." }
+            },
+            {
+              '@type': 'Question',
+              name: 'How large is India Gully\'s advisory pipeline?',
+              acceptedAnswer: { '@type': 'Answer', text: 'As of 2026, India Gully manages an active advisory pipeline of ₹1,165 Cr+ across 8 mandates in Real Estate, Hospitality, F&B, Retail, and Debt & Special Situations.' }
+            }
+          ]
         }
       ]
     }

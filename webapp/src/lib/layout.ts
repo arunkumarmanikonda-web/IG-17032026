@@ -11,6 +11,14 @@ export function layout(title: string, content: string, opts?: {
   jsonLd?: string | object  // optional JSON-LD structured data blob (string or object)
   canonical?: string      // optional canonical URL override
   heroPreload?: string    // optional above-fold image URL to preload with high priority
+  ogType?: string         // og:type override — defaults to 'website'; use 'article' for insight pages
+  articleMeta?: {         // article: Open Graph tags — only used when ogType='article'
+    publishedTime?: string  // ISO 8601 date e.g. '2026-03-01'
+    modifiedTime?: string
+    author?: string
+    section?: string        // e.g. 'Real Estate', 'Hospitality'
+    tags?: string[]         // article:tag entries
+  }
 }) {
   const desc = opts?.description || "India Gully — Celebrating Desiness. India's premier multi-vertical advisory firm across Real Estate, Retail, Hospitality, Entertainment, Debt & HORECA Solutions."
   const ogImg = opts?.ogImage || 'https://indiagully.com/static/og.jpg'
@@ -32,7 +40,13 @@ export function layout(title: string, content: string, opts?: {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="India Gully — Celebrating Desiness">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${opts?.ogType || 'website'}">${
+opts?.ogType === 'article' && opts?.articleMeta ? `
+<meta property="article:published_time" content="${opts.articleMeta.publishedTime || ''}">
+<meta property="article:modified_time" content="${opts.articleMeta.modifiedTime || opts.articleMeta.publishedTime || ''}">
+<meta property="article:author" content="${opts.articleMeta.author || 'India Gully Advisory'}">
+<meta property="article:section" content="${opts.articleMeta.section || 'Advisory'}">
+${(opts.articleMeta.tags || []).map(t => `<meta property="article:tag" content="${t}">`).join('\n')}` : ''}
 <meta property="og:site_name" content="India Gully">
 <meta property="og:locale" content="en_IN">
 ${opts?.canonical ? `<meta property="og:url" content="${opts.canonical}">` : ''}

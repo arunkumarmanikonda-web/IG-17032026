@@ -461,6 +461,26 @@ document.getElementById('apply-modal').addEventListener('click', function(e){
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },
             { '@type': 'ListItem', position: 2, name: 'Careers', item: 'https://indiagully.com/careers' },
           ]
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What roles is India Gully hiring for?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully is actively hiring for Transaction Advisory (Real Estate & Hospitality), HORECA Procurement Management, Business Development (Mandate Origination), and Research & Market Intelligence roles. All positions are based in Delhi NCR.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'What is the work culture at India Gully?',
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully is a high-performance advisory firm that values institutional rigour, speed of execution, and a celebrating-Desiness mindset. The team operates at the intersection of capital markets, real estate, and hospitality — a rare cross-vertical advisory environment in India.' }
+            },
+            {
+              '@type': 'Question',
+              name: 'How do I apply for a position at India Gully?',
+              acceptedAnswer: { '@type': 'Answer', text: 'Submit your profile and area of interest via the Careers page at https://indiagully.com/careers or email advisory@indiagully.com with the subject line matching the role you are applying for.' }
+            }
+          ]
         }
       ]
     }
