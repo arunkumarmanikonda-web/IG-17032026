@@ -33,9 +33,9 @@ app.get('/', (c) => {
       </div>
       <div class="fu2" style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.07);">
         ${[
-          { n:'500+',    l:'SKUs in Catalogue',   icon:'th-list' },
+          { n:'63+',     l:'SKUs in Catalogue',   icon:'th-list' },
           { n:'₹50 Cr+', l:'Procurement Managed', icon:'rupee-sign' },
-          { n:'50+',     l:'Vendor Network',       icon:'handshake' },
+          { n:'20',      l:'Verified Suppliers',    icon:'handshake' },
           { n:'15+',     l:'Hotels Supplied',      icon:'hotel' },
         ].map(s => `
         <div style="padding:2rem 1.5rem;background:rgba(255,255,255,.03);text-align:center;transition:background .22s;position:relative;overflow:hidden;" onmouseover="this.style.background='rgba(184,150,12,.06)'" onmouseout="this.style.background='rgba(255,255,255,.03)'">
@@ -340,7 +340,7 @@ app.get('/', (c) => {
         {
           '@type': 'Service',
           name: 'HORECA Procurement & Supply Solutions',
-          description: 'End-to-end HORECA procurement for hotel pre-openings and F&B operators — kitchen equipment, FF&E, OS&E, linens, uniforms, and guest amenities across 500+ SKUs.',
+          description: 'End-to-end HORECA procurement for hotel pre-openings and F&B operators — kitchen equipment, FF&E, OS&E, linens, uniforms, and guest amenities across 63+ SKUs.',
           provider: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' },
           serviceType: 'HORECA Procurement',
           areaServed: { '@type': 'Country', name: 'India' },
@@ -371,7 +371,7 @@ app.get('/', (c) => {
             {
               '@type': 'Question',
               name: 'What does India Gully HORECA Solutions cover?',
-              acceptedAnswer: { '@type': 'Answer', text: 'India Gully HORECA Solutions covers end-to-end procurement for hotel pre-openings and F&B operators, including kitchen equipment, FF&E (furniture, fixtures & equipment), OS&E (operating supplies & equipment), hotel linens, uniforms, guest amenities, and crockery — across 500+ SKUs sourced from 50+ verified vendors.' }
+              acceptedAnswer: { '@type': 'Answer', text: 'India Gully HORECA Solutions covers end-to-end procurement for hotel pre-openings and F&B operators, including kitchen equipment, FF&E (furniture, fixtures & equipment), OS&E (operating supplies & equipment), hotel linens, uniforms, guest amenities, and crockery — across 63+ SKUs sourced from 20 verified suppliers.' }
             },
             {
               '@type': 'Question',
@@ -1345,24 +1345,20 @@ function igCatDownloadBOQ() {
   Object.keys(catMap).forEach(function(cat) {
     // Category header row
     rows += '<tr style="background:#1A3A6B;">'
-      + '<td colspan="13" style="font-size:11pt;font-weight:bold;color:#fff;padding:6px 8px;letter-spacing:.1em;text-transform:uppercase;">' + cat.toUpperCase() + ' (' + catMap[cat].length + ' items)</td>'
+      + '<td colspan="11" style="font-size:11pt;font-weight:bold;color:#fff;padding:6px 8px;letter-spacing:.1em;text-transform:uppercase;">' + cat.toUpperCase() + ' (' + catMap[cat].length + ' items)</td>'
       + '</tr>';
     catMap[cat].forEach(function(p, i) {
-      var price = p.price || 0;
-      var gst = p.gst_rate || 18;
-      var priceIncGst = Math.round(price * (1 + gst/100));
+      var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '—');
       rows += '<tr style="background:' + (i%2===0?'#fff':'#fafaf7') + ';">'
         + '<td style="padding:5px 6px;font-size:9pt;color:#555;">' + rowNum + '</td>'
+        + '<td style="padding:5px 6px;font-size:8pt;font-family:monospace;color:#0d9488;">' + (p.id||p.sku) + '</td>'
         + '<td style="padding:5px 6px;font-size:8pt;font-family:monospace;color:#0d9488;">' + p.sku + '</td>'
         + '<td style="padding:5px 6px;font-size:9pt;font-weight:bold;">' + p.name + '</td>'
         + '<td style="padding:5px 6px;font-size:8pt;color:#555;">' + p.category + '</td>'
-        + '<td style="padding:5px 6px;font-size:8pt;color:#666;">' + (p.brand||'—') + '</td>'
         + '<td style="padding:5px 6px;font-size:8pt;text-align:center;">' + (p.unit||'Piece') + '</td>'
-        + '<td style="padding:5px 6px;font-size:9pt;text-align:right;font-weight:bold;color:#B8960C;">₹' + price.toLocaleString('en-IN') + '</td>'
-        + '<td style="padding:5px 6px;font-size:8pt;text-align:center;">' + gst + '%</td>'
-        + '<td style="padding:5px 6px;font-size:9pt;text-align:right;">₹' + priceIncGst.toLocaleString('en-IN') + '</td>'
         + '<td style="padding:5px 6px;font-size:8pt;text-align:center;font-family:monospace;">' + (p.hsn||'—') + '</td>'
-        + '<td style="padding:5px 6px;font-size:9pt;text-align:center;font-weight:bold;color:' + (p.stock===0?'#dc2626':(p.stock<=p.reorder?'#d97706':'#16a34a')) + ';">' + (p.stock||0) + '</td>'
+        + '<td style="padding:5px 6px;font-size:8pt;font-weight:700;color:#7c3aed;">' + supplierCode + '</td>'
+        + '<td style="padding:5px 6px;font-size:8pt;text-align:center;">' + (p.spaceType||'—') + '</td>'
         + '<td style="padding:5px 6px;font-size:8pt;color:#888;"><!-- Qty --></td>'
         + '<td style="padding:5px 6px;font-size:8pt;color:#888;"><!-- Remarks --></td>'
         + '</tr>';
@@ -1377,27 +1373,25 @@ function igCatDownloadBOQ() {
     + '<style>td,th{border:1px solid #e4dece;}</style></head><body>'
     + '<table>'
     // Title rows
-    + '<tr><td colspan="13" style="background:#0a1628;color:#B8960C;font-size:16pt;font-weight:bold;font-family:Georgia,serif;padding:10px 12px;">India Gully HORECA — Bill of Quantities (BOQ)</td></tr>'
-    + '<tr style="background:#f8f6f1;"><td colspan="13" style="font-size:9pt;color:#555;padding:6px 12px;">Generated: ' + date + ' · Vivacious Entertainment &amp; Hospitality Pvt. Ltd. · GSTIN: 07AAGCV0867P1ZN · Contact: pavan@indiagully.com · +91 62825 56067</td></tr>'
-    + '<tr><td colspan="13" style="padding:4px;background:#fff;"></td></tr>'
+    + '<tr><td colspan="11" style="background:#0a1628;color:#B8960C;font-size:16pt;font-weight:bold;font-family:Georgia,serif;padding:10px 12px;">India Gully HORECA — Bill of Quantities (BOQ)</td></tr>'
+    + '<tr style="background:#f8f6f1;"><td colspan="11" style="font-size:9pt;color:#555;padding:6px 12px;">Generated: ' + date + ' · Vivacious Entertainment &amp; Hospitality Pvt. Ltd. · GSTIN: 07AAGCV0867P1ZN · Contact: pavan@indiagully.com · +91 62825 56067</td></tr>'
+    + '<tr><td colspan="11" style="padding:4px;background:#fff;"></td></tr>'
     // Column headers
     + '<tr style="background:#111;">'
     + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:center;">S.No</th>'
+    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">Product ID</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">SKU</th>'
     + '<th style="padding:6px 8px;font-size:10pt;color:#fff;">Product Name</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">Category</th>'
-    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">Brand</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:center;">Unit</th>'
-    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:right;">Unit Price (Ex-GST)</th>'
-    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:center;">GST Rate</th>'
-    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:right;">Price (Inc-GST)</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">HSN Code</th>'
-    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;text-align:center;">Stock Qty</th>'
+    + '<th style="padding:6px 8px;font-size:9pt;color:#7c3aed;">Supplier Code</th>'
+    + '<th style="padding:6px 8px;font-size:9pt;color:#fff;">Space Type</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#B8960C;text-align:center;">Required Qty</th>'
     + '<th style="padding:6px 8px;font-size:9pt;color:#B8960C;">Remarks / Specs</th>'
     + '</tr>'
     + rows
-    + '<tr><td colspan="13" style="padding:12px;background:#f8f6f1;font-size:8.5pt;color:#888;">* Prices are indicative and subject to change. Final pricing confirmed on Purchase Order. All prices in INR. India Gully HORECA Division · pavan@indiagully.com</td></tr>'
+    + '<tr><td colspan="11" style="padding:12px;background:#f8f6f1;font-size:8.5pt;color:#888;">Enquiry Only — Contact India Gully HORECA Division for pricing: pavan@indiagully.com · +91 62825 56067 · indiagully.com/horeca</td></tr>'
     + '</table></body></html>';
 
   var blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
@@ -1494,8 +1488,8 @@ app.get('/portal', (c) => {
       {label:'Total Products',   value:'—', c:'#B8960C', icon:'box'},
       {label:'Categories',       value:'—', c:'#2563eb', icon:'folder'},
       {label:'Featured Items',   value:'—', c:'#7c3aed', icon:'star'},
-      {label:'In Stock',         value:'—', c:'#16a34a', icon:'check-circle'},
-      {label:'Low Stock Alerts', value:'—', c:'#dc2626', icon:'exclamation-triangle'},
+      {label:'Suppliers',        value:'—', c:'#16a34a', icon:'handshake'},
+      {label:'Space Types',      value:'—', c:'#0891b2', icon:'building'},
     ].map(s=>`<div style="background:#fff;border:1px solid var(--border);padding:1.25rem;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;">
         <span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;">${s.label}</span>
@@ -1537,8 +1531,7 @@ app.get('/portal', (c) => {
         <select id="portal-sort" class="ig-input" style="max-width:160px;font-size:.78rem;" onchange="igPortalRender()">
           <option value="">Sort: Default</option>
           <option value="name">Name A–Z</option>
-          <option value="price_asc">Price: Low–High</option>
-          <option value="price_desc">Price: High–Low</option>
+          <option value="supplier">By Supplier</option>
           <option value="featured">Featured First</option>
         </select>
         <span id="portal-result-count" style="font-size:.75rem;color:#64748b;white-space:nowrap;"></span>
@@ -1580,13 +1573,13 @@ function igPortalLoad() {
       var total = stats.total_products || _portalProducts.length;
       var cats = stats.total_categories || _portalCategories.length;
       var featured = stats.featured_count || _portalProducts.filter(function(p){ return p.featured; }).length;
-      var inStock = _portalProducts.filter(function(p){ return p.stock > p.reorder; }).length;
-      var lowStock = _portalProducts.filter(function(p){ return p.stock > 0 && p.stock <= p.reorder; }).length;
+      var supplierCount = new Set(_portalProducts.map(function(p){ return p.supplierCode||''; }).filter(Boolean)).size;
+      var spaceTypes = new Set(_portalProducts.map(function(p){ return p.spaceType||''; }).filter(Boolean)).size;
       document.getElementById('pstat-total-products').textContent = total;
       document.getElementById('pstat-categories').textContent = cats;
       document.getElementById('pstat-featured-items').textContent = featured;
-      document.getElementById('pstat-in-stock').textContent = inStock;
-      document.getElementById('pstat-low-stock-alerts').textContent = lowStock;
+      document.getElementById('pstat-suppliers').textContent = supplierCount;
+      document.getElementById('pstat-space-types').textContent = spaceTypes;
       document.getElementById('portal-count-all').textContent = _portalProducts.length;
       document.getElementById('portal-welcome').innerHTML = 'Welcome — <strong style="color:#fff;">India Gully HORECA Portal</strong>';
 
@@ -1627,32 +1620,30 @@ function igPortalRender() {
     return true;
   });
   if (sort==='name') products.sort(function(a,b){ return a.name.localeCompare(b.name); });
-  else if (sort==='price_asc') products.sort(function(a,b){ return a.price-b.price; });
-  else if (sort==='price_desc') products.sort(function(a,b){ return b.price-a.price; });
+  else if (sort==='supplier') products.sort(function(a,b){ return (a.supplierCode||'').localeCompare(b.supplierCode||''); });
   else if (sort==='featured') products.sort(function(a,b){ return (b.featured?1:0)-(a.featured?1:0); });
 
   document.getElementById('portal-result-count').textContent = products.length + ' product' + (products.length!==1?'s':'') + (_portalActiveCat?' in '+_portalActiveCat:'');
   var html = '';
   products.forEach(function(p){
-    var lowStock = p.stock<=p.reorder&&p.stock>0;
-    var outOfStock = p.stock===0;
-    var sc = outOfStock?'#dc2626':(lowStock?'#d97706':'#16a34a');
-    var st = outOfStock?'Out of Stock':(lowStock?'Low — '+p.stock+' left':p.stock+' in stock');
     var catColor = (_portalCategories.find(function(c){ return c.name===p.category; })||{}).color||'#475569';
+    var supplierCode = p.supplierCode || (p.sku ? p.sku.split('-')[0] : '');
+    var featuredBrands = { 'ARI': {label:'Ariane', bg:'#7c3aed'}, 'OCN': {label:'Ocean', bg:'#2563eb'}, 'DLP': {label:'Dolphy', bg:'#059669'} };
+    var brandBadge = featuredBrands[supplierCode];
     html += '<div class="prod-card">'
       + (p.featured?'<div style="background:var(--gold);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .75rem;">★ Featured</div>':'')
       + '<div style="padding:1.1rem;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;">'
-      + '<span style="font-size:.62rem;font-weight:700;font-family:monospace;color:#0d9488;">' + p.sku + '</span>'
-      + '<span style="font-size:.6rem;background:' + catColor + '22;color:' + catColor + ';padding:.15rem .4rem;font-weight:700;">' + (p.category||'').split(' ')[0] + '</span>'
+      + '<span style="font-size:.62rem;font-weight:700;font-family:monospace;color:#0d9488;">' + (p.id||p.sku) + '</span>'
+      + (brandBadge ? '<span style="font-size:.58rem;font-weight:800;padding:.15rem .4rem;background:' + brandBadge.bg + ';color:#fff;">' + brandBadge.label + '</span>' : '<span style="font-size:.6rem;background:' + catColor + '22;color:' + catColor + ';padding:.15rem .4rem;font-weight:700;">' + supplierCode + '</span>')
       + '</div>'
       + '<h3 style="font-size:.875rem;font-weight:700;color:var(--ink);margin:0 0 .3rem;line-height:1.3;">' + p.name + '</h3>'
-      + (p.brand?'<p style="font-size:.68rem;color:#94a3b8;margin:0 0 .5rem;"><i class="fas fa-tag" style="margin-right:.25rem;"></i>' + p.brand + '</p>':'')
-      + '<div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.35rem;">'
-      + '<span style="font-family:\'DM Serif Display\',Georgia,serif;font-size:1.2rem;color:var(--gold);">₹' + (p.price||0).toLocaleString('en-IN') + '</span>'
-      + '<span style="font-size:.68rem;color:#94a3b8;">per ' + (p.unit||'Piece') + ' · GST ' + (p.gst_rate||18) + '%</span>'
+      + '<div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.35rem;">'
+      + '<span style="font-size:.6rem;background:' + catColor + '15;color:' + catColor + ';padding:.12rem .4rem;border:1px solid ' + catColor + '25;">' + (p.category||'') + '</span>'
+      + (p.spaceType ? '<span style="font-size:.58rem;color:#94a3b8;"><i class="fas fa-map-marker-alt" style="margin-right:.2rem;"></i>' + p.spaceType + '</span>' : '')
       + '</div>'
-      + '<p style="font-size:.68rem;color:' + sc + ';font-weight:600;margin:0;"><i class="fas fa-circle" style="font-size:.4rem;margin-right:.25rem;"></i>' + st + '</p>'
+      + (p.description ? '<p style="font-size:.68rem;color:#64748b;margin:0 0 .35rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + p.description + '</p>' : '')
+      + '<p style="font-size:.62rem;color:#94a3b8;font-family:monospace;margin:0;">' + (p.hsn ? 'HSN: ' + p.hsn : '') + (p.unit ? ' · per ' + p.unit : '') + '</p>'
       + '</div>'
       + '<div style="padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;">'
       + '<input type="number" min="1" value="1" id="qty-' + p.sku.replace(/[^a-z0-9]/gi,'-') + '" style="width:50px;border:1px solid var(--border);padding:.3rem .4rem;font-size:.78rem;text-align:center;">'
@@ -1683,9 +1674,10 @@ function igPortalDownload() {
   if (_portalProducts.length === 0) { igPortalToast('Catalogue not loaded yet', 'warn'); return; }
   var cat = _portalActiveCat;
   var products = cat ? _portalProducts.filter(function(p){ return p.category===cat; }) : _portalProducts;
-  var headers = ['SKU','Product Name','Category','Unit','Price (INR)','GST Rate (%)','HSN Code','Brand','Stock Qty','Description'];
+  var headers = ['Product ID','SKU','Product Name','Category','Space Type','Unit','Supplier Code','HSN Code','Featured','Description'];
   var rows = products.map(function(p){
-    return [p.sku,'"'+(p.name||'').replace(/"/g,"'")+'"','"'+(p.category||'')+'"',p.unit||'Piece',p.price||0,p.gst_rate||18,p.hsn||'','"'+(p.brand||'')+'"',p.stock||0,'"'+(p.description||'').replace(/"/g,"'").substring(0,150)+'"'].join(',');
+    var sc = p.supplierCode||(p.sku?p.sku.split('-')[0]:'');
+    return [(p.id||p.sku),p.sku,'"'+(p.name||'').replace(/"/g,"'")+'"','"'+(p.category||'')+'"','"'+(p.spaceType||'')+'"',p.unit||'Piece',sc,p.hsn||'',(p.featured?'Yes':'No'),'"'+(p.description||'').replace(/"/g,"'").substring(0,150)+'"'].join(',');
   });
   var csv = [headers.join(',')].concat(rows).join('\\n');
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
