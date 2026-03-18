@@ -648,7 +648,7 @@ app.get('/catalogue', (c) => {
 
 <!-- Phase 11C: Quick RFQ Floating Button + Slide-out Panel -->
 <button onclick="igQuickRFQOpen()" id="rfq-fab"
-        style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;background:var(--gold);color:#fff;border:none;padding:.75rem 1.25rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(184,150,12,.4);transition:all .2s;"
+        style="position:fixed;bottom:6rem;right:1.5rem;z-index:600;background:var(--gold);color:#fff;border:none;padding:.75rem 1.25rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(184,150,12,.4);transition:all .2s;"
         onmouseover="this.style.background='#a37a08'" onmouseout="this.style.background='var(--gold)'">
   <i class="fas fa-file-invoice" style="font-size:.7rem;"></i>Quick RFQ
 </button>
@@ -1635,7 +1635,7 @@ var _portalCart = [];
 function igPortalToast(msg, type) {
   var t = document.createElement('div');
   var bg = type==='success'?'#16a34a':type==='warn'?'#d97706':type==='info'?'#2563eb':'#dc2626';
-  t.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;background:'+bg+';color:#fff;padding:.75rem 1.25rem;font-size:.78rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  t.style.cssText='position:fixed;bottom:9.5rem;right:1.5rem;background:'+bg+';color:#fff;padding:.75rem 1.25rem;font-size:.78rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:280px;';
   t.textContent=msg; document.body.appendChild(t);
   setTimeout(function(){ t.remove(); }, 3000);
 }
