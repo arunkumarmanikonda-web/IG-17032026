@@ -11,7 +11,7 @@ const RECENT_INSIGHTS = [
     readTime: '9 min read',
     title: 'Cloud Kitchens & Dark Stores: India\'s HORECA Infrastructure Revolution',
     excerpt: 'India\'s online food delivery GMV has crossed ₹1,00,000 Cr. We map how cloud kitchens, dark stores and ghost brands are reshaping HORECA procurement, supply chains and real estate demand in 2026.',
-    img: '/static/mandates/chandigarh/chandigarh-img1.webp',
+    img: '/static/mandates/hero/hero-hotel-products.jpg',
     color: '#065F46',
   },
   {
@@ -21,7 +21,7 @@ const RECENT_INSIGHTS = [
     readTime: '12 min read',
     title: 'Hotel Brand Affiliation in India 2026: Choosing the Right Flag for Your Asset',
     excerpt: 'With 20+ international and domestic brands competing for India hotel management agreements, selecting the right brand is the most consequential decision a hotel owner makes. Our complete evaluation framework.',
-    img: '/static/mandates/kasauli/kasauli-cover.jpg',
+    img: '/static/mandates/kasauli/kasauli-img2.jpg',
     color: '#1A3A6B',
   },
   {
@@ -31,7 +31,7 @@ const RECENT_INSIGHTS = [
     readTime: '9 min read',
     title: 'India Retail Leasing 2026: Mall Demand, Brand Expansion & Rental Benchmarks',
     excerpt: 'India\'s organised retail leasing market is set to absorb 8–10 million sq ft of new supply in 2026. We examine demand drivers, city-wise rental benchmarks, and the evolving tenant mix strategy in Grade-A malls.',
-    img: '/static/mandates/jaipur/jaipur-exterior-front.jpg',
+    img: '/static/mandates/jaipur/jaipur-render-aerial.jpg',
     color: '#B8960C',
   },
 ]
@@ -478,8 +478,12 @@ app.get('/', (c) => {
       <!-- Right: SVG India map -->
       <div style="position:relative;" id="indiaMapWrap" class="india-map-wrap">
         <div class="india-map-box" style="border:1px solid var(--border);padding:1.25rem 1rem 1rem;position:relative;overflow:hidden;border-radius:3px;">
-          <!-- India SVG map — geographically accurate, viewBox 440×525 with 15px top padding for J&K -->
-          <svg id="igIndiaMap" viewBox="0 -20 440 530" width="100%" style="display:block;max-width:440px;margin:0 auto;" aria-label="India map showing active mandate locations">
+          <!-- India SVG map — accurate state geometry, scaled from market-data.tsx (950×1100) at 0.4632×0.4727 -->
+          <!-- viewBox 0 0 440 520 — proportional, no padding offsets, preserveAspectRatio xMidYMid meet -->
+          <svg id="igIndiaMap" viewBox="0 0 440 520" width="100%"
+               preserveAspectRatio="xMidYMid meet"
+               style="display:block;max-width:440px;margin:0 auto;"
+               aria-label="India map showing active mandate locations">
             <defs>
               <filter id="mapPinGlow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
@@ -498,143 +502,174 @@ app.get('/', (c) => {
             </defs>
 
             <!-- India States — generated from GADM GeoJSON, simplified for SVG rendering -->
+            <!-- India states — scaled from market-data.tsx (950×1100) by X×0.4632 Y×0.4727 -->
+            <!-- Same accurate geometry as services.tsx map, at 440×520 viewBox -->
             <g id="india-states" filter="url(#mapShadow)">
-              <!-- J&K rendered LAST (after all other states) to ensure it always appears on top -->
-              <!-- See end of india-states group for J&K path -->
-              <!-- Telangana — separated from AP path below; lon 76.7-81.5 lat 15.4-19.5 -->
-              <path class="india-state" id="state-telangana" d="M132.0,304.4L139.3,299.4L146.7,301.1L154.0,296.1L161.3,299.4L168.7,304.4L176.0,304.4L183.3,312.6L190.7,320.8L198.0,329.0L198.0,345.5L190.7,353.7L183.3,357.0L176.0,361.9L168.7,363.6L161.3,361.9L154.0,353.7L146.7,358.7L139.3,363.6L132.0,361.9L128.0,353.7L128.0,337.2L130.7,320.8Z"/>
-              <path class="india-state" d="M213.3,335.3L211.4,335.1L213.4,337.6L208.0,340.4L199.3,341.0L193.4,351.1L189.2,348.7L183.0,352.0L179.7,361.7L183.7,388.1L181.2,383.5L179.7,385.7L183.6,389.2L179.1,386.6L175.2,392.0L170.5,389.9L166.3,395.0L159.6,394.3L157.3,400.2L154.6,401.4L152.0,400.3L152.7,397.6L155.9,397.5L157.8,390.9L154.6,390.0L155.0,385.8L150.4,384.9L150.7,381.4L146.4,380.1L144.8,383.3L140.9,384.3L140.6,381.7L136.9,380.4L136.7,383.0L134.1,383.2L132.6,376.5L140.2,381.0L139.4,377.0L141.7,374.8L133.3,375.2L133.8,371.3L130.7,369.4L130.8,362.0L135.4,362.9L136.5,361.0L133.8,355.0L136.0,352.6L135.2,348.4L141.8,348.1L143.1,341.3L137.7,339.2L141.2,337.4L139.9,327.1L144.5,322.7L140.8,321.3L144.0,315.0L142.1,307.4L148.3,301.3L145.5,297.9L147.1,293.5L151.7,294.6L153.8,291.0L153.8,283.7L161.8,286.2L166.7,291.0L167.7,288.5L171.1,290.4L176.2,289.1L178.6,291.9L177.6,301.5L188.4,306.1L189.9,311.7L193.5,311.8L194.6,318.0L203.0,317.5L209.2,313.6L212.7,314.8L215.9,305.9L218.2,310.8L220.7,307.4L224.5,308.5L223.9,304.2L229.6,301.1L228.3,298.6L230.5,299.3L233.0,295.9L239.9,302.5L243.3,301.9L244.8,298.2L249.2,296.0L240.5,309.5L214.3,328.7L213.3,335.3Z"/>
-              <path class="india-state" d="M420.0,130.9L423.5,133.0L419.3,135.8L420.1,138.6L425.5,135.8L426.8,140.7L421.6,146.6L427.5,145.7L438.5,150.0L438.3,154.9L431.0,159.3L434.7,167.7L426.9,163.3L419.1,165.6L406.3,174.4L405.6,168.7L417.9,163.4L415.4,162.4L414.0,157.6L417.3,153.7L394.7,160.4L391.6,159.0L385.3,168.1L380.2,170.3L367.8,168.7L359.6,171.1L358.2,161.6L351.4,159.9L351.3,155.5L356.8,157.8L361.1,155.5L366.3,156.1L369.0,153.4L368.2,151.2L376.1,147.8L377.9,142.9L386.7,142.4L397.2,131.5L399.7,134.4L408.8,136.5L414.3,131.3L420.0,130.9Z"/>
-              <path class="india-state" d="M416.9,154.2L414.0,157.6L415.4,162.4L417.9,163.4L410.3,165.1L392.5,178.0L391.9,176.5L387.5,186.8L384.8,188.5L384.4,186.0L377.8,192.8L380.0,196.6L374.5,204.7L373.5,211.1L370.3,211.6L369.4,209.3L364.9,215.6L361.1,213.7L361.6,203.2L365.3,203.6L365.2,199.9L370.0,198.1L366.4,194.1L367.7,192.1L363.7,189.5L360.4,190.8L362.4,184.2L356.8,185.5L355.3,183.6L346.4,189.9L342.2,186.3L329.9,186.1L326.2,192.8L326.5,186.4L323.6,182.4L326.1,173.6L334.2,170.9L338.6,173.1L353.3,172.5L367.8,168.7L373.2,170.7L382.7,169.9L391.6,159.0L394.7,160.4L411.8,153.9L416.9,154.2Z"/>
-              <path class="india-state" d="M240.4,161.1L247.9,163.9L248.3,168.6L256.7,173.2L263.1,171.4L266.3,176.3L273.4,175.5L279.4,178.7L284.5,176.0L288.5,179.9L296.7,177.6L298.8,179.6L301.8,176.6L302.5,180.1L295.4,186.8L299.4,193.9L295.0,194.4L295.9,198.4L292.0,196.0L288.2,198.0L284.1,208.0L277.5,208.0L275.2,211.8L269.2,205.2L264.5,204.5L263.5,208.4L254.9,211.6L250.5,209.2L246.0,213.1L243.0,208.6L231.2,209.2L228.9,198.4L240.1,190.0L248.0,189.9L239.4,183.9L241.2,179.5L237.2,178.2L239.9,175.1L244.8,175.4L239.4,171.1L236.1,164.1L240.4,161.1Z"/>
-              <path class="india-state" d="M228.6,216.1L235.3,224.2L238.7,223.7L239.1,231.6L244.3,235.9L238.7,240.8L238.7,244.1L233.0,246.8L232.4,252.5L228.7,258.1L229.7,260.5L227.8,260.1L226.6,263.9L218.3,263.7L215.7,269.0L214.0,268.0L214.6,281.3L219.4,282.4L219.4,284.7L217.5,286.0L206.9,281.5L206.6,283.7L209.7,285.8L209.1,290.3L211.5,291.7L212.4,299.8L201.8,310.3L199.6,317.7L194.5,318.0L193.5,311.8L189.9,311.7L189.8,307.9L182.6,302.4L184.7,294.5L187.5,291.9L190.2,293.8L192.3,290.9L187.1,285.2L184.9,285.6L187.1,281.2L184.7,278.4L188.2,276.9L185.8,263.4L189.0,261.3L189.7,254.6L195.5,242.9L203.1,241.3L207.9,232.6L211.1,231.6L211.6,228.6L207.6,225.3L203.0,225.7L203.0,219.2L216.5,221.2L220.7,218.4L225.6,219.5L228.6,216.1Z"/>
-              <path class="india-state" d="M137.5,139.8L139.3,145.0L136.7,146.6L132.4,145.0L133.4,140.0L137.5,139.8Z"/>
-              <path class="india-state" d="M87.7,350.3L89.5,353.1L93.3,352.4L94.6,358.2L92.1,364.4L88.2,361.5L86.3,356.3L88.0,356.2L84.7,351.3L87.7,350.3Z"/>
-              <path class="india-state" d="M61.2,207.4L73.4,212.5L76.1,209.8L78.0,211.9L75.8,214.8L78.2,217.6L80.1,215.7L80.0,221.2L84.4,223.8L84.0,226.6L91.1,229.1L96.6,236.2L95.2,239.7L90.2,241.3L93.9,243.6L90.6,244.2L91.7,250.6L86.7,252.8L88.0,255.4L86.3,256.0L87.4,258.1L94.4,258.1L83.4,263.4L88.1,266.4L88.7,270.3L84.6,273.2L81.3,270.8L81.0,278.9L78.4,280.2L75.7,279.6L76.2,276.4L70.7,280.1L72.9,270.2L68.4,261.7L70.7,257.3L68.6,257.2L72.1,255.4L67.7,255.4L67.2,250.7L68.3,246.8L73.3,245.5L66.9,246.8L65.1,243.9L63.8,251.1L64.1,248.2L61.8,250.3L64.2,256.0L61.4,263.0L45.5,270.5L42.9,270.8L43.1,267.0L40.8,266.3L39.8,270.1L31.3,264.4L25.9,255.6L24.4,255.8L25.5,257.4L23.7,256.1L14.0,245.0L15.9,242.3L18.4,245.8L32.3,241.1L37.2,232.7L35.0,235.0L32.1,233.4L25.4,238.3L21.9,237.5L9.8,231.5L8.7,230.1L11.3,228.5L7.3,225.8L11.4,219.8L7.7,220.6L9.9,219.1L8.2,218.3L11.2,218.4L11.5,213.0L29.8,215.1L38.4,211.0L38.4,213.7L41.8,214.1L46.7,211.3L44.7,209.0L46.3,206.8L61.2,207.4Z"/>
-              <path class="india-state" d="M131.8,106.8L136.5,109.9L137.3,113.2L143.1,115.0L136.0,124.7L137.5,138.6L133.4,140.0L131.7,143.8L141.3,146.6L142.2,154.0L134.8,156.1L133.8,158.8L132.2,149.6L127.3,153.7L126.3,150.7L123.6,150.3L122.7,155.8L118.8,155.4L118.4,151.7L120.7,150.7L112.7,143.3L110.3,132.9L105.6,133.3L102.0,130.6L98.4,131.8L98.5,125.0L96.4,124.4L97.3,121.7L105.7,122.3L107.7,128.3L111.0,124.1L119.9,125.0L122.9,123.1L122.4,118.4L128.3,119.7L127.5,116.7L130.6,113.9L133.2,114.6L131.8,106.8Z"/>
-              <path class="india-state" d="M131.3,68.8L139.1,75.5L144.9,73.0L148.9,79.2L154.7,76.4L153.3,80.5L155.7,80.6L155.7,84.7L160.7,88.7L159.5,92.0L161.5,94.9L159.7,96.5L164.0,103.0L154.5,100.1L147.5,102.3L144.5,108.6L146.3,112.4L142.8,114.8L136.1,112.1L136.5,109.9L128.4,104.8L128.8,101.4L124.7,97.7L121.9,99.9L117.7,89.5L113.0,87.4L118.3,81.9L116.5,73.7L131.3,68.8Z"/>
-              <path class="india-state" d="M147.7,33.4L150.8,32.6L149.0,34.7L152.9,45.2L163.8,51.1L159.7,55.3L159.8,62.0L165.2,68.9L170.2,69.7L169.3,72.9L172.2,78.9L163.7,83.2L160.3,77.5L153.8,81.0L154.7,76.4L148.9,79.2L144.9,73.0L139.1,75.5L130.9,68.5L116.5,73.7L118.2,78.3L111.8,84.3L99.9,80.9L99.9,75.2L97.4,76.8L89.7,69.4L92.3,65.2L88.8,61.0L93.4,56.9L87.7,55.6L89.1,52.2L86.0,50.5L88.9,45.2L95.1,43.5L115.6,48.1L129.5,44.2L130.5,41.5L134.2,41.3L146.5,32.2L147.7,33.4Z"/>
-              <path class="india-state" d="M292.3,196.5L297.9,203.3L293.7,215.3L290.2,218.0L286.9,217.1L287.0,220.5L280.3,220.5L280.3,222.8L275.0,223.7L272.9,227.1L269.2,224.5L266.4,226.6L267.2,231.8L276.5,234.1L274.7,237.5L279.8,240.8L281.7,245.9L274.9,245.1L269.0,240.9L267.1,250.5L264.9,250.2L265.5,248.2L259.4,247.4L257.0,250.0L253.3,248.6L254.5,242.3L243.0,244.6L238.7,241.6L244.4,234.9L240.9,234.5L239.1,231.6L238.7,223.7L235.3,224.2L228.6,216.1L229.6,209.6L238.5,207.5L240.3,210.0L243.1,208.7L246.0,213.1L250.5,209.2L254.9,211.6L263.5,208.4L264.5,204.5L269.2,205.2L275.2,211.8L277.5,208.0L284.1,208.0L286.0,200.6L292.3,196.5Z"/>
-              <path class="india-state" d="M139.3,307.5L139.6,309.5L143.2,310.0L144.0,315.0L140.8,321.3L144.5,322.6L139.9,327.1L141.2,337.4L137.7,339.2L143.1,342.1L141.8,348.1L134.6,349.5L136.1,352.3L133.8,355.0L136.7,360.3L135.4,362.9L130.9,361.8L130.7,369.4L133.8,371.3L133.4,375.2L141.7,374.8L139.4,377.0L140.2,381.0L132.6,376.5L134.1,383.2L136.7,383.0L136.9,380.4L141.3,384.2L148.8,379.9L150.4,384.9L155.0,385.8L154.6,390.0L157.8,390.9L155.9,397.5L154.3,396.3L152.4,399.2L146.6,397.4L143.0,400.7L141.2,408.0L145.1,408.6L144.2,412.3L141.5,412.4L140.5,415.3L132.7,414.8L131.8,418.2L125.4,416.7L120.9,411.8L117.3,412.2L110.7,406.7L109.3,401.9L102.4,399.1L95.3,370.2L90.9,366.1L94.6,358.2L93.3,352.4L90.9,352.1L94.9,350.4L96.5,346.1L95.0,345.9L96.9,345.1L93.6,338.0L99.8,337.0L103.5,331.6L107.6,333.2L114.5,331.3L113.9,322.9L125.0,325.6L124.3,321.1L127.1,318.4L129.6,319.7L133.6,311.5L135.9,312.1L139.3,307.5Z"/>
-              <path class="india-state" d="M104.3,398.6L110.6,403.3L113.0,408.9L125.4,415.3L122.9,420.0L127.3,421.7L126.1,424.5L130.1,424.1L131.1,426.7L129.0,428.6L132.7,431.1L131.5,438.8L133.8,440.2L137.6,438.1L136.5,449.9L140.1,451.7L136.2,459.5L138.2,467.1L136.6,470.8L127.5,461.3L124.0,451.2L123.0,444.0L124.6,451.2L126.8,451.1L125.0,445.7L122.5,441.2L122.7,443.9L117.2,425.2L108.4,411.2L110.4,409.1L107.4,411.2L102.4,399.2L104.3,398.6Z"/>
-              <path class="india-state" d="M154.6,171.5L164.0,174.4L166.1,179.9L160.3,189.5L161.2,191.5L155.6,192.5L153.6,195.6L155.8,199.5L151.6,203.9L154.9,213.3L156.7,211.4L161.0,214.8L163.6,212.0L157.6,197.4L155.5,197.0L158.9,194.5L160.6,195.8L160.1,193.5L161.6,194.6L162.4,192.6L162.2,199.0L164.1,197.1L164.4,199.3L168.2,199.7L168.6,196.1L171.4,197.3L170.0,199.8L176.7,200.0L176.7,197.7L182.8,194.7L185.3,198.8L183.7,201.6L187.9,199.1L190.6,200.6L189.4,199.4L192.1,198.5L190.9,202.5L195.9,203.4L197.9,198.9L201.1,200.4L202.3,198.5L208.2,204.3L211.7,204.4L213.2,207.8L218.6,206.4L220.7,208.1L218.6,215.6L220.9,218.3L218.2,220.3L202.8,219.5L203.0,225.7L207.6,225.3L211.6,228.6L211.1,231.6L207.9,232.6L203.1,241.3L195.5,242.9L188.9,260.7L185.0,260.1L182.9,256.1L172.1,257.4L167.5,254.5L163.1,258.3L155.6,258.0L154.8,256.2L143.0,260.3L140.5,257.5L143.3,257.4L142.3,254.8L138.5,253.8L131.2,256.5L128.6,263.0L121.9,264.8L120.8,260.1L107.7,259.5L97.8,255.1L96.1,249.6L91.7,250.7L90.6,244.2L93.9,243.6L90.2,241.3L95.2,239.7L96.6,236.2L94.3,232.9L100.6,230.4L97.2,228.6L103.5,223.7L104.3,217.3L100.7,213.2L102.3,210.2L100.1,209.5L101.4,204.9L102.8,207.2L104.7,205.3L102.2,205.0L101.9,202.1L105.1,203.9L106.8,200.9L109.6,200.9L108.3,203.4L110.6,203.8L107.5,203.1L107.6,206.1L116.9,206.0L118.0,210.4L115.2,211.2L116.8,216.5L114.9,218.2L112.1,217.0L113.1,221.0L119.0,218.8L122.1,212.4L122.5,214.2L127.2,215.1L129.7,213.1L132.7,215.6L131.5,209.1L133.7,210.3L135.2,208.5L131.3,204.5L133.5,203.7L132.1,201.4L140.2,199.8L139.6,195.0L130.8,196.6L126.5,190.0L136.1,181.6L154.6,171.5Z"/>
-              <path class="india-state" d="M96.0,249.5L98.3,255.4L108.9,259.9L120.8,260.1L123.5,264.9L128.6,263.0L131.2,256.5L138.5,253.8L142.3,254.8L143.3,257.4L140.5,257.5L143.0,260.3L154.8,256.2L155.6,258.0L163.1,258.3L167.5,254.5L172.1,257.4L182.9,256.1L185.0,260.1L189.0,261.1L185.4,264.6L188.2,276.9L184.7,278.4L187.1,281.2L184.9,285.6L192.1,290.0L191.6,292.6L186.1,293.0L183.0,298.6L184.1,301.4L180.6,303.6L177.4,301.1L178.6,291.9L175.8,288.8L171.1,290.4L167.7,288.5L166.7,291.0L161.8,286.2L153.8,283.7L153.8,291.0L151.7,294.6L147.1,293.5L145.5,297.9L148.3,301.3L143.1,305.7L142.7,309.5L139.6,309.5L139.0,307.2L135.9,312.1L133.6,311.5L129.6,319.7L127.1,318.4L124.3,321.1L125.0,325.6L113.9,322.9L114.5,331.3L107.6,333.2L103.5,331.6L99.8,337.0L93.5,338.1L94.5,342.5L97.1,343.5L94.9,350.4L89.9,353.2L87.6,350.1L84.7,351.2L79.3,338.5L79.3,330.0L73.5,311.0L76.0,311.9L72.4,303.3L75.1,298.4L71.7,300.1L69.4,284.6L72.7,278.6L77.3,281.4L80.9,279.0L81.4,270.7L84.6,273.2L88.7,270.3L88.1,266.4L83.4,263.4L86.8,263.4L88.8,259.6L94.5,257.4L87.4,258.1L86.7,252.8L96.0,249.5Z"/>
-              <path class="india-state" d="M396.4,191.2L398.0,194.2L396.5,198.1L398.9,201.2L390.2,220.1L372.5,215.9L374.5,204.7L378.9,197.4L382.0,198.4L385.4,192.5L392.4,193.6L396.4,191.2Z"/>
-              <path class="india-state" d="M355.8,183.8L356.8,185.5L362.5,184.3L360.4,190.8L363.7,189.5L367.8,192.2L366.4,194.1L370.0,198.1L364.8,201.0L359.0,198.6L334.9,199.3L325.7,196.8L328.4,191.8L326.6,189.6L329.9,186.1L342.2,186.3L346.4,189.9L355.8,183.8Z"/>
-              <path class="india-state" d="M369.9,211.0L373.2,211.4L372.5,215.9L377.9,216.9L379.5,222.9L378.8,231.6L374.9,233.1L376.0,245.8L371.6,250.9L368.7,247.5L367.1,250.4L361.8,220.7L362.4,213.7L364.9,215.6L369.4,209.3L369.9,211.0Z"/>
-              <path class="india-state" d="M405.9,170.4L403.7,178.1L405.5,184.2L401.3,192.5L397.2,194.1L396.3,190.4L392.5,193.6L385.4,192.5L382.0,198.3L380.4,197.7L377.8,192.8L384.4,186.0L384.8,188.5L387.5,186.8L391.9,176.5L392.5,178.0L401.6,170.2L405.6,168.7L405.9,170.4Z"/>
-              <path class="india-state" d="M269.6,241.4L282.9,248.7L283.8,252.2L286.9,250.7L290.3,254.4L290.6,256.3L285.0,257.8L280.7,263.0L282.9,269.0L279.7,272.4L284.1,270.8L279.4,274.5L279.9,276.9L274.3,282.6L272.2,281.4L273.9,283.0L259.8,288.3L250.2,296.6L244.8,298.2L243.3,301.9L237.0,301.5L233.0,295.9L230.5,299.3L228.3,298.6L229.6,301.1L223.9,304.2L224.5,308.5L220.7,307.4L218.2,310.8L215.9,305.9L212.8,314.7L209.2,313.6L199.6,317.6L201.8,310.3L212.4,299.8L211.5,291.7L209.1,290.3L209.7,285.8L206.8,281.7L219.3,285.0L219.4,282.4L214.6,281.3L214.0,268.0L215.7,269.0L218.3,263.7L225.5,264.5L227.8,260.1L229.7,260.5L228.7,258.1L233.1,246.7L238.7,244.1L238.6,241.5L243.0,244.6L254.5,242.3L253.4,248.8L265.5,248.2L264.9,250.2L267.1,250.5L269.6,241.4Z"/>
-              <path class="india-state" d="M117.4,80.8L113.0,87.4L117.7,89.5L121.9,99.9L124.7,97.7L128.7,101.2L128.4,104.8L132.0,108.2L129.6,108.9L132.2,110.0L133.2,114.7L130.6,113.9L127.5,116.7L128.3,119.7L122.4,118.4L122.9,123.1L119.9,125.0L111.0,124.1L107.7,128.3L105.7,122.3L87.9,121.5L87.6,114.8L99.8,103.3L97.0,102.6L98.4,90.6L108.0,87.3L109.3,83.2L111.8,84.3L117.4,80.8Z"/>
-              <path class="india-state" d="M87.8,121.3L97.2,121.9L98.4,131.8L102.0,130.6L105.6,133.3L110.3,132.9L112.7,143.3L120.7,150.7L118.4,151.7L118.8,155.4L122.7,155.8L123.6,150.3L126.3,150.7L127.3,153.7L132.7,149.9L132.8,158.7L134.8,156.1L138.6,156.5L139.2,160.8L144.3,166.1L141.7,167.8L145.5,169.0L140.5,171.5L140.9,173.4L145.5,170.4L153.1,170.6L150.4,174.5L136.1,181.6L126.5,190.0L130.8,196.6L139.6,195.0L140.2,199.8L132.1,201.4L133.5,203.7L131.3,204.5L135.2,208.5L133.7,210.3L131.5,209.1L132.7,215.6L129.7,213.1L127.2,215.1L122.5,214.2L122.1,212.4L119.0,218.8L113.1,221.0L112.1,217.0L114.9,218.2L116.8,216.5L115.2,211.2L118.0,210.4L116.9,206.0L107.6,206.1L107.5,203.1L110.6,203.8L108.3,203.4L109.6,200.9L106.8,200.9L105.1,203.9L102.1,202.0L102.2,205.0L104.7,205.6L102.8,207.2L101.4,204.9L100.1,209.5L102.3,210.2L100.7,213.2L104.3,217.3L103.5,223.7L97.2,228.6L100.6,230.4L94.3,232.9L89.1,227.8L84.0,226.6L84.4,223.8L80.0,221.2L80.1,215.7L78.2,217.6L75.8,214.8L78.0,211.9L76.0,209.8L73.4,212.5L67.8,209.6L66.6,211.2L63.4,208.4L64.9,207.8L60.4,206.4L57.5,208.0L46.5,207.0L39.9,195.3L39.8,190.4L34.0,190.3L31.3,186.4L32.3,176.6L22.1,172.5L23.7,166.5L35.3,153.1L38.2,152.9L43.0,158.1L58.1,153.9L65.4,140.9L73.7,136.7L80.4,122.0L89.0,117.8L87.8,121.3Z"/>
-              <path class="india-state" d="M307.9,151.6L311.5,155.0L309.7,160.2L311.8,164.8L304.7,168.0L299.7,167.2L300.2,154.0L307.9,151.6Z"/>
-              <path class="india-state" d="M180.1,386.7L183.8,388.0L182.8,398.7L176.6,412.2L173.6,411.7L176.0,414.4L176.8,427.8L174.6,428.7L176.8,430.4L177.2,438.7L168.5,439.3L162.5,451.8L166.9,455.1L154.6,458.2L151.7,461.6L150.1,469.8L142.5,474.6L139.0,473.9L135.6,471.0L138.2,467.1L136.2,459.5L140.1,451.7L136.5,449.9L138.4,440.2L137.6,438.1L133.8,440.2L131.5,438.8L132.7,431.1L129.0,428.6L131.1,426.7L130.1,424.1L126.1,424.5L127.3,421.7L122.7,418.3L126.8,416.2L131.8,418.2L132.7,414.8L140.5,415.3L141.5,412.4L144.2,412.3L145.7,409.5L141.2,407.4L143.3,405.5L143.0,400.7L146.6,397.4L155.9,401.4L159.6,394.3L166.3,395.0L170.5,389.9L175.2,392.0L180.1,386.7Z"/>
-              <path class="india-state" d="M360.7,209.3L362.8,219.8L361.3,223.3L357.4,222.1L355.5,232.4L352.3,234.8L349.3,229.4L348.4,232.3L345.4,221.9L348.7,216.0L351.9,216.4L353.0,214.0L354.4,215.5L354.1,213.8L356.5,215.5L356.8,212.3L360.7,209.3Z"/>
-              <path class="india-state" d="M143.0,114.4L148.1,117.0L144.7,123.0L149.0,128.3L155.3,124.6L162.9,129.7L159.8,132.0L170.2,139.4L175.6,138.8L178.5,141.7L180.8,139.9L186.7,144.3L187.5,142.1L207.1,155.5L209.9,154.5L215.5,158.4L219.4,157.7L219.8,161.2L228.5,164.0L229.6,161.6L232.9,161.8L237.4,164.1L239.4,171.1L244.8,175.4L237.2,177.1L241.2,179.5L238.7,182.6L248.0,189.9L240.1,190.0L228.7,198.7L231.8,207.7L226.6,219.0L222.8,219.7L218.7,215.7L220.2,207.3L213.2,207.8L211.7,204.4L208.2,204.3L202.3,198.5L201.1,200.4L197.9,198.9L195.9,203.4L190.9,202.5L192.1,198.5L189.4,199.4L190.6,200.6L187.9,199.1L183.1,201.3L185.3,198.8L182.8,194.7L176.7,197.7L176.8,200.0L170.0,199.8L171.4,197.3L168.5,196.1L168.6,199.5L166.0,199.8L164.1,197.1L162.2,198.9L163.4,196.0L160.8,196.8L163.7,195.5L163.0,192.6L161.6,194.6L160.1,193.5L160.6,195.8L158.9,194.5L155.5,197.0L157.6,197.4L163.6,212.0L161.0,214.8L156.7,211.4L154.3,212.8L151.6,203.9L155.8,199.5L153.6,195.6L155.6,192.5L161.2,191.5L160.3,189.5L166.0,178.3L164.0,174.4L152.3,172.0L152.4,170.1L140.6,173.1L145.5,169.0L141.9,168.2L144.3,166.1L138.9,159.5L142.3,149.2L137.1,140.3L135.5,127.4L143.0,114.4Z"/>
-              <path class="india-state" d="M167.0,99.1L170.2,104.2L176.8,105.2L182.3,108.6L182.2,111.6L194.2,116.9L184.5,125.0L183.4,133.8L178.8,141.7L162.6,134.7L159.8,132.0L162.9,129.7L156.2,125.0L154.1,124.3L149.0,128.3L144.7,123.0L148.1,117.0L142.6,114.2L146.3,112.4L144.5,108.6L147.5,102.3L154.5,100.1L163.2,103.1L164.7,97.3L167.0,99.1Z"/>
-              <path class="india-state" d="M300.2,167.4L310.2,167.1L315.2,172.5L326.0,174.1L326.2,178.3L321.5,186.1L315.7,183.3L314.6,179.0L312.7,178.0L314.3,181.4L310.9,181.7L303.9,175.9L306.1,179.7L301.0,183.1L300.1,188.8L302.3,188.6L306.4,193.4L310.4,193.2L313.4,196.9L312.1,198.9L305.0,198.4L304.3,202.5L300.4,202.6L298.5,207.0L303.3,211.6L309.3,213.3L309.8,218.0L306.9,220.0L306.7,223.5L310.2,225.9L309.0,229.8L313.1,230.4L310.9,233.8L312.6,238.9L310.3,238.2L312.6,240.1L311.0,243.0L308.4,240.4L311.4,244.3L309.2,246.8L308.2,244.5L307.4,251.4L305.7,252.0L306.6,249.4L305.4,251.7L303.9,250.5L302.4,254.3L301.3,247.3L296.6,242.9L301.1,248.4L297.8,248.3L297.2,253.2L290.6,256.3L286.9,250.7L283.8,252.2L283.7,249.3L279.1,247.7L281.7,245.3L279.8,240.8L274.7,237.5L276.5,234.1L271.6,234.0L265.9,229.6L269.0,224.5L272.9,227.1L275.0,223.7L280.3,222.8L280.3,220.5L287.0,220.5L286.9,217.1L290.2,218.0L293.7,215.3L297.9,203.3L294.9,200.0L294.7,195.0L299.4,193.5L295.4,186.8L302.7,179.8L301.8,176.6L299.9,176.8L300.9,171.5L298.2,167.4L298.8,165.8L300.2,167.4Z"/>
-
-              <!-- ══ J&K FULL CLAIM — Rendered LAST to stay on top of all other states ══ -->
-              <!-- India's official Survey of India claim: POK + Gilgit-Baltistan + Ladakh + Aksai Chin -->
-              <!-- Geographic: lon 73.0°E–83.0°E (Johnson Line), lat 32.2°N–37.5°N -->
-              <!-- Scale: 14.77 px/deg lon, 16.1 px/deg lat | Delhi (77.2°E,28.6°N)→SVG(137,144) -->
-              <!-- Phase 47: Corrected geometry — proper southern border width (74–80.5°E),
-                   true western wall (Pakistan LoC, 73–74°E), northern peak 97-119 SVG-x (74.5–76°E),
-                   and Aksai Chin plateau extended to 83°E. DO NOT MOVE ABOVE OTHER STATE PATHS. -->
-              <path class="india-state-claim" id="jk-full-claim"
-                d="M89.7,86.0 L111.9,86.0 L141.4,84.4 L156.2,81.2
-                   L185.7,81.2 L222.7,65.1 L222.7,41.0
-                   L185.7,32.9 L163.6,32.9 L156.2,24.9
-                   L141.4,8.8 L119.3,0.7 L97.1,0.7
-                   L82.4,16.8 L75.0,32.9 L75.0,49.0
-                   L79.4,65.1 L82.4,76.4 Z"/>
-              <!-- J&K label — centred in claim polygon (center ≈ 149, 43) -->
-              <text x="135" y="38" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(90,74,60,.9)" text-anchor="middle" pointer-events="none" letter-spacing="0.3">J&amp;K</text>
-              <text x="135" y="47" font-family="DM Sans,sans-serif" font-size="4.5" fill="rgba(90,74,60,.65)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
+              <!-- J&K + Ladakh — official India claim, dashed border -->
+              <path d="M 73,0 L 147,0 L 183,0 L 183,43 L 169,61 L 154,73 L 147,83 L 132,78 L 120,78 L 115,78 L 95,66 L 81,43 L 73,17 Z"
+                    fill="#d4cdb8" stroke="#8b7d5e" stroke-width="0.8" stroke-dasharray="3,2" stroke-linejoin="round" class="india-state"/>
+              <!-- Himachal Pradesh -->
+              <path d="M 117,69 L 139,66 L 161,73 L 159,97 L 141,115 L 115,115 L 110,101 L 110,78 L 117,69 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Punjab -->
+              <path d="M 87,78 L 112,78 L 117,111 L 120,125 L 100,130 L 87,125 L 87,95 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Haryana -->
+              <path d="M 117,111 L 141,115 L 141,163 L 125,170 L 100,170 L 97,156 L 97,130 L 117,121 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Delhi (UT) -->
+              <path d="M 129,139 L 137,141 L 138,149 L 129,149 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Uttarakhand -->
+              <path d="M 141,115 L 147,104 L 183,104 L 191,113 L 183,144 L 169,144 L 147,144 L 141,130 L 141,115 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Uttar Pradesh -->
+              <path d="M 135,145 L 141,115 L 147,130 L 183,144 L 244,170 L 235,225 L 220,225 L 183,217 L 141,163 L 125,170 L 132,156 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Rajasthan -->
+              <path d="M 22,130 L 66,130 L 100,130 L 141,163 L 138,217 L 115,239 L 73,243 L 27,251 L 22,225 L 7,182 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Gujarat -->
+              <path d="M 25,217 L 73,217 L 85,234 L 85,260 L 66,286 L 37,291 L 15,284 L 0,269 L 7,234 L 25,217 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Madhya Pradesh -->
+              <path d="M 88,175 L 141,163 L 217,173 L 217,217 L 176,275 L 117,275 L 88,251 L 73,217 L 88,175 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Maharashtra -->
+              <path d="M 68,260 L 117,275 L 176,275 L 190,303 L 183,338 L 169,355 L 147,371 L 117,371 L 88,364 L 73,355 L 68,329 L 68,295 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Goa -->
+              <path d="M 84,367 L 93,367 L 93,383 L 84,383 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.5" stroke-linejoin="round" class="india-state"/>
+              <!-- Karnataka -->
+              <path d="M 89,321 L 117,321 L 156,338 L 147,390 L 132,419 L 117,433 L 95,433 L 88,407 L 88,381 L 89,321 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Kerala -->
+              <path d="M 102,419 L 117,433 L 132,425 L 138,459 L 125,497 L 117,499 L 103,477 L 102,451 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Tamil Nadu -->
+              <path d="M 132,425 L 179,407 L 182,433 L 173,477 L 154,501 L 139,501 L 125,497 L 132,459 L 132,425 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Andhra Pradesh -->
+              <path d="M 129,295 L 176,277 L 190,303 L 245,303 L 235,338 L 205,364 L 183,399 L 161,399 L 156,373 L 156,338 L 129,321 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Telangana -->
+              <path d="M 135,297 L 161,297 L 193,297 L 195,338 L 176,364 L 156,373 L 147,371 L 135,347 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Odisha -->
+              <path d="M 198,249 L 264,249 L 286,269 L 279,315 L 247,329 L 205,321 L 198,303 L 198,269 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Chhattisgarh -->
+              <path d="M 176,223 L 217,217 L 242,260 L 220,295 L 205,321 L 183,321 L 161,312 L 154,295 L 176,260 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Jharkhand -->
+              <path d="M 226,201 L 292,201 L 286,243 L 264,249 L 242,260 L 226,251 L 220,225 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Bihar -->
+              <path d="M 225,165 L 298,165 L 298,220 L 292,225 L 226,208 L 225,191 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- West Bengal -->
+              <path d="M 261,170 L 301,170 L 322,208 L 301,269 L 264,249 L 292,225 L 292,201 L 261,208 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.6" stroke-linejoin="round" class="india-state"/>
+              <!-- Assam -->
+              <path d="M 318,153 L 352,153 L 411,153 L 411,199 L 389,223 L 345,217 L 318,199 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.5" stroke-linejoin="round" class="india-state"/>
+              <!-- NE States (Nagaland, Manipur, Mizoram, Tripura, Meghalaya) -->
+              <path d="M 345,199 L 411,199 L 411,262 L 357,262 L 340,245 L 340,217 L 345,217 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.5" stroke-linejoin="round" class="india-state"/>
+              <!-- Arunachal Pradesh -->
+              <path d="M 348,130 L 431,130 L 431,179 L 348,179 Z"
+                    fill="#d4cdb8" stroke="#9a8468" stroke-width="0.5" stroke-linejoin="round" class="india-state"/>
+              <!-- Andaman & Nicobar Islands -->
+              <ellipse cx="380" cy="294" rx="3" ry="9" fill="#d4cdb8" stroke="#9a8468" stroke-width="0.5" opacity="0.7"/>
+              <!-- J&K label -->
+              <text x="130" y="27" font-family="DM Sans,sans-serif" font-size="5" font-weight="700" fill="rgba(90,74,60,.9)" text-anchor="middle" pointer-events="none">J&amp;K</text>
+              <text x="130" y="34" font-family="DM Sans,sans-serif" font-size="4" fill="rgba(90,74,60,.65)" text-anchor="middle" pointer-events="none" font-style="italic">India's Claim</text>
             </g>
 
             <!-- ══ MANDATE CITY PINS ══ -->
 
-            <!-- Himachal Pradesh (Kasauli · Chail) lon 77.1°E lat 31.0°N → 136,100 -->
-            <!-- Label placed LEFT side to avoid overlap with Chandigarh -->
+            <!-- Pins — recalibrated to viewBox 0 0 440 520 (scale X×0.4632, Y×0.4727 from market-data) -->
+
+            <!-- Kasauli · Chail lon 77.1°E lat 31.0°N → (123,106) -->
             <g id="pin-himachal" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('himachal',true)" onmouseout="igMapHover('himachal',false)">
-              <circle cx="136" cy="100" r="7.5" fill="#1A3A6B" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="136" cy="100" r="3" fill="#fff"/>
-              <text x="125" y="95" class="map-pin-label" text-anchor="end">Kasauli · Chail</text>
-              <text x="125" y="105" class="map-pin-sub" text-anchor="end">₹75 Cr</text>
+              <circle cx="123" cy="106" r="7.5" fill="#1A3A6B" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="123" cy="106" r="3" fill="#fff"/>
+              <text x="112" y="101" class="map-pin-label" text-anchor="end">Kasauli · Chail</text>
+              <text x="112" y="111" class="map-pin-sub" text-anchor="end">₹75 Cr</text>
             </g>
 
-            <!-- Chandigarh lon 76.8°E lat 30.7°N → 131,108 -->
-            <!-- Label placed RIGHT side -->
+            <!-- Chandigarh lon 76.8°E lat 30.7°N → (129,109) -->
             <g id="pin-chandigarh" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('chandigarh',true)" onmouseout="igMapHover('chandigarh',false)">
-              <circle cx="131" cy="112" r="7.5" fill="#065F46" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="131" cy="112" r="3" fill="#fff"/>
-              <text x="142" y="109" class="map-pin-label">Chandigarh</text>
-              <text x="142" y="119" class="map-pin-sub">₹70 Cr</text>
+              <circle cx="129" cy="113" r="7.5" fill="#065F46" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="129" cy="113" r="3" fill="#fff"/>
+              <text x="140" y="110" class="map-pin-label">Chandigarh</text>
+              <text x="140" y="120" class="map-pin-sub">₹70 Cr</text>
             </g>
 
-            <!-- Delhi NCR lon 77.2°E lat 28.6°N → 137,138 — pulsing gold -->
+            <!-- Delhi NCR lon 77.2°E lat 28.6°N → (135,146) — pulsing gold -->
             <g id="pin-delhi" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('delhi',true)" onmouseout="igMapHover('delhi',false)">
-              <circle cx="137" cy="144" r="22" fill="rgba(184,150,12,.09)" stroke="rgba(184,150,12,.28)" stroke-width="1">
-                <animate attributeName="r" values="22;32;22" dur="2.5s" repeatCount="indefinite"/>
+              <circle cx="135" cy="146" r="20" fill="rgba(184,150,12,.09)" stroke="rgba(184,150,12,.28)" stroke-width="1">
+                <animate attributeName="r" values="20;30;20" dur="2.5s" repeatCount="indefinite"/>
                 <animate attributeName="opacity" values=".7;0.08;.7" dur="2.5s" repeatCount="indefinite"/>
               </circle>
-              <circle cx="137" cy="144" r="12" fill="#B8960C" stroke="#fff" stroke-width="2" filter="url(#mapPinGlow)"/>
-              <circle cx="137" cy="144" r="5" fill="#fff"/>
-              <text x="154" y="138" class="map-pin-label" style="font-size:9.5px;">Delhi NCR</text>
-              <text x="154" y="150" class="map-pin-sub" style="font-size:7px;opacity:.7;">3 Mandates · ₹900 Cr</text>
+              <circle cx="135" cy="146" r="11" fill="#B8960C" stroke="#fff" stroke-width="2" filter="url(#mapPinGlow)"/>
+              <circle cx="135" cy="146" r="4.5" fill="#fff"/>
+              <text x="150" y="140" class="map-pin-label" style="font-size:9px;">Delhi NCR</text>
+              <text x="150" y="152" class="map-pin-sub" style="font-size:6.5px;opacity:.7;">3 Mandates · ₹900 Cr</text>
             </g>
 
-            <!-- Jaipur lon 75.8°E lat 26.9°N → 116,166 -->
+            <!-- Jaipur lon 75.8°E lat 26.9°N → (114,175) -->
             <g id="pin-jaipur" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('jaipur',true)" onmouseout="igMapHover('jaipur',false)">
-              <circle cx="116" cy="171" r="7.5" fill="#7C3AED" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="116" cy="171" r="3" fill="#fff"/>
-              <text x="103" y="167" class="map-pin-label" text-anchor="end">Jaipur</text>
-              <text x="103" y="177" class="map-pin-sub" text-anchor="end">₹20 Cr</text>
+              <circle cx="114" cy="175" r="7.5" fill="#7C3AED" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="114" cy="175" r="3" fill="#fff"/>
+              <text x="101" y="171" class="map-pin-label" text-anchor="end">Jaipur</text>
+              <text x="101" y="181" class="map-pin-sub" text-anchor="end">₹20 Cr</text>
             </g>
 
-            <!-- Mumbai lon 72.8°E lat 19.1°N → 72,293 -->
+            <!-- Mumbai lon 72.8°E lat 18.9°N → (70,314) -->
             <g id="pin-mumbai" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('mumbai',true)" onmouseout="igMapHover('mumbai',false)">
-              <circle cx="72" cy="297" r="8" fill="#dc2626" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="72" cy="297" r="3.2" fill="#fff"/>
-              <text x="59" y="293" class="map-pin-label" text-anchor="end">Mumbai</text>
-              <text x="59" y="303" class="map-pin-sub" text-anchor="end">Pipeline</text>
+              <circle cx="70" cy="314" r="8" fill="#dc2626" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="70" cy="314" r="3.2" fill="#fff"/>
+              <text x="57" y="310" class="map-pin-label" text-anchor="end">Mumbai</text>
+              <text x="57" y="320" class="map-pin-sub" text-anchor="end">Pipeline</text>
             </g>
 
-            <!-- Hyderabad lon 78.5°E lat 17.4°N → 156,323 -->
+            <!-- Hyderabad lon 78.5°E lat 17.4°N → (154,340) -->
             <g id="pin-hyderabad" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('hyderabad',true)" onmouseout="igMapHover('hyderabad',false)">
-              <circle cx="156" cy="323" r="7" fill="#b45309" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="156" cy="323" r="2.8" fill="#fff"/>
-              <text x="168" y="319" class="map-pin-label">Hyderabad</text>
-              <text x="168" y="329" class="map-pin-sub">Pipeline</text>
+              <circle cx="154" cy="340" r="7" fill="#b45309" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="154" cy="340" r="2.8" fill="#fff"/>
+              <text x="166" y="336" class="map-pin-label">Hyderabad</text>
+              <text x="166" y="346" class="map-pin-sub">Pipeline</text>
             </g>
 
-            <!-- Bengaluru lon 77.6°E lat 12.9°N → 143,395 -->
+            <!-- Bengaluru lon 77.6°E lat 12.9°N → (141,418) -->
             <g id="pin-bengaluru" class="map-pin-group" style="cursor:pointer;" onmouseover="igMapHover('bengaluru',true)" onmouseout="igMapHover('bengaluru',false)">
-              <circle cx="143" cy="397" r="7" fill="#065F46" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
-              <circle cx="143" cy="397" r="2.8" fill="#fff"/>
-              <text x="155" y="394" class="map-pin-label">Bengaluru</text>
-              <text x="155" y="404" class="map-pin-sub">Pipeline</text>
+              <circle cx="141" cy="418" r="7" fill="#065F46" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <circle cx="141" cy="418" r="2.8" fill="#fff"/>
+              <text x="153" y="414" class="map-pin-label">Bengaluru</text>
+              <text x="153" y="424" class="map-pin-sub">Pipeline</text>
             </g>
 
             <!-- ══ LEGEND ══ -->
-            <rect x="5" y="463" width="390" height="50" rx="2"
+            <rect x="5" y="468" width="390" height="48" rx="2"
               fill="rgba(184,150,12,.04)" stroke="rgba(184,150,12,.18)" stroke-width=".7"/>
-            <text x="12" y="476" font-family="DM Sans,sans-serif" font-size="6" font-weight="700"
+            <text x="12" y="480" font-family="DM Sans,sans-serif" font-size="6" font-weight="700"
               fill="currentColor" opacity=".45" letter-spacing="1.5">ACTIVE MANDATE LOCATIONS</text>
-            <circle cx="14" cy="490" r="4" fill="#B8960C"/>
-            <text x="22" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Delhi NCR ₹900Cr</text>
-            <circle cx="110" cy="490" r="4" fill="#065F46"/>
-            <text x="118" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Chandigarh ₹70Cr</text>
-            <circle cx="210" cy="490" r="4" fill="#1A3A6B"/>
-            <text x="218" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Kasauli/Chail ₹75Cr</text>
-            <circle cx="300" cy="490" r="4" fill="#7C3AED"/>
-            <text x="308" y="494" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Jaipur ₹20Cr</text>
-            <circle cx="14" cy="505" r="4" fill="#dc2626"/>
-            <text x="22" y="509" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Mumbai · Pipeline</text>
-            <circle cx="110" cy="505" r="4" fill="#065F46"/>
-            <text x="118" y="509" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Bengaluru · Pipeline</text>
-            <circle cx="210" cy="505" r="4" fill="#b45309"/>
-            <text x="218" y="509" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Hyderabad · Pipeline</text>
+            <circle cx="14" cy="492" r="4" fill="#B8960C"/>
+            <text x="22" y="496" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Delhi NCR ₹900Cr</text>
+            <circle cx="110" cy="492" r="4" fill="#065F46"/>
+            <text x="118" y="496" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Chandigarh ₹70Cr</text>
+            <circle cx="210" cy="492" r="4" fill="#1A3A6B"/>
+            <text x="218" y="496" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Kasauli/Chail ₹75Cr</text>
+            <circle cx="300" cy="492" r="4" fill="#7C3AED"/>
+            <text x="308" y="496" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".7">Jaipur ₹20Cr</text>
+            <circle cx="14" cy="508" r="4" fill="#dc2626"/>
+            <text x="22" y="512" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Mumbai · Pipeline</text>
+            <circle cx="110" cy="508" r="4" fill="#065F46"/>
+            <text x="118" y="512" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Bengaluru · Pipeline</text>
+            <circle cx="210" cy="508" r="4" fill="#b45309"/>
+            <text x="218" y="512" font-family="DM Sans,sans-serif" font-size="6.5" fill="currentColor" opacity=".5">Hyderabad · Pipeline</text>
 
           </svg>
           <!-- Hover tooltip -->
