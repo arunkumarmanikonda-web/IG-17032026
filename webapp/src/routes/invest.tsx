@@ -460,6 +460,23 @@ function filterInvest(sector) {
           }
         },
         {
+          '@type': 'ItemList',
+          name: 'Active Investment Mandates — India Gully Advisory Pipeline',
+          description: '₹1,165 Cr+ active advisory pipeline across Real Estate, Hospitality, Retail, Entertainment and Debt.',
+          url: 'https://indiagully.com/invest',
+          numberOfItems: 8,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Prism Tower — Mixed-Use Hospitality & Commercial, Gurgaon (₹400 Cr)', url: 'https://indiagully.com/listings/prism-tower-gurgaon' },
+            { '@type': 'ListItem', position: 2, name: 'Belcibo — Multi-Brand F&B Platform, Delhi NCR (₹100 Cr)', url: 'https://indiagully.com/listings/belcibo-hospitality-platform' },
+            { '@type': 'ListItem', position: 3, name: 'Hotel Rajshree — Boutique Heritage Hotel, Chandigarh (₹70 Cr)', url: 'https://indiagully.com/listings/hotel-rajshree-chandigarh' },
+            { '@type': 'ListItem', position: 4, name: 'WelcomHeritage Santa Rosa — Mountain Heritage Resort, Kasauli (₹85 Cr)', url: 'https://indiagully.com/listings/welcomheritage-santa-roza-kasauli' },
+            { '@type': 'ListItem', position: 5, name: 'Heritage Hotel Jaipur — Luxury Heritage Property (₹180 Cr)', url: 'https://indiagully.com/listings/heritage-hotel-jaipur' },
+            { '@type': 'ListItem', position: 6, name: 'Maple Resort Chail — Eco Mountain Resort, Himachal Pradesh (₹45 Cr)', url: 'https://indiagully.com/listings/maple-resort-chail' },
+            { '@type': 'ListItem', position: 7, name: 'Ambience Tower — Premium Commercial, North Delhi (₹160 Cr)', url: 'https://indiagully.com/listings/ambience-tower-north-delhi' },
+            { '@type': 'ListItem', position: 8, name: 'Sawasdee JLG Galleria — Hotel & Retail Mall, Noida (₹150 Cr)', url: 'https://indiagully.com/listings/sawasdee-jlg-noida' },
+          ]
+        },
+        {
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },

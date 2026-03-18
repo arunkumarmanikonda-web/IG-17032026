@@ -319,6 +319,20 @@ function filterVertical(id) {
           publisher: { '@type': 'Organization', name: 'India Gully', url: 'https://indiagully.com' }
         },
         {
+          '@type': 'ItemList',
+          name: 'Completed Advisory Transactions — India Gully Track Record',
+          url: 'https://indiagully.com/works',
+          numberOfItems: 6,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: '800 Sq. Yard Asset Takeover & Strata Sale — Anand Lok, New Delhi' },
+            { '@type': 'ListItem', position: 2, name: 'Jaipur Resort Mandate — Premium Leisure Asset Sale' },
+            { '@type': 'ListItem', position: 3, name: 'Entertainment City Limited — Landmark Divestment Transaction' },
+            { '@type': 'ListItem', position: 4, name: "Lutyens' Delhi Prime Property — Ultra-Premium Residential" },
+            { '@type': 'ListItem', position: 5, name: 'Greater Kailash-1 Premium Asset — High-Value Residential Deal' },
+            { '@type': 'ListItem', position: 6, name: 'NCLT Resolution — ₹120 Cr Hospitality Asset, Delhi NCR' },
+          ]
+        },
+        {
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://indiagully.com/' },

@@ -2031,6 +2031,13 @@ ${relatedArticles.length ? `
     description: article.excerpt,
     ogImage: CAT_IMAGES[article.category],
     canonical: `https://indiagully.com/insights/${article.id}`,
+    ogType: 'article',
+    articleMeta: {
+      publishedTime: article.date,
+      author: 'India Gully Research',
+      section: article.category,
+      tags: article.tags,
+    },
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
