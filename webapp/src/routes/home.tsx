@@ -478,10 +478,24 @@ app.get('/', (c) => {
       <!-- Right: SVG India map -->
       <div style="position:relative;" id="indiaMapWrap" class="india-map-wrap">
         <div class="india-map-box" style="border:1px solid var(--border);padding:1.25rem 1rem 1rem;position:relative;overflow:hidden;border-radius:3px;">
+          <!--
+            ╔══════════════════════════════════════════════════════════════════════╗
+            ║  GEOGRAPHY LOCK — DO NOT MODIFY OR REGENERATE THIS SVG             ║
+            ║  Version: geography-v1  Locked: 2026-03-19                         ║
+            ║  This SVG renders India per Survey of India official boundaries.    ║
+            ║  J&K + Ladakh includes PoK (Pakistan-occupied Kashmir) shown with  ║
+            ║  dashed border = disputed/claimed territory per India's position.   ║
+            ║  ANY change to state path data = FAILURE.                           ║
+            ║  Restore from: /public/static/india-map-locked-home.svg            ║
+            ╚══════════════════════════════════════════════════════════════════════╝
+          -->
           <!-- India SVG map — accurate state geometry, scaled from market-data.tsx (950×1100) at 0.4632×0.4727 -->
           <!-- viewBox 0 0 440 520 — proportional, no padding offsets, preserveAspectRatio xMidYMid meet -->
           <svg id="igIndiaMap" viewBox="0 0 440 520" width="100%"
                preserveAspectRatio="xMidYMid meet"
+               data-locked="geography-v1"
+               data-boundary="Survey-of-India-official"
+               data-pok="included-dashed-border"
                style="display:block;max-width:440px;margin:0 auto;"
                aria-label="India map showing active mandate locations">
             <defs>
