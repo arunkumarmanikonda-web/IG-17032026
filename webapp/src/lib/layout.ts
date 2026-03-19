@@ -167,10 +167,10 @@ html[data-theme="dark"]{
 [data-theme="dark"] .map-city-card:hover{border-color:rgba(184,150,12,.3)!important;}
 [data-theme="dark"] .map-city-name{color:rgba(255,255,255,.9)!important;}
 [data-theme="dark"] .map-city-sub{color:rgba(255,255,255,.4)!important;}
-[data-theme="dark"] .india-map-box{background:linear-gradient(135deg,#0d0d1e 0%,#141428 100%)!important;border-color:rgba(255,255,255,.08)!important;}
-[data-theme="dark"] .india-map-wrap svg .india-land{fill:#1e1e35!important;stroke:rgba(184,150,12,.35)!important;}
-[data-theme="dark"] .india-map-wrap svg .india-state{fill:#1a1a30!important;stroke:rgba(184,150,12,.3)!important;}
-[data-theme="dark"] .india-map-wrap svg .india-state-claim{fill:#1a1a30!important;stroke:rgba(184,150,12,.4)!important;}
+[data-theme="dark"] .india-map-box{background:linear-gradient(135deg,#0a0e1a 0%,#111825 100%)!important;border-color:rgba(255,255,255,.08)!important;}
+[data-theme="dark"] .india-map-wrap svg .india-land{fill:#2a3550!important;stroke:rgba(184,150,12,.4)!important;}
+[data-theme="dark"] .india-map-wrap svg .india-state{fill:#2e3d55!important;stroke:rgba(184,150,12,.35)!important;}
+[data-theme="dark"] .india-map-wrap svg .india-state-claim{fill:#253045!important;stroke:rgba(184,150,12,.55)!important;stroke-dasharray:3,2!important;}
 [data-theme="dark"] .india-map-wrap svg path[style*="fill:#e8ddc8"]{fill:#1e1e35!important;stroke:rgba(184,150,12,.3)!important;}
 [data-theme="dark"] .india-map-wrap svg path[style*="fill:#ddd5be"]{fill:#181830!important;stroke:rgba(184,150,12,.25)!important;}
 [data-theme="dark"] .india-map-wrap svg ellipse[style*="fill:#ddd5be"],[data-theme="dark"] .india-map-wrap svg ellipse[style*="fill:#e8ddc8"]{fill:#181830!important;stroke:rgba(184,150,12,.25)!important;}
